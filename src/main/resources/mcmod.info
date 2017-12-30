@@ -1,0 +1,16 @@
+[
+{
+  "modid": "bettermuffling",
+  "name": "Better Muffling",
+  "description": "A simple block to muffle the sound around it.",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["Korti"],
+  "credits": "",
+  "logoFile": "logo.png",
+  "screenshots": [],
+  "dependencies": []
+}
+]

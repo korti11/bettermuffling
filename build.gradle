@@ -50,18 +50,3 @@ processResources {
 }
 
 version = "${project.minecraft.version}-$version"
-
-task deobfJar(type: Jar) {
-    from sourceSets.main.output
-    classifier = 'deobf'
-}
-
-task apiJar(type: Jar) {
-    from sourceSets.api.output
-    classifier = "api"
-}
-
-artifacts {
-    archives deobfJar
-    archives apiJar
-}

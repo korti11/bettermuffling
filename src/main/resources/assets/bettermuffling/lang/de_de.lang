@@ -1,3 +1,10 @@
+#Gui
 gui.muffling_block.title=Muffling Optionen
 button.range.name=Radius
+
+#Block
 tile.bettermuffling.muffling_block.name=Muffling Block
+
+#Advancements
+advancements.muffling.title=Muffle Sounds
+advancements.muffling.description=Hast du etwas gehört?

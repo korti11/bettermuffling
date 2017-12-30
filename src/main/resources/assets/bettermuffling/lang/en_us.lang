@@ -1,3 +1,10 @@
+#Gui
 gui.muffling_block.title=Muffling Options
 button.range.name=Range
+
+#Block
 tile.bettermuffling.muffling_block.name=Muffling Block
+
+#Advancements
+advancements.muffling.title=Muffle Sounds
+advancements.muffling.description=Did you hear something?
