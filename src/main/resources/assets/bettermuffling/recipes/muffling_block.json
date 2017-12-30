@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "WLW",
+    "LNL",
+    "WLW"
+  ],
+  "key": {
+    "W": {
+      "item": "minecraft:wool",
+      "data": 32767
+    },
+    "L": {
+      "item": "minecraft:leather"
+    },
+    "N": {
+      "item": "minecraft:noteblock"
+    }
+  },
+  "result": {
+    "item": "bettermuffling:muffling_block"
+  }
+}
