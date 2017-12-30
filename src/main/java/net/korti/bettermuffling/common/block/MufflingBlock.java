@@ -7,6 +7,7 @@ import net.korti.bettermuffling.common.util.TileCache;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -26,7 +27,7 @@ public class MufflingBlock extends BlockContainer {
 
     public MufflingBlock() {
         super(Material.CLOTH);
-        setCreativeTab(BetterMuffling.creativeTab);
+        setCreativeTab(CreativeTabs.MISC);
         setRegistryName(ModInfo.MOD_ID, "muffling_block");
         setUnlocalizedName(ModInfo.MOD_ID + "." + "muffling_block");
     }

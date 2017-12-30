@@ -19,13 +19,6 @@ public class BetterMuffling {
     @SidedProxy(serverSide = ModInfo.COMMON_PROXY, clientSide = ModInfo.CLIENT_PROXY)
     public static CommonProxy proxy;
 
-    public static CreativeTabs creativeTab = new CreativeTabs(ModInfo.MOD_ID) {
-        @Override
-        public ItemStack getTabIconItem() {
-            return new ItemStack(Blocks.WOOL);
-        }
-    };
-
     @Mod.EventHandler
     public static void preInit(FMLPreInitializationEvent event) {
         proxy.preInit();

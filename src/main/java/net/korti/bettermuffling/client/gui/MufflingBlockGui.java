@@ -10,8 +10,6 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-import java.io.IOException;
-
 @SideOnly(Side.CLIENT)
 public class MufflingBlockGui extends GuiScreen {
 
