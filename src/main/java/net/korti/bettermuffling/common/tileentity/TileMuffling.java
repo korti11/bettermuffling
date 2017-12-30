@@ -1,6 +1,10 @@
 package net.korti.bettermuffling.common.tileentity;
 
+import net.korti.bettermuffling.common.network.PacketNetworkHandler;
+import net.korti.bettermuffling.common.network.UpdateTileEntityMessage;
+import net.korti.bettermuffling.common.network.UpdateTileEntityRequestMessage;
 import net.korti.bettermuffling.common.util.TileCache;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.nbt.NBTTagCompound;
@@ -74,7 +78,7 @@ public class TileMuffling extends TileEntity {
             iSound.createAccessor(event.getManager().sndHandler);
             final float soundLevel = soundLevels.get(category);
             final ISound newSound = new PositionedSoundRecord(
-                    iSound.getSoundLocation(), category, iSound.getVolume() * soundLevel, iSound.getPitch() * soundLevel,
+                    iSound.getSoundLocation(), category, iSound.getVolume() * soundLevel, iSound.getPitch(),
                     iSound.canRepeat(), iSound.getRepeatDelay(), iSound.getAttenuationType(),
                     iSound.getXPosF(), iSound.getYPosF(), iSound.getZPosF()
             );
@@ -90,16 +94,17 @@ public class TileMuffling extends TileEntity {
         return distance <= range;
     }
 
-    @SideOnly(Side.CLIENT)
     @Override
     public void onLoad() {
         super.onLoad();
         if(getWorld().isRemote) {
             MinecraftForge.EVENT_BUS.register(this);
             TileCache.addTileEntity(this);
+            PacketNetworkHandler.sendToServer(new UpdateTileEntityRequestMessage(getPos()));
         }
     }
 
+    //region Sync to client
     @Nullable
     @Override
     public SPacketUpdateTileEntity getUpdatePacket() {
@@ -113,5 +118,45 @@ public class TileMuffling extends TileEntity {
     public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
         super.onDataPacket(net, pkt);
         syncReadFromNBT(pkt.getNbtCompound());
+    }
+
+    public void syncToClient() {
+        if (!world.isRemote) {
+            markDirty();
+            final IBlockState state = world.getBlockState(pos);
+            world.notifyBlockUpdate(getPos(), state, state, 2);
+        }
+    }
+    //endregion
+
+    //region Sync to server
+    private void syncToServer() {
+        NBTTagCompound compound = new NBTTagCompound();
+        syncWriteToNBT(compound);
+        PacketNetworkHandler.sendToServer(new UpdateTileEntityMessage(getPos(), compound));
+    }
+
+    public void onDataPacket(UpdateTileEntityMessage message) {
+        syncReadFromNBT(message.getCompound());
+        syncToClient();
+    }
+    //endregion
+
+    public float getSoundLevel(SoundCategory soundCategory) {
+        return this.soundLevels.get(soundCategory);
+    }
+
+    public int getRange() {
+        return range;
+    }
+
+    public void updateSoundLevel(SoundCategory soundCategory, float volume) {
+        this.soundLevels.replace(soundCategory, volume);
+        this.syncToServer();
+    }
+
+    public void updateRange(int range) {
+        this.range = range;
+        this.syncToServer();
     }
 }

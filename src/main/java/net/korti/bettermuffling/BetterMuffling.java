@@ -7,6 +7,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
+import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
 @Mod(modid = ModInfo.MOD_ID, name = ModInfo.MOD_NAME, version = ModInfo.VERSION)
@@ -28,6 +29,11 @@ public class BetterMuffling {
     @Mod.EventHandler
     public static void preInit(FMLPreInitializationEvent event) {
         proxy.preInit();
+    }
+
+    @Mod.EventHandler
+    public static void init(FMLInitializationEvent event) {
+        proxy.init();
     }
 
 }
