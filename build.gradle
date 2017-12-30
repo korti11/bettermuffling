@@ -24,6 +24,9 @@ minecraft {
     runDir = "run"
 
     mappings = project.mappingVersion
+
+    replaceIn "src/main/java/net/korti/bettermuffling/common/constant/ModInfo.java"
+    replace "@VERSION@", project.version
 }
 
 dependencies {

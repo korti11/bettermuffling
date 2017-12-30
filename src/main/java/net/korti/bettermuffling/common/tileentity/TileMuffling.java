@@ -91,7 +91,7 @@ public class TileMuffling extends TileEntity {
         final double distance = Math.sqrt(
                 getDistanceSq((double) sound.getXPosF(), (double) sound.getYPosF(), (double) sound.getZPosF())
         );
-        return distance <= range;
+        return distance <= (range + 1);
     }
 
     @Override
