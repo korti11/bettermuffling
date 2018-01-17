@@ -1,5 +1,6 @@
 package net.korti.bettermuffling.common.tileentity;
 
+import net.korti.bettermuffling.common.config.ModConfig;
 import net.korti.bettermuffling.common.network.PacketNetworkHandler;
 import net.korti.bettermuffling.common.network.UpdateTileEntityMessage;
 import net.korti.bettermuffling.common.network.UpdateTileEntityRequestMessage;
@@ -12,6 +13,7 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.SoundCategory;
+import net.minecraft.util.math.MathHelper;
 import net.minecraftforge.client.event.sound.PlaySoundEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -39,7 +41,7 @@ public class TileMuffling extends TileEntity {
 
         for (String categoryName : categoryNames) {
             final SoundCategory category = SoundCategory.getByName(categoryName);
-            soundLevels.put(category, 0.1F);
+            soundLevels.put(category, (float) ModConfig.minVolume);
         }
     }
 
@@ -60,6 +62,7 @@ public class TileMuffling extends TileEntity {
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
         syncReadFromNBT(compound);
+        validateWithConfig();
     }
 
     private void syncReadFromNBT(NBTTagCompound compound) {
@@ -141,6 +144,16 @@ public class TileMuffling extends TileEntity {
         syncToClient();
     }
     //endregion
+
+    private void validateWithConfig() {
+        this.range = MathHelper.clamp(this.range, 2, ModConfig.maxRange);
+        for(Map.Entry<SoundCategory, Float> soundLevel : soundLevels.entrySet()) {
+            soundLevels.replace(soundLevel.getKey(),
+                    MathHelper.clamp(soundLevel.getValue(),
+                    (float) ModConfig.minVolume,
+                    (float) ModConfig.maxVolume));
+        }
+    }
 
     public float getSoundLevel(SoundCategory soundCategory) {
         return this.soundLevels.get(soundCategory);

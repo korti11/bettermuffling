@@ -1,5 +1,6 @@
 package net.korti.bettermuffling.client.gui;
 
+import net.korti.bettermuffling.common.config.ModConfig;
 import net.korti.bettermuffling.common.tileentity.TileMuffling;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.*;
@@ -81,6 +82,8 @@ public class MufflingBlockGui extends GuiScreen {
     @SideOnly(Side.CLIENT)
     class RangeButton extends GuiButton {
         private final String labelName;
+        private float minRange = 2F;
+        private float maxRange = ModConfig.maxRange - minRange;
         public float range;
         public boolean pressed;
 
@@ -88,12 +91,16 @@ public class MufflingBlockGui extends GuiScreen {
         {
             super(buttonId, x, y, 150, 20, "");
             this.labelName = I18n.format("button.range.name");
-            this.range = (float)(range - 2) / 14F;
+            this.range = (range - minRange) / maxRange;
             this.displayString = this.labelName + ": " + this.getDisplayString();
         }
 
         private String getDisplayString() {
-            return String.valueOf((int)(range * 14F) + 2);
+            return String.valueOf(getRange());
+        }
+
+        private int getRange() {
+            return (int)((range * maxRange) + minRange);
         }
 
         /**
@@ -116,7 +123,7 @@ public class MufflingBlockGui extends GuiScreen {
                 {
                     this.range = (float)(mouseX - (this.x + 4)) / (this.width - 8);
                     this.range = MathHelper.clamp(this.range, 0.0F, 1.0F);
-                    MufflingBlockGui.this.updateRange((int)((range * 14F) + 2));
+                    MufflingBlockGui.this.updateRange(getRange());
                     this.displayString = this.labelName + ": " + this.getDisplayString();
                 }
 
@@ -136,7 +143,7 @@ public class MufflingBlockGui extends GuiScreen {
             {
                 this.range = (float)(mouseX - (this.x + 4)) / (this.width - 8);
                 this.range = MathHelper.clamp(this.range, 0.0F, 1.0F);
-                MufflingBlockGui.this.updateRange((int)((range * 14F) + 2));
+                MufflingBlockGui.this.updateRange(getRange());
                 this.displayString = this.labelName + ": " + this.getDisplayString();
                 this.pressed = true;
                 return true;
@@ -160,7 +167,9 @@ public class MufflingBlockGui extends GuiScreen {
     class SoundButton extends GuiButton {
         private final SoundCategory category;
         private final String categoryName;
-        public float volume = 1.0F;
+        private float minVolume = (float) ModConfig.minVolume;
+        private float maxVolume = (float) ModConfig.maxVolume - minVolume;
+        public float volume;
         public boolean pressed;
 
         public SoundButton(int buttonId, int x, int y, SoundCategory category, float volume)
@@ -168,12 +177,16 @@ public class MufflingBlockGui extends GuiScreen {
             super(buttonId, x, y, 150, 20, "");
             this.category = category;
             this.categoryName = I18n.format("soundCategory." + category.getName());
-            this.volume = volume;
+            this.volume = (volume - minVolume) / maxVolume;
             this.displayString = this.categoryName + ": " + this.getDisplayString();
         }
 
         private String getDisplayString() {
-            return (int)(this.volume * 100.0F) + "%";
+            return (int)(calcVolume() * 100.0F) + "%";
+        }
+
+        private float calcVolume() {
+            return (this.volume * maxVolume) + minVolume;
         }
 
         /**
@@ -196,7 +209,7 @@ public class MufflingBlockGui extends GuiScreen {
                 {
                     this.volume = (float)(mouseX - (this.x + 4)) / (float)(this.width - 8);
                     this.volume = MathHelper.clamp(this.volume, 0.0F, 1.0F);
-                    MufflingBlockGui.this.updateSoundLevel(category, volume);
+                    MufflingBlockGui.this.updateSoundLevel(category, calcVolume());
                     this.displayString = this.categoryName + ": " + this.getDisplayString();
                 }
 
@@ -216,7 +229,7 @@ public class MufflingBlockGui extends GuiScreen {
             {
                 this.volume = (float)(mouseX - (this.x + 4)) / (float)(this.width - 8);
                 this.volume = MathHelper.clamp(this.volume, 0.0F, 1.0F);
-                MufflingBlockGui.this.updateSoundLevel(category, volume);
+                MufflingBlockGui.this.updateSoundLevel(category, calcVolume());
                 this.displayString = this.categoryName + ": " + this.getDisplayString();
                 this.pressed = true;
                 return true;
