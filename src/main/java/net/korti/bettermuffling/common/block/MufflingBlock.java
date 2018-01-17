@@ -57,6 +57,9 @@ public class MufflingBlock extends BlockContainer {
         if (world.isRemote) {
             TileEntity tile = world.getTileEntity(pos);
             if (tile != null) {
+                if(tile instanceof TileMuffling) {
+                    ((TileMuffling) tile).hideIndicator();
+                }
                 MinecraftForge.EVENT_BUS.unregister(tile);
                 TileCache.removeTileEntity(tile);
             }

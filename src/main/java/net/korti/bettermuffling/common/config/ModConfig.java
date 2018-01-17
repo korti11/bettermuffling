@@ -29,6 +29,9 @@ public class ModConfig {
     @Config.RequiresWorldRestart
     public static double maxVolume = 1;
 
+    @Config.Name("Muffler Indicator")
+    public static final MufflerIndicator mufflerIndicator = new MufflerIndicator();
+
     @Mod.EventBusSubscriber(modid = ModInfo.MOD_ID)
     public static class EventHandler {
         @SubscribeEvent
@@ -37,5 +40,19 @@ public class ModConfig {
                 ConfigManager.sync(ModInfo.MOD_ID, Config.Type.INSTANCE);
             }
         }
+    }
+
+    public static class MufflerIndicator {
+        @Config.Comment("Show muffler indicator.")
+        @Config.Name("Enable")
+        public boolean enable = true;
+
+        @Config.Comment("The x coordinate of the indicator position.")
+        @Config.Name("Position X")
+        public int x = 25;
+
+        @Config.Comment("The y coordinate of the indicator position.")
+        @Config.Name("Position Y")
+        public int y = 25;
     }
 }
