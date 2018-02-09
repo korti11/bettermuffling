@@ -8,13 +8,17 @@ import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -53,6 +57,17 @@ public class MufflingBlock extends BlockContainer {
     }
 
     @Override
+    public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
+        NBTTagCompound tileData = stack.getSubCompound("tile_data");
+        if (tileData != null) {
+            TileEntity te = world.getTileEntity(pos);
+            if (te instanceof TileMuffling) {
+                ((TileMuffling) te).readMufflingData(tileData);
+            }
+        }
+    }
+
+    @Override
     public boolean removedByPlayer(IBlockState state, World world, BlockPos pos, EntityPlayer player, boolean willHarvest) {
         if (world.isRemote) {
             TileEntity tile = world.getTileEntity(pos);
@@ -64,6 +79,28 @@ public class MufflingBlock extends BlockContainer {
                 TileCache.removeTileEntity(tile);
             }
         }
+        if(willHarvest) return true;
         return super.removedByPlayer(state, world, pos, player, willHarvest);
+    }
+
+    @Override
+    public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState state, int fortune) {
+        TileEntity te = world.getTileEntity(pos);
+
+        if (te instanceof TileMuffling) {
+            TileMuffling tMuffling = (TileMuffling) te;
+            ItemStack dropStack = new ItemStack(this);
+            NBTTagCompound tileData = dropStack.getOrCreateSubCompound("tile_data");
+            tMuffling.writeMufflingData(tileData);
+            drops.add(dropStack);
+            return;
+        }
+        super.getDrops(drops, world, pos, state, fortune);
+    }
+
+    @Override
+    public void harvestBlock(World worldIn, EntityPlayer player, BlockPos pos, IBlockState state, @Nullable TileEntity te, ItemStack stack) {
+        super.harvestBlock(worldIn, player, pos, state, te, stack);
+        worldIn.setBlockToAir(pos);
     }
 }

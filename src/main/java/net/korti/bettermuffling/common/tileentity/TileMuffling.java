@@ -26,7 +26,6 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -52,11 +51,11 @@ public class TileMuffling extends TileEntity implements ITickable {
 
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
-        syncWriteToNBT(compound);
+        writeMufflingData(compound);
         return super.writeToNBT(compound);
     }
 
-    private void syncWriteToNBT(NBTTagCompound compound) {
+    public void writeMufflingData(NBTTagCompound compound) {
         for (Map.Entry<SoundCategory, Float> soundLevel : soundLevels.entrySet()) {
             compound.setFloat(soundLevel.getKey().getName(), soundLevel.getValue());
         }
@@ -66,11 +65,11 @@ public class TileMuffling extends TileEntity implements ITickable {
     @Override
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
-        syncReadFromNBT(compound);
+        readMufflingData(compound);
         validateWithConfig();
     }
 
-    private void syncReadFromNBT(NBTTagCompound compound) {
+    public void readMufflingData(NBTTagCompound compound) {
         for (SoundCategory category : soundLevels.keySet()) {
             soundLevels.replace(category, compound.getFloat(category.getName()));
         }
@@ -180,7 +179,7 @@ public class TileMuffling extends TileEntity implements ITickable {
     @Override
     public SPacketUpdateTileEntity getUpdatePacket() {
         NBTTagCompound compound = new NBTTagCompound();
-        syncWriteToNBT(compound);
+        writeMufflingData(compound);
         return new SPacketUpdateTileEntity(getPos(), -1, compound);
     }
 
@@ -188,7 +187,7 @@ public class TileMuffling extends TileEntity implements ITickable {
     @Override
     public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
         super.onDataPacket(net, pkt);
-        syncReadFromNBT(pkt.getNbtCompound());
+        readMufflingData(pkt.getNbtCompound());
     }
 
     public void syncToClient() {
@@ -203,12 +202,12 @@ public class TileMuffling extends TileEntity implements ITickable {
     //region Sync to server
     private void syncToServer() {
         NBTTagCompound compound = new NBTTagCompound();
-        syncWriteToNBT(compound);
+        writeMufflingData(compound);
         PacketNetworkHandler.sendToServer(new UpdateTileEntityMessage(getPos(), compound));
     }
 
     public void onDataPacket(UpdateTileEntityMessage message) {
-        syncReadFromNBT(message.getCompound());
+        readMufflingData(message.getCompound());
         syncToClient();
     }
     //endregion
