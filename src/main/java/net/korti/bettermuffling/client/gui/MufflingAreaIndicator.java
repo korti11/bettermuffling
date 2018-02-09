@@ -7,7 +7,6 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -24,11 +23,13 @@ public class MufflingAreaIndicator {
 
     @SubscribeEvent
     public static void onOverlayRendering(final RenderGameOverlayEvent.Post event) {
-        final EntityPlayer player = mc.player;
-        if(player.getEntityData()
-                .getCompoundTag("muffling_indicator").getBoolean("render") &&
-                ModConfig.mufflerIndicator.enable) {
-            indicatorGui.drawIndicator();
+        if(event.getType() == RenderGameOverlayEvent.ElementType.ALL) {
+            final EntityPlayer player = mc.player;
+            if (player.getEntityData()
+                    .getCompoundTag("muffling_indicator").getBoolean("render") &&
+                    ModConfig.mufflerIndicator.enable) {
+                indicatorGui.drawIndicator();
+            }
         }
     }
 
