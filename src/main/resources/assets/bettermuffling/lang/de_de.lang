@@ -1,6 +1,8 @@
 #Gui
 gui.muffling_block.title=Muffling Optionen
-button.range.name=Radius
+button.muffling_block.range.name=Radius
+button.muffling_block.placer_only.on.name=Privater Modus: Ein
+button.muffling_block.placer_only.off.name=Privater Modus: Aus
 
 #Block
 tile.bettermuffling.muffling_block.name=Muffling Block
