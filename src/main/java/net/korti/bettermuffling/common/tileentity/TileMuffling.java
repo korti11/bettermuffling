@@ -28,11 +28,14 @@ import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 public class TileMuffling extends TileEntity implements ITickable {
 
     private final Map<SoundCategory, Float> soundLevels = new HashMap<>();
     private int range = 6;
+    private UUID placedBy;
+    private boolean placerOnly = false;
 
     public TileMuffling() {
         init();
@@ -60,6 +63,8 @@ public class TileMuffling extends TileEntity implements ITickable {
             compound.setFloat(soundLevel.getKey().getName(), soundLevel.getValue());
         }
         compound.setInteger("range", range);
+        compound.setUniqueId("placedBy", placedBy);
+        compound.setBoolean("placerOnly", placerOnly);
     }
 
     @Override
@@ -74,6 +79,8 @@ public class TileMuffling extends TileEntity implements ITickable {
             soundLevels.replace(category, compound.getFloat(category.getName()));
         }
         range = compound.getInteger("range");
+        placedBy = compound.getUniqueId("placedBy");
+        placerOnly = compound.getBoolean("placerOnly");
     }
 
     @SideOnly(Side.CLIENT)
@@ -120,7 +127,6 @@ public class TileMuffling extends TileEntity implements ITickable {
         );
     }
 
-    @SideOnly(Side.CLIENT)
     @Override
     public void update() {
         if(getWorld().isRemote) {
@@ -238,5 +244,23 @@ public class TileMuffling extends TileEntity implements ITickable {
     public void updateRange(int range) {
         this.range = range;
         this.syncToServer();
+    }
+
+    public void setPlacedBy(UUID placedBy) {
+        this.placedBy = placedBy;
+    }
+
+    public boolean getPlacerOnly() {
+        return this.placerOnly;
+    }
+
+    public boolean switchPlacerOnly() {
+        this.placerOnly = !this.placerOnly;
+        this.syncToServer();
+        return this.placerOnly;
+    }
+
+    public boolean isPlayerAllowedToOpen(EntityPlayer player) {
+        return !this.placerOnly || this.placedBy.equals(player.getUniqueID());
     }
 }

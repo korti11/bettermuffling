@@ -49,9 +49,12 @@ public class MufflingBlock extends BlockContainer {
 
     @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) {
-        if (!player.isSneaking()) {
-            player.openGui(BetterMuffling.instance, 0, world, pos.getX(), pos.getY(), pos.getZ());
-            return true;
+        TileEntity te = world.getTileEntity(pos);
+        if(te instanceof TileMuffling) {
+            if (!player.isSneaking() && ((TileMuffling) te).isPlayerAllowedToOpen(player)) {
+                player.openGui(BetterMuffling.instance, 0, world, pos.getX(), pos.getY(), pos.getZ());
+                return true;
+            }
         }
         return super.onBlockActivated(world, pos, state, player, hand, facing, hitX, hitY, hitZ);
     }
@@ -59,11 +62,12 @@ public class MufflingBlock extends BlockContainer {
     @Override
     public void onBlockPlacedBy(World world, BlockPos pos, IBlockState state, EntityLivingBase placer, ItemStack stack) {
         NBTTagCompound tileData = stack.getSubCompound("tile_data");
-        if (tileData != null) {
-            TileEntity te = world.getTileEntity(pos);
-            if (te instanceof TileMuffling) {
+        TileEntity te = world.getTileEntity(pos);
+        if (te instanceof TileMuffling) {
+            if (tileData != null) {
                 ((TileMuffling) te).readMufflingData(tileData);
             }
+            ((TileMuffling) te).setPlacedBy(placer.getUniqueID());
         }
     }
 

@@ -1,6 +1,8 @@
 #Gui
 gui.muffling_block.title=Muffling Options
-button.range.name=Range
+button.muffling_block.range.name=Range
+button.muffling_block.placer_only.on.name=Private Mode: On
+button.muffling_block.placer_only.off.name=Private Mode: Off
 
 #Block
 tile.bettermuffling.muffling_block.name=Muffling Block

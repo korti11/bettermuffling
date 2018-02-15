@@ -17,6 +17,8 @@ public class MufflingBlockGui extends GuiScreen {
     private TileMuffling tileMuffling;
     private String title = "Muffling Options";
 
+    private GuiButton placerOnlyButton;
+
     public MufflingBlockGui(TileMuffling tileMuffling) {
         this.tileMuffling = tileMuffling;
     }
@@ -29,7 +31,12 @@ public class MufflingBlockGui extends GuiScreen {
         int i = 0;
         this.buttonList.add(new RangeButton(42, this.width / 2 - 155 + i % 2 * 160,
                 (this.height / 6 - 12 + 24 * (i >> 1)) + 35, tileMuffling.getRange()));
-        i = i + 2;
+        i++;
+        this.placerOnlyButton = new GuiButton(199, this.width / 2 - 155 + i % 2 * 160,
+                (this.height / 6 - 12 + 24 * (i >> 1)) + 35, 150, 20, "");
+        this.setPlacerOnlyButtonName(tileMuffling.getPlacerOnly());
+        this.buttonList.add(this.placerOnlyButton);
+        i++;
 
         for (SoundCategory soundcategory : SoundCategory.values())
         {
@@ -59,6 +66,11 @@ public class MufflingBlockGui extends GuiScreen {
     protected void actionPerformed(GuiButton button) {
         if(button.enabled) {
             switch (button.id) {
+                case 199: {
+                    boolean placerOnly = this.tileMuffling.switchPlacerOnly();
+                    this.setPlacerOnlyButtonName(placerOnly);
+                    break;
+                }
                 case 200: {
                     this.mc.displayGuiScreen(null);
 
@@ -66,6 +78,7 @@ public class MufflingBlockGui extends GuiScreen {
                     {
                         this.mc.setIngameFocus();
                     }
+                    break;
                 }
             }
         }
@@ -79,6 +92,14 @@ public class MufflingBlockGui extends GuiScreen {
         this.tileMuffling.updateSoundLevel(category, volume);
     }
 
+    private void setPlacerOnlyButtonName(boolean placerOnly) {
+        if (placerOnly) {
+            this.placerOnlyButton.displayString = I18n.format("button.muffling_block.placer_only.on.name");
+        } else {
+            this.placerOnlyButton.displayString = I18n.format("button.muffling_block.placer_only.off.name");
+        }
+    }
+
     @SideOnly(Side.CLIENT)
     class RangeButton extends GuiButton {
         private final String labelName;
@@ -90,7 +111,7 @@ public class MufflingBlockGui extends GuiScreen {
         public RangeButton(int buttonId, int x, int y, int range)
         {
             super(buttonId, x, y, 150, 20, "");
-            this.labelName = I18n.format("button.range.name");
+            this.labelName = I18n.format("button.muffling_block.range.name");
             this.range = (range - minRange) / maxRange;
             this.displayString = this.labelName + ": " + this.getDisplayString();
         }
