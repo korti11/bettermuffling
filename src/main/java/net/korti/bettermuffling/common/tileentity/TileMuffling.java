@@ -1,7 +1,9 @@
 package net.korti.bettermuffling.common.tileentity;
 
+import net.korti.bettermuffling.client.event.SoundLevelUpdateEvent;
 import net.korti.bettermuffling.common.config.ModConfig;
 import net.korti.bettermuffling.common.network.PacketNetworkHandler;
+import net.korti.bettermuffling.common.network.PlayerMufflingEventMessage;
 import net.korti.bettermuffling.common.network.UpdateTileEntityMessage;
 import net.korti.bettermuffling.common.network.UpdateTileEntityRequestMessage;
 import net.korti.bettermuffling.common.util.TileCache;
@@ -9,6 +11,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.server.SPacketUpdateTileEntity;
@@ -25,10 +28,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.annotation.Nullable;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class TileMuffling extends TileEntity implements ITickable {
 
@@ -36,6 +37,8 @@ public class TileMuffling extends TileEntity implements ITickable {
     private int range = 6;
     private UUID placedBy;
     private boolean placerOnly = false;
+
+    private final Set<EntityPlayerMP> playerCache = new HashSet<>();
 
     public TileMuffling() {
         init();
@@ -52,6 +55,44 @@ public class TileMuffling extends TileEntity implements ITickable {
         }
     }
 
+    //region Client code
+    @SideOnly(Side.CLIENT)
+    @SubscribeEvent
+    public void onSoundPlaying(PlaySoundEvent event) {
+        final ISound iSound = event.getSound();
+        final SoundCategory category = iSound.getCategory();
+        if(isInRange(iSound) && soundLevels.containsKey(category)) {
+            iSound.createAccessor(event.getManager().sndHandler);
+            final float soundLevel = soundLevels.get(category);
+            final ISound newSound = new PositionedSoundRecord(
+                    iSound.getSoundLocation(), category, iSound.getVolume() * soundLevel, iSound.getPitch(),
+                    iSound.canRepeat(), iSound.getRepeatDelay(), iSound.getAttenuationType(),
+                    iSound.getXPosF(), iSound.getYPosF(), iSound.getZPosF()
+            );
+            event.setResultSound(newSound);
+        }
+    }
+
+    @SideOnly(Side.CLIENT)
+    private boolean isInRange(ISound sound) {
+        final double distance = Math.sqrt(
+                getDistanceSq((double) sound.getXPosF(), (double) sound.getYPosF(), (double) sound.getZPosF())
+        );
+        return isInRange(distance);
+    }
+
+    @SideOnly(Side.CLIENT)
+    @Override
+    public void onLoad() {
+        if(getWorld().isRemote) {
+            MinecraftForge.EVENT_BUS.register(this);
+            TileCache.addTileEntity(this);
+            PacketNetworkHandler.sendToServer(new UpdateTileEntityRequestMessage(getPos()));
+        }
+    }
+    //endregion
+
+    //region Data handling
     @Override
     public NBTTagCompound writeToNBT(NBTTagCompound compound) {
         writeMufflingData(compound);
@@ -82,102 +123,38 @@ public class TileMuffling extends TileEntity implements ITickable {
         placedBy = compound.getUniqueId("placedBy");
         placerOnly = compound.getBoolean("placerOnly");
     }
+    //endregion
 
-    @SideOnly(Side.CLIENT)
-    @SubscribeEvent
-    public void onSoundPlaying(PlaySoundEvent event) {
-        final ISound iSound = event.getSound();
-        final SoundCategory category = iSound.getCategory();
-        if(isInRange(iSound) && soundLevels.containsKey(category)) {
-            iSound.createAccessor(event.getManager().sndHandler);
-            final float soundLevel = soundLevels.get(category);
-            final ISound newSound = new PositionedSoundRecord(
-                    iSound.getSoundLocation(), category, iSound.getVolume() * soundLevel, iSound.getPitch(),
-                    iSound.canRepeat(), iSound.getRepeatDelay(), iSound.getAttenuationType(),
-                    iSound.getXPosF(), iSound.getYPosF(), iSound.getZPosF()
-            );
-            event.setResultSound(newSound);
-        }
-    }
-
-    @SideOnly(Side.CLIENT)
-    private boolean isInRange(ISound sound) {
-        final double distance = Math.sqrt(
-                getDistanceSq((double) sound.getXPosF(), (double) sound.getYPosF(), (double) sound.getZPosF())
-        );
-        return isInRange(distance);
-    }
-
-    @SideOnly(Side.CLIENT)
     private boolean isInRange(double distance) {
         return distance <= (range + 1);
     }
 
-    private void writePos(BlockPos pos, NBTTagCompound compound) {
-        compound.setInteger("pos_x", pos.getX());
-        compound.setInteger("pos_y", pos.getY());
-        compound.setInteger("pos_z", pos.getZ());
-    }
-
-    private BlockPos readPos(NBTTagCompound compound) {
-        return new BlockPos(
-                compound.getInteger("pos_x"),
-                compound.getInteger("pos_y"),
-                compound.getInteger("pos_z")
-        );
-    }
-
     @Override
     public void update() {
-        if(getWorld().isRemote) {
+        if(!getWorld().isRemote) {
             handleIndicator();
         }
     }
 
-    @SideOnly(Side.CLIENT)
     private void handleIndicator() {
-        final EntityPlayer player = FMLClientHandler.instance().getClientPlayerEntity();
-        final double distance = Math.sqrt(player.getDistanceSqToCenter(this.getPos())) + 0.5;
-        if (isInRange(distance)) {
-            showIndicator();
-        } else {
-            hideIndicator();
-        }
-    }
+        final List<EntityPlayerMP> playersInRange = getWorld().getPlayers(EntityPlayerMP.class, (player) -> {
+            if(player != null) {
+                final double distance = Math.sqrt(player.getDistanceSqToCenter(this.getPos())) + 0.5;
+                return isInRange(distance);
+            }
+            return false;
+        });
 
-    @SideOnly(Side.CLIENT)
-    private void showIndicator() {
-        final EntityPlayer player = FMLClientHandler.instance().getClientPlayerEntity();
-        final NBTTagCompound entityData = player.getEntityData();
-        final NBTTagCompound mufflingIndicator = entityData.getCompoundTag("muffling_indicator");
-        if(!mufflingIndicator.getBoolean("render")) {
-            mufflingIndicator.setBoolean("render", true);
-            writePos(this.getPos(), mufflingIndicator);
-            entityData.setTag("muffling_indicator", mufflingIndicator);
-        }
-    }
+        final Set<EntityPlayerMP> entered = playersInRange.stream()
+                .filter((player) -> !playerCache.contains(player)).collect(Collectors.toSet());
+        final Set<EntityPlayerMP> left = playerCache.stream()
+                .filter((player) -> !playersInRange.contains(player)).collect(Collectors.toSet());
 
-    @SideOnly(Side.CLIENT)
-    public void hideIndicator() {
-        final EntityPlayer player = FMLClientHandler.instance().getClientPlayerEntity();
-        final NBTTagCompound entityData = player.getEntityData();
-        final NBTTagCompound mufflingIndicator = entityData.getCompoundTag("muffling_indicator");
-        if(readPos(mufflingIndicator).equals(this.getPos())
-                && mufflingIndicator.getBoolean("render")) {
-            mufflingIndicator.setBoolean("render", false);
-            writePos(BlockPos.ORIGIN, mufflingIndicator);
-            entityData.setTag("muffling_indicator", mufflingIndicator);
-        }
-    }
+        entered.forEach((player) -> PacketNetworkHandler.sendToClient(new PlayerMufflingEventMessage(true), player));
+        left.forEach((player) -> PacketNetworkHandler.sendToClient(new PlayerMufflingEventMessage(false), player));
 
-    @SideOnly(Side.CLIENT)
-    @Override
-    public void onLoad() {
-        if(getWorld().isRemote) {
-            MinecraftForge.EVENT_BUS.register(this);
-            TileCache.addTileEntity(this);
-            PacketNetworkHandler.sendToServer(new UpdateTileEntityRequestMessage(getPos()));
-        }
+        playerCache.removeAll(left);
+        playerCache.addAll(entered);
     }
 
     //region Sync to client
@@ -194,6 +171,7 @@ public class TileMuffling extends TileEntity implements ITickable {
     public void onDataPacket(NetworkManager net, SPacketUpdateTileEntity pkt) {
         super.onDataPacket(net, pkt);
         readMufflingData(pkt.getNbtCompound());
+        MinecraftForge.EVENT_BUS.post(new SoundLevelUpdateEvent(this.soundLevels));
     }
 
     public void syncToClient() {

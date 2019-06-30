@@ -26,7 +26,7 @@ public class MufflingAreaIndicator {
         if(event.getType() == RenderGameOverlayEvent.ElementType.ALL) {
             final EntityPlayer player = mc.player;
             if (player.getEntityData()
-                    .getCompoundTag("muffling_indicator").getBoolean("render") &&
+                    .getInteger("muffling_areas") > 0 &&
                     ModConfig.mufflerIndicator.enable) {
                 indicatorGui.drawIndicator();
             }

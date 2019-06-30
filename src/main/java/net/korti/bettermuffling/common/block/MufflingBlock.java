@@ -2,6 +2,8 @@ package net.korti.bettermuffling.common.block;
 
 import net.korti.bettermuffling.BetterMuffling;
 import net.korti.bettermuffling.common.constant.ModInfo;
+import net.korti.bettermuffling.common.network.PacketNetworkHandler;
+import net.korti.bettermuffling.common.network.PlayerMufflingEventMessage;
 import net.korti.bettermuffling.common.tileentity.TileMuffling;
 import net.korti.bettermuffling.common.util.TileCache;
 import net.minecraft.block.BlockContainer;
@@ -10,6 +12,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -73,12 +76,11 @@ public class MufflingBlock extends BlockContainer {
 
     @Override
     public boolean removedByPlayer(IBlockState state, World world, BlockPos pos, EntityPlayer player, boolean willHarvest) {
-        if (world.isRemote) {
+        if(!world.isRemote && player instanceof EntityPlayerMP) {
+            PacketNetworkHandler.sendToClient(new PlayerMufflingEventMessage(false), (EntityPlayerMP) player);
+        } else if (world.isRemote) {
             TileEntity tile = world.getTileEntity(pos);
             if (tile != null) {
-                if(tile instanceof TileMuffling) {
-                    ((TileMuffling) tile).hideIndicator();
-                }
                 MinecraftForge.EVENT_BUS.unregister(tile);
                 TileCache.removeTileEntity(tile);
             }
