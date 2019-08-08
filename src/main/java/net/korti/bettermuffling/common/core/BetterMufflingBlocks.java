@@ -12,7 +12,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.ObjectHolder;
 
-public class BetterMufflingBlocks {
+final public class BetterMufflingBlocks {
 
     @ObjectHolder(BetterMuffling.MOD_ID + ":muffling_block")
     public static MufflingBlock mufflingBlock;

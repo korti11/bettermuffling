@@ -1,6 +1,7 @@
 package net.korti.bettermuffling.common.block;
 
 import net.korti.bettermuffling.BetterMuffling;
+import net.korti.bettermuffling.common.tileentity.TileMuffling;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.ContainerBlock;
@@ -21,7 +22,7 @@ public class MufflingBlock extends ContainerBlock {
     @Nullable
     @Override
     public TileEntity createNewTileEntity(IBlockReader worldIn) {
-        return null;
+        return new TileMuffling();
     }
 
     @Override
