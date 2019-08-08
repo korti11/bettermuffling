@@ -1,5 +1,6 @@
 package net.korti.bettermuffling.common.tileentity;
 
+import net.korti.bettermuffling.client.util.MufflingCache;
 import net.korti.bettermuffling.common.core.BetterMufflingTileEntities;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
@@ -62,5 +63,12 @@ public final class TileMuffling extends TileEntity {
     private void readSoundLevels(CompoundNBT compound) {
         this.soundLevels.forEach((category, level) ->
                 this.soundLevels.replace(category, level, compound.getFloat(category.getName())));
+    }
+
+    @Override
+    public void onLoad() {
+        if(Objects.requireNonNull(getWorld()).isRemote) {
+            MufflingCache.addMufflingPos(this.getPos(), this.range);
+        }
     }
 }
