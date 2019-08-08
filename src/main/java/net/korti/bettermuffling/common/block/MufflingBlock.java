@@ -1,6 +1,8 @@
 package net.korti.bettermuffling.common.block;
 
 import net.korti.bettermuffling.BetterMuffling;
+import net.minecraft.block.BlockRenderType;
+import net.minecraft.block.BlockState;
 import net.minecraft.block.ContainerBlock;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
@@ -22,4 +24,8 @@ public class MufflingBlock extends ContainerBlock {
         return null;
     }
 
+    @Override
+    public BlockRenderType getRenderType(BlockState p_149645_1_) {
+        return BlockRenderType.MODEL;
+    }
 }
