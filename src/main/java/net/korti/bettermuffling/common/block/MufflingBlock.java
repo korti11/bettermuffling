@@ -7,8 +7,12 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.ContainerBlock;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
+import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
 
@@ -28,5 +32,16 @@ public class MufflingBlock extends ContainerBlock {
     @Override
     public BlockRenderType getRenderType(BlockState p_149645_1_) {
         return BlockRenderType.MODEL;
+    }
+
+    @Override
+    public void onBlockPlacedBy(World worldIn, BlockPos blockPos, BlockState blockState,
+                                @Nullable LivingEntity player, ItemStack itemStack) {
+        if(player != null) {
+            final TileEntity te = worldIn.getTileEntity(blockPos);
+            if(te instanceof TileMuffling) {
+                ((TileMuffling) te).setPlacer(player.getUniqueID());
+            }
+        }
     }
 }

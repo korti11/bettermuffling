@@ -33,6 +33,10 @@ public final class TileMuffling extends TileEntity {
         return this.soundLevels.get(category);
     }
 
+    public void setPlacer(final UUID placer) {
+        this.placer = placer;
+    }
+
     public boolean canAccess(PlayerEntity player) {
         return !this.placerOnly || this.placer.equals(player.getUniqueID());
     }
