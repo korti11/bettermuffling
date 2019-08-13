@@ -18,6 +18,10 @@ public final class MufflingCache {
         cache.remove(pos);
     }
 
+    public static void reset() {
+        cache.clear();
+    }
+
     public static ImmutableSet<Map.Entry<BlockPos, Short>> getCache() {
         return ImmutableSet.copyOf(cache.entrySet());
     }
