@@ -33,12 +33,32 @@ public final class TileMuffling extends TileEntity {
         return this.soundLevels.get(category);
     }
 
-    public void setPlacer(final UUID placer) {
-        this.placer = placer;
+    public short getRange() {
+        return this.range;
+    }
+
+    public boolean isPlacerOnly() {
+        return this.placerOnly;
     }
 
     public boolean canAccess(PlayerEntity player) {
         return !this.placerOnly || this.placer.equals(player.getUniqueID());
+    }
+
+    public void setPlacer(final UUID placer) {
+        this.placer = placer;
+    }
+
+    public void setRange(final short range) {
+        this.range = range;
+    }
+
+    public void setSoundLevel(final SoundCategory category, final float volume) {
+        this.soundLevels.replace(category, volume);
+    }
+
+    public void setPlacerOnly(final boolean placerOnly) {
+        this.placerOnly = placerOnly;
     }
 
     @Override

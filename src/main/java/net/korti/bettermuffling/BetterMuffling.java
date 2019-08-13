@@ -2,6 +2,7 @@ package net.korti.bettermuffling;
 
 import net.korti.bettermuffling.client.ClientProxy;
 import net.korti.bettermuffling.common.ServerProxy;
+import net.korti.bettermuffling.common.network.PacketHandler;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -22,5 +23,6 @@ public class BetterMuffling {
 
     private void preInit(final FMLCommonSetupEvent event) {
         proxy.preInit();
+        PacketHandler.register();
     }
 }
