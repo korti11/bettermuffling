@@ -9,7 +9,6 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.ContainerBlock;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -47,9 +46,10 @@ public class MufflingBlock extends ContainerBlock {
                                     BlockRayTraceResult traceResult) {
         if(!worldIn.isRemote) {
             TileEntity te = worldIn.getTileEntity(pos);
-            if(te instanceof TileMuffling && ((TileMuffling) te).canAccess(player)) {
-                PacketHandler.sendToPlayer(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player),
+            if(te instanceof TileMuffling && !player.isSneaking() && ((TileMuffling) te).canAccess(player)) {
+                PacketHandler.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player),
                         new OpenScreenPacket(pos));
+                return true;
             }
         }
         return super.onBlockActivated(blockState, worldIn, pos, player, hand, traceResult);

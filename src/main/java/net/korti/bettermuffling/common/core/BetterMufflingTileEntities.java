@@ -27,7 +27,7 @@ final public class BetterMufflingTileEntities {
             tileEntityTypeRegistry.register(
                     TileEntityType.Builder
                             .create((Supplier<TileEntity>)TileMuffling::new, BetterMufflingBlocks.mufflingBlock)
-                            .build(null).setRegistryName(BetterMuffling.MOD_ID + "muffling_block")
+                            .build(null).setRegistryName(BetterMuffling.MOD_ID + ":muffling_block")
             );
         }
     }
