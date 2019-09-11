@@ -18,7 +18,7 @@ archivesBaseName = mod_base_name
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
 
 minecraft {
-    mappings channel: mapping_channel, version: mapping_version
+    mappings channel: 'snapshot', version: '20190808-1.14.3'  // It's again not working with the props file. Idk why. Fuuuu >:(
 
     runs {
         client {

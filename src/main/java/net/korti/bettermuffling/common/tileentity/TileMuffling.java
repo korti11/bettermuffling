@@ -76,7 +76,7 @@ public final class TileMuffling extends TileEntity {
     @Override
     public CompoundNBT write(CompoundNBT compound) {
         this.writeMufflingData(compound);
-        //compound.putUniqueId("placer", this.placer);
+        compound.putUniqueId("placer", this.placer);
         return super.write(compound);
     }
 
@@ -94,7 +94,7 @@ public final class TileMuffling extends TileEntity {
     public void read(CompoundNBT compound) {
         super.read(compound);
         this.readMufflingData(compound);
-        //this.placer = compound.getUniqueId("placer");
+        this.placer = compound.getUniqueId("placer");
         // TODO: Validate with config.
     }
 
