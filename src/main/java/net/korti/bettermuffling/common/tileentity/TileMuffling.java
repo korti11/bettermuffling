@@ -80,10 +80,11 @@ public final class TileMuffling extends TileEntity {
         return super.write(compound);
     }
 
-    public void writeMufflingData(CompoundNBT compound) {
+    public CompoundNBT writeMufflingData(CompoundNBT compound) {
         this.writeSoundLevels(compound);
         compound.putShort("range", this.range);
         compound.putBoolean("placerOnly", this.placerOnly);
+        return compound;
     }
 
     private void writeSoundLevels(CompoundNBT compound) {
