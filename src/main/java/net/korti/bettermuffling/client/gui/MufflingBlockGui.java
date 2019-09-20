@@ -1,6 +1,8 @@
 package net.korti.bettermuffling.client.gui;
 
 import com.mojang.blaze3d.platform.GlStateManager;
+import net.korti.bettermuffling.BetterMuffling;
+import net.korti.bettermuffling.common.config.BetterMufflingConfig;
 import net.korti.bettermuffling.common.tileentity.TileMuffling;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.Screen;
@@ -70,11 +72,12 @@ public class MufflingBlockGui extends Screen {
     }
 
     private class RangeSlider extends AbstractSlider {
-        private static final short min = 2;
-        private static final short max = 16 - min;    // TODO: Get value form config.
+        private final short min = 2;
+        private final short max = (short) (BetterMufflingConfig.COMMON.maxRange.get() - min);
 
         public RangeSlider(int x, int y, int width, int height, double value) {
-            super(x, y, width, height, (value - min) / max);
+            super(x, y, width, height, 0);
+            this.value = (value - min) / max;
             this.updateMessage();
         }
 
@@ -94,13 +97,14 @@ public class MufflingBlockGui extends Screen {
     }
 
     private class SoundSlider extends AbstractSlider {
-        private static final short min = 0;     // TODO: Get value from config.
-        private static final short max = 1;     // TODO: Get value from config.
+        private final double min = BetterMufflingConfig.COMMON.minVolume.get();
+        private final double max = BetterMufflingConfig.COMMON.maxVolume.get() - min;
 
         private final SoundCategory category;
 
         public SoundSlider(int x, int y, int width, int height, double value, SoundCategory category) {
-            super(x, y, width, height, (value - min) / max);
+            super(x, y, width, height, 0);
+            this.value = (value - min) / max;
             this.category = category;
             this.updateMessage();
         }

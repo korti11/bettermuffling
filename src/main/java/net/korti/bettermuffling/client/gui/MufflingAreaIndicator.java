@@ -2,6 +2,7 @@ package net.korti.bettermuffling.client.gui;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.korti.bettermuffling.BetterMuffling;
+import net.korti.bettermuffling.common.config.BetterMufflingConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.gui.AbstractGui;
@@ -23,7 +24,7 @@ public class MufflingAreaIndicator {
         if (event.getType() == RenderGameOverlayEvent.ElementType.ALL) {
             final ClientPlayerEntity clientPlayer = mc.player;
             if(clientPlayer.getPersistentData().getInt("muffling_areas") > 0 &&
-                    true) { // TODO: Replace true with config check
+                    BetterMufflingConfig.CLIENT.enable.get()) {
                 indicator.drawIndicator();
             }
         }
@@ -36,11 +37,15 @@ public class MufflingAreaIndicator {
         private final Minecraft mc = Minecraft.getInstance();
 
         private void drawIndicator() {
+            final float size = (float)BetterMufflingConfig.CLIENT.size.get() / 100F;
+            final int xPos = BetterMufflingConfig.CLIENT.xPos.get();
+            final int yPos = BetterMufflingConfig.CLIENT.yPos.get();
+
             GlStateManager.color4f(1F, 1F, 1F, 1F);
             this.mc.getTextureManager().bindTexture(INDICATOR_ICON);
             GL11.glPushMatrix();
-            GL11.glScalef(0.1F, 0.1F, 0.1F);
-            this.blit(25, 25, 0, 0, 256, 256);
+            GL11.glScalef(size, size, size);
+            this.blit(xPos, yPos, 0, 0, 256, 256);
             GL11.glPopMatrix();
         }
     }

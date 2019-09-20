@@ -1,6 +1,7 @@
 package net.korti.bettermuffling.common.tileentity;
 
 import net.korti.bettermuffling.client.util.MufflingCache;
+import net.korti.bettermuffling.common.config.BetterMufflingConfig;
 import net.korti.bettermuffling.common.core.BetterMufflingTileEntities;
 import net.korti.bettermuffling.common.network.PacketHandler;
 import net.korti.bettermuffling.common.network.packet.MufflingAreaEventPacket;
@@ -15,6 +16,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.Vec3d;
+import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.network.PacketDistributor;
 import org.apache.commons.lang3.ArrayUtils;
 
@@ -42,7 +44,8 @@ public final class TileMuffling extends TileEntity implements ITickableTileEntit
         categories.remove(SoundCategory.MASTER);
         categories.remove(SoundCategory.MUSIC);
 
-        categories.forEach(category -> this.soundLevels.put(category, 0f)); // TODO: Use min value from config.
+        categories.forEach(category -> this.soundLevels.put(category,
+                BetterMufflingConfig.COMMON.minVolume.get().floatValue()));
     }
 
     public Float getSoundLevel(SoundCategory category) {
@@ -103,7 +106,7 @@ public final class TileMuffling extends TileEntity implements ITickableTileEntit
         super.read(compound);
         this.readMufflingData(compound);
         this.placer = compound.getUniqueId("placer");
-        // TODO: Validate with config.
+        validateWithConfig();
     }
 
     public void readMufflingData(CompoundNBT compound) {
@@ -115,6 +118,18 @@ public final class TileMuffling extends TileEntity implements ITickableTileEntit
     private void readSoundLevels(CompoundNBT compound) {
         this.soundLevels.forEach((category, level) ->
                 this.soundLevels.replace(category, level, compound.getFloat(category.getName())));
+    }
+
+    private void validateWithConfig() {
+        this.range = (short) net.minecraft.util.math.MathHelper
+                .clamp(this.range, 2, BetterMufflingConfig.COMMON.maxRange.get());
+        for(Map.Entry<SoundCategory, Float> soundLevel : soundLevels.entrySet()) {
+            soundLevels.replace(soundLevel.getKey(),
+                    net.minecraft.util.math.MathHelper
+                            .clamp(soundLevel.getValue(),
+                                    BetterMufflingConfig.COMMON.minVolume.get().floatValue(),
+                                    BetterMufflingConfig.COMMON.maxVolume.get().floatValue()));
+        }
     }
 
     @Override
