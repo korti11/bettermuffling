@@ -53,17 +53,19 @@ public class BetterMufflingConfig {
     }
 
     public static class Client {
-        public final BooleanValue enable;
+        public final BooleanValue indicatorEnable;
 
         public final IntValue xPos;
         public final IntValue yPos;
 
         public final IntValue size;
 
+        public final BooleanValue tooltipEnable;
+
         Client(Builder builder) {
             builder.comment("Client only configuration settings.").push("client");
 
-            enable = builder
+            indicatorEnable = builder
                     .comment("Show muffling indicator.")
                     .translation("config.muffling_indicator.enable")
                     .define("indicatorEnable", true);
@@ -82,6 +84,11 @@ public class BetterMufflingConfig {
                     .comment("The size of the indicator.")
                     .translation("config.muffling_indicator.size")
                     .defineInRange("size", 10, 1, 100);
+
+            tooltipEnable = builder.comment("Show sound levels and range in the tool tip of the muffling block.",
+                    "This tooltip is only shown if it has data saved on it.")
+                    .translation("config.muffling_tooltip.enable")
+                    .define("tooltipEnable", true);
 
             builder.pop();
         }

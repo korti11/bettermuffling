@@ -6,5 +6,8 @@
   "gui.muffling_block.title": "Muffling Options",
   "button.muffling_block.range": "Range",
   "button.muffling_block.placer_only.on": "Private Mode: On",
-  "button.muffling_block.placer_only.off": "Private Mode: Off"
+  "button.muffling_block.placer_only.off": "Private Mode: Off",
+
+  "_comment": "Tooltips",
+  "tooltip.hold_key.info": "Hold %s to show more infos."
 }

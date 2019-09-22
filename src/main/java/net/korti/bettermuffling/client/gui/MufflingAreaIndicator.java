@@ -24,7 +24,7 @@ public class MufflingAreaIndicator {
         if (event.getType() == RenderGameOverlayEvent.ElementType.ALL) {
             final ClientPlayerEntity clientPlayer = mc.player;
             if(clientPlayer.getPersistentData().getInt("muffling_areas") > 0 &&
-                    BetterMufflingConfig.CLIENT.enable.get()) {
+                    BetterMufflingConfig.CLIENT.indicatorEnable.get()) {
                 indicator.drawIndicator();
             }
         }

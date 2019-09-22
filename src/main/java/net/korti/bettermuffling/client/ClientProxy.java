@@ -4,12 +4,14 @@ import net.korti.bettermuffling.common.ServerProxy;
 import net.korti.bettermuffling.common.network.packet.MufflingDataPacket;
 import net.korti.bettermuffling.common.tileentity.TileMuffling;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.util.InputMappings;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
+import org.lwjgl.glfw.GLFW;
 
 import java.util.Objects;
 
@@ -37,5 +39,12 @@ public class ClientProxy extends ServerProxy {
                 te.markDirty();
             }
         };
+    }
+
+    @Override
+    public boolean isShiftKeyDown() {
+        long handler = Minecraft.getInstance().mainWindow.getHandle();
+        return InputMappings.isKeyDown(handler, GLFW.GLFW_KEY_LEFT_SHIFT) ||
+                InputMappings.isKeyDown(handler, GLFW.GLFW_KEY_RIGHT_SHIFT);
     }
 }
