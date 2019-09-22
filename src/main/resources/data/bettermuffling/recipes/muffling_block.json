@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "WLW",
+    "LNL",
+    "WLW"
+  ],
+  "key": {
+    "W": {
+      "tag": "minecraft:wool"
+    },
+    "L": {
+      "item": "minecraft:leather"
+    },
+    "N":{
+      "item": "minecraft:note_block"
+    }
+  },
+  "result": {
+    "item": "bettermuffling:muffling_block"
+  }
+}
