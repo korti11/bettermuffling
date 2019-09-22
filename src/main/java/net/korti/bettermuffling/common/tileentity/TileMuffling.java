@@ -86,7 +86,6 @@ public final class TileMuffling extends TileEntity implements ITickableTileEntit
     @Override
     public CompoundNBT write(CompoundNBT compound) {
         this.writeMufflingData(compound);
-        compound.putUniqueId("placer", this.placer);
         return super.write(compound);
     }
 
@@ -94,6 +93,7 @@ public final class TileMuffling extends TileEntity implements ITickableTileEntit
         this.writeSoundLevels(compound);
         compound.putShort("range", this.range);
         compound.putBoolean("placerOnly", this.placerOnly);
+        compound.putUniqueId("placer", this.placer);
         return compound;
     }
 
@@ -105,7 +105,6 @@ public final class TileMuffling extends TileEntity implements ITickableTileEntit
     public void read(CompoundNBT compound) {
         super.read(compound);
         this.readMufflingData(compound);
-        this.placer = compound.getUniqueId("placer");
         validateWithConfig();
     }
 
@@ -113,6 +112,7 @@ public final class TileMuffling extends TileEntity implements ITickableTileEntit
         this.readSoundLevels(compound);
         this.range = compound.getShort("range");
         this.placerOnly = compound.getBoolean("placerOnly");
+        this.placer = compound.getUniqueId("placer");
     }
 
     private void readSoundLevels(CompoundNBT compound) {

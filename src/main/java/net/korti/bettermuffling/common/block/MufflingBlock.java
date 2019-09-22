@@ -3,6 +3,7 @@ package net.korti.bettermuffling.common.block;
 import net.korti.bettermuffling.BetterMuffling;
 import net.korti.bettermuffling.client.util.MufflingCache;
 import net.korti.bettermuffling.common.network.PacketHandler;
+import net.korti.bettermuffling.common.network.packet.MufflingAreaEventPacket;
 import net.korti.bettermuffling.common.network.packet.MufflingDataPacket;
 import net.korti.bettermuffling.common.network.packet.OpenScreenPacket;
 import net.korti.bettermuffling.common.tileentity.TileMuffling;
@@ -83,16 +84,8 @@ public class MufflingBlock extends ContainerBlock {
     @Override
     public boolean removedByPlayer(BlockState state, World world, BlockPos pos, PlayerEntity player,
                                    boolean willHarvest, IFluidState fluid) {
-        final TileEntity te = world.getTileEntity(pos);
-        if(te instanceof TileMuffling) {
-            final TileMuffling tileMuffling = (TileMuffling) te;
-            if(tileMuffling.canAccess(player)) {        // TODO: Is not working. Block gets destroyed but not dropped. Use PlayerEvent.BreakSpeed event.
-                if(world.isRemote) {
-                    MufflingCache.removeMufflingPos(pos);
-                }
-                return super.removedByPlayer(state, world, pos, player, willHarvest, fluid);
-            }
-            return false;
+        if(!world.isRemote) {
+            PacketHandler.send(PacketDistributor.ALL.noArg(), MufflingAreaEventPacket.PLAYER_LEFT);
         }
         return super.removedByPlayer(state, world, pos, player, willHarvest, fluid);
     }

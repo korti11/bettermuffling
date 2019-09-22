@@ -6,14 +6,14 @@ import net.korti.bettermuffling.common.config.BetterMufflingConfig;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.gui.AbstractGui;
-import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.lwjgl.opengl.GL11;
 
-@Mod.EventBusSubscriber(modid = BetterMuffling.MOD_ID)
+@Mod.EventBusSubscriber(value = Dist.CLIENT, modid = BetterMuffling.MOD_ID)
 public class MufflingAreaIndicator {
 
     private final static IndicatorGui indicator = new IndicatorGui();

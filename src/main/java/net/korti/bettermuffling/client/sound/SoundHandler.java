@@ -9,13 +9,14 @@ import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.SimpleSound;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.sound.PlaySoundEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import java.util.Objects;
 
-@Mod.EventBusSubscriber(modid = BetterMuffling.MOD_ID)
+@Mod.EventBusSubscriber(value = Dist.CLIENT, modid = BetterMuffling.MOD_ID)
 public final class SoundHandler {
 
     @SubscribeEvent

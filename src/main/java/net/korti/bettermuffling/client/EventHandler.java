@@ -4,10 +4,12 @@ import net.korti.bettermuffling.BetterMuffling;
 import net.korti.bettermuffling.client.event.MufflingAreaEvent;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-@Mod.EventBusSubscriber(modid = BetterMuffling.MOD_ID)
+@Mod.EventBusSubscriber(value = Dist.CLIENT, modid = BetterMuffling.MOD_ID)
 public class EventHandler {
 
     @SubscribeEvent

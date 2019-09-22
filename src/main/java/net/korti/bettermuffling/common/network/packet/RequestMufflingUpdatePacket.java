@@ -31,7 +31,7 @@ public class RequestMufflingUpdatePacket {
     }
 
     public static RequestMufflingUpdatePacket decode(PacketBuffer buf) {
-        return new RequestMufflingUpdatePacket(buf.readString(), buf.readBlockPos());
+        return new RequestMufflingUpdatePacket(buf.readString(32767), buf.readBlockPos());
     }
 
     public static class Handler {
