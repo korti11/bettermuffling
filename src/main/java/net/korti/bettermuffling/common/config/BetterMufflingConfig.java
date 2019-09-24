@@ -25,6 +25,8 @@ public class BetterMufflingConfig {
         public final DoubleValue minVolume;
         public final DoubleValue maxVolume;
 
+        public final IntValue ticksIndicatorHandler;
+
         Common(Builder builder) {
             builder.comment("Common configuration settings").push("common");
 
@@ -47,6 +49,12 @@ public class BetterMufflingConfig {
                     .translation("config.muffling_block.min_volume")
                     .worldRestart()
                     .defineInRange("maxVolume", 1.0D, 0.01D, 1.0D);
+
+            ticksIndicatorHandler = builder
+                    .comment("After this amount of ticks the muffling block checks if players have left or entered the",
+                            "muffling Area. The default value should be fine, but if you wish to change this, do it as so.")
+                    .translation("config.muffling_block.ticks")
+                    .defineInRange("ticksIndicatorHandler", 5, 0, 100);
 
             builder.pop();
         }

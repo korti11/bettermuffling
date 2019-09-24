@@ -24,7 +24,9 @@ import javax.xml.bind.DatatypeConverter;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public final class TileMuffling extends TileEntity implements ITickableTileEntity {
 
@@ -33,6 +35,8 @@ public final class TileMuffling extends TileEntity implements ITickableTileEntit
     private short range = 6;
     private UUID placer;
     private boolean placerOnly = false;
+
+    private int tickCount;
 
     public TileMuffling() {
         super(BetterMufflingTileEntities.MUFFLING_BLOCK);
@@ -191,9 +195,13 @@ public final class TileMuffling extends TileEntity implements ITickableTileEntit
 
     @Override
     public void tick() {
-        if(!Objects.requireNonNull(this.getWorld()).isRemote) {
+        if(!Objects.requireNonNull(this.getWorld()).isRemote && tickCount >=
+                BetterMufflingConfig.COMMON.ticksIndicatorHandler.get()) {
             this.handleIndicator();
+            tickCount = 0;
         }
+
+        tickCount++;
     }
 
     private void handleIndicator() {
@@ -207,19 +215,32 @@ public final class TileMuffling extends TileEntity implements ITickableTileEntit
             return false;
         });
 
-        final Set<ServerPlayerEntity> entered = playersInRange.stream().
-                filter(player -> !this.playerCache.contains(player)).collect(Collectors.toSet());
-        final Set<ServerPlayerEntity> left = this.playerCache.stream().
-                filter(player -> !playersInRange.contains(player)).collect(Collectors.toSet());
-
-        entered.forEach(player -> PacketHandler.send(PacketDistributor.PLAYER.with(() -> player),
-                MufflingAreaEventPacket.PLAYER_ENTERED));
-        left.forEach(player -> PacketHandler.send(PacketDistributor.PLAYER.with(() -> player),
-                MufflingAreaEventPacket.PLAYER_LEFT));
-
-        this.playerCache.removeAll(left);
-        this.playerCache.addAll(entered);
-
+        if(!playersInRange.isEmpty()) {
+            final Stream<ServerPlayerEntity> s = playersInRange.stream();
+            final Consumer<ServerPlayerEntity> send = (player) -> {
+                PacketHandler
+                    .send(PacketDistributor.PLAYER.with(() -> player), MufflingAreaEventPacket.PLAYER_ENTERED);
+                this.playerCache.add(player);
+            };
+            if (this.playerCache.isEmpty()) {
+                s.forEach(send);
+            } else {
+                s.filter(player -> !this.playerCache.contains(player)).forEach(send);
+            }
+        }
+        if (!playerCache.isEmpty()) {
+            final Stream<ServerPlayerEntity> s = new HashSet<>(this.playerCache).stream();
+            final Consumer<ServerPlayerEntity> send = (player) -> {
+                PacketHandler
+                    .send(PacketDistributor.PLAYER.with(() -> player), MufflingAreaEventPacket.PLAYER_LEFT);
+                this.playerCache.remove(player);
+            };
+            if (playersInRange.isEmpty()) {
+                s.forEach(send);
+            } else {
+                s.filter(player -> !playersInRange.contains(player)).forEach(send);
+            }
+        }
     }
 
     private AxisAlignedBB calcRangeAABB() {
