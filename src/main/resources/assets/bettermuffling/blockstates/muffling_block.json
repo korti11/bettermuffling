@@ -1,5 +1,5 @@
 {
   "variants": {
-    "normal": { "model": "bettermuffling:muffling_block" }
+    "": { "model": "bettermuffling:block/muffling_block" }
   }
 }

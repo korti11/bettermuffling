@@ -1,55 +1,82 @@
 buildscript {
     repositories {
+        maven { url = 'https://files.minecraftforge.net/maven' }
         jcenter()
-        maven { url = "http://files.minecraftforge.net/maven" }
+        mavenCentral()
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
     }
 }
-apply plugin: 'net.minecraftforge.gradle.forge'
-//Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
+apply plugin: 'net.minecraftforge.gradle'
+apply plugin: 'eclipse'
 
-version = "$modVersion-$releaseType"
-group = modGroup
-archivesBaseName = modBaseName
+version = "$mod_version-$release_type"
+group = mod_group
+archivesBaseName = mod_base_name
 
-sourceCompatibility = targetCompatibility = javaVersion
-compileJava {
-    sourceCompatibility = targetCompatibility = javaVersion
-}
+sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
 
 minecraft {
-    version = project.forgeVersion
-    runDir = "run"
+    //mappings channel: mapping_channel, version: mapping_version
+    mappings channel: 'snapshot', version: '20190920-1.14.3'  // It's again not working with the props file. Idk why. Fuuuu >:(
 
-    mappings = project.mappingVersion
+    runs {
+        client {
+            workingDirectory project.file('run')
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+            property 'forge.logging.console.level', 'debug'
+            property 'username', 'Bettermuffling'
 
-    replaceIn "src/main/java/net/korti/bettermuffling/common/constant/ModInfo.java"
-    replace "@VERSION@", project.version
+            mods {
+                bettermuffling {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        server {
+            workingDirectory project.file('run/server')
+            property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
+            property 'forge.logging.console.level', 'debug'
+
+            mods {
+                bettermuffling {
+                    source sourceSets.main
+                }
+            }
+        }
+    }
 }
 
 dependencies {
-
+    minecraft "net.minecraftforge:forge:$forge_version"
 }
 
 processResources {
-    // this will ensure that this task is redone when the versions change.
-    inputs.property "version", project.version
-    inputs.property "mcversion", project.minecraft.version
+    from(sourceSets.main.resources.srcDirs) {
+        include 'META-INF/mods.toml'
 
-    // replace stuff in mcmod.info, nothing else
-    from(sourceSets.main.resources.srcDirs) {
-        include 'mcmod.info'
-                
-        // replace version and mcversion
-        expand 'version':project.version, 'mcversion':project.minecraft.version
+        expand 'version': project.version
     }
-        
-    // copy everything else except the mcmod.info
+
     from(sourceSets.main.resources.srcDirs) {
-        exclude 'mcmod.info'
+        exclude 'META-INF/mods.toml'
     }
 }
 
-version = "${project.minecraft.version}-$version"
+jar {
+    manifest {
+        attributes([
+            "Specification-Title": "Better Muffling",
+            "Specification-Vendor": "Korti",
+            "Specification-Version": "1", // We are version 1 of ourselves
+            "Implementation-Title": project.name,
+            "Implementation-Version": "${version}",
+            "Implementation-Vendor" :"Korti",
+            "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+        ])
+    }
+}
+
+version = "1.14.4-$version"
