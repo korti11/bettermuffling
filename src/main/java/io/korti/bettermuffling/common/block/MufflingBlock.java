@@ -7,10 +7,7 @@ import io.korti.bettermuffling.common.network.PacketHandler;
 import io.korti.bettermuffling.common.network.packet.MufflingAreaEventPacket;
 import io.korti.bettermuffling.common.network.packet.OpenScreenPacket;
 import io.korti.bettermuffling.common.tileentity.TileMuffling;
-import net.minecraft.block.BlockRenderType;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.ContainerBlock;
-import net.minecraft.block.SoundType;
+import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
@@ -40,7 +37,7 @@ import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 
-public class MufflingBlock extends ContainerBlock {
+public class MufflingBlock extends Block {
 
     public MufflingBlock() {
         super(Properties.create(Material.WOOL).sound(SoundType.CLOTH).noDrops());
@@ -77,15 +74,15 @@ public class MufflingBlock extends ContainerBlock {
         }
     }
 
-    @Nullable
     @Override
-    public TileEntity createNewTileEntity(IBlockReader worldIn) {
-        return new TileMuffling();
+    public boolean hasTileEntity(BlockState state) {
+        return true;
     }
 
+    @Nullable
     @Override
-    public BlockRenderType getRenderType(BlockState p_149645_1_) {
-        return BlockRenderType.MODEL;
+    public TileEntity createTileEntity(BlockState state, IBlockReader world) {
+        return new TileMuffling();
     }
 
     @Override
