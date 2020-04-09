@@ -12,18 +12,13 @@ import io.korti.bettermuffling.common.util.MathHelper;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.fml.network.PacketDistributor;
-import org.apache.commons.lang3.ArrayUtils;
 
-import javax.xml.bind.DatatypeConverter;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
@@ -129,6 +124,7 @@ public final class TileMuffling extends TileEntity implements ITickableTileEntit
     }
 
     public void readMufflingData(CompoundNBT compound) {
+        BetterMuffling.LOG.debug("Read muffling data.");
         this.readSoundLevels(compound);
         this.range = compound.getShort("range");
         this.placerOnly = compound.getBoolean("placerOnly");
@@ -141,6 +137,7 @@ public final class TileMuffling extends TileEntity implements ITickableTileEntit
     }
 
     private void validateWithConfig() {
+        BetterMuffling.LOG.debug("Validating muffle data with config.");
         this.range = (short) net.minecraft.util.math.MathHelper
                 .clamp(this.range, 2, BetterMufflingConfig.COMMON.maxRange.get());
         for(Map.Entry<SoundCategory, Float> soundLevel : soundLevels.entrySet()) {
@@ -156,57 +153,25 @@ public final class TileMuffling extends TileEntity implements ITickableTileEntit
     public void onLoad() {
         if(Objects.requireNonNull(getWorld()).isRemote) {
             MufflingCache.addMufflingPos(this.getPos(), this);
+            BetterMuffling.LOG.debug("Request init muffling data from server.");
             PacketHandler.send(PacketDistributor.SERVER.noArg(),
-                    new RequestMufflingUpdatePacket(this.getDataHash(), this.getPos()));
+                    new RequestMufflingUpdatePacket(this.getPos()));
         }
     }
 
     public void syncToClient(final RequestMufflingUpdatePacket packet, final ServerPlayerEntity player) {
-        final String clientDataHash = packet.getDataHash();
-        final String serverDataHash = getDataHash();
-        if(!serverDataHash.equals(clientDataHash)) {
-            final CompoundNBT mufflingData = new CompoundNBT();
-            this.writeMufflingData(mufflingData);
-            PacketHandler.send(PacketDistributor.PLAYER.with(() -> player),
-                    new MufflingDataPacket(this.getPos(), mufflingData));
-        }
+        BetterMuffling.LOG.debug("Sending muffling data to the client.");
+        final CompoundNBT mufflingData = new CompoundNBT();
+        this.writeMufflingData(mufflingData);
+        PacketHandler.send(PacketDistributor.PLAYER.with(() -> player),
+                new MufflingDataPacket(this.getPos(), mufflingData));
     }
 
     public void syncToServer() {
+        BetterMuffling.LOG.debug("Sending muffling data to the server.");
         final CompoundNBT mufflingData = new CompoundNBT();
         this.writeMufflingData(mufflingData);
         PacketHandler.send(PacketDistributor.SERVER.noArg(), new MufflingDataPacket(this.getPos(), mufflingData));
-    }
-
-    private String getDataHash() {
-        try {
-            byte[] hashBytes = new byte[0];
-
-            for(SoundCategory category : soundLevels.keySet()) {
-                hashBytes = ArrayUtils.addAll(hashBytes, category.getName().getBytes());
-                hashBytes = ArrayUtils.addAll(hashBytes, getSoundLevelBytes(category));
-            }
-
-            ArrayUtils.add(hashBytes, (byte)this.range);
-            ArrayUtils.add(hashBytes, this.placerOnly ? (byte) 1 : 0);
-
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            md.update(hashBytes);
-
-            return DatatypeConverter.printHexBinary(md.digest()).toUpperCase();
-        } catch (NoSuchAlgorithmException e) {
-            System.err.println("Could not find MD5 algorithm!");
-            return "";
-        }
-    }
-
-    private byte[] getSoundLevelBytes(SoundCategory category) {
-        final Float soundLevel = this.getSoundLevel(category);
-        final String sSoundLevel = soundLevel.toString();
-        if(sSoundLevel.length() == 1) {
-            return sSoundLevel.getBytes();
-        }
-        return sSoundLevel.replace(".", "").substring(0, Math.min(sSoundLevel.length() - 1, 3)).getBytes();
     }
 
     @Override

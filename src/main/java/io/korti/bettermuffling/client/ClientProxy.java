@@ -1,5 +1,6 @@
 package io.korti.bettermuffling.client;
 
+import io.korti.bettermuffling.BetterMuffling;
 import io.korti.bettermuffling.common.ServerProxy;
 import io.korti.bettermuffling.common.network.packet.MufflingDataPacket;
 import io.korti.bettermuffling.common.tileentity.TileMuffling;
@@ -24,6 +25,7 @@ public class ClientProxy extends ServerProxy {
     @Override
     public Runnable getMufflingDataPacketRunnable(MufflingDataPacket packet, NetworkEvent.Context ctx) {
         return () -> {
+            BetterMuffling.LOG.debug("Received muffling data from server.");
             final LogicalSide side = ctx.getDirection().getReceptionSide();
             final World world;
             final TileEntity te;

@@ -1,5 +1,6 @@
 package io.korti.bettermuffling.common;
 
+import io.korti.bettermuffling.BetterMuffling;
 import io.korti.bettermuffling.common.network.packet.MufflingDataPacket;
 import io.korti.bettermuffling.common.tileentity.TileMuffling;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -17,6 +18,7 @@ public class ServerProxy {
 
     public Runnable getMufflingDataPacketRunnable(final MufflingDataPacket packet, final NetworkEvent.Context ctx) {
         return () -> {
+            BetterMuffling.LOG.debug("Received muffling data from the client.");
             final ServerPlayerEntity player = ctx.getSender();
             final World world = Objects.requireNonNull(player).getServerWorld();
             final TileEntity te = world.getTileEntity(packet.getPos());

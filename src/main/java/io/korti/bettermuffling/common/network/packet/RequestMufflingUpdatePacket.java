@@ -13,25 +13,19 @@ import java.util.function.Supplier;
 
 public class RequestMufflingUpdatePacket {
 
-    private final String dataHash;
     private final BlockPos pos;
 
-    public RequestMufflingUpdatePacket(String dataHash, BlockPos pos) {
-        this.dataHash = dataHash;
+    public RequestMufflingUpdatePacket(BlockPos pos) {
         this.pos = pos;
     }
 
-    public String getDataHash() {
-        return dataHash;
-    }
 
     public static void encode(RequestMufflingUpdatePacket packet, PacketBuffer buf) {
-        buf.writeString(packet.dataHash);
         buf.writeBlockPos(packet.pos);
     }
 
     public static RequestMufflingUpdatePacket decode(PacketBuffer buf) {
-        return new RequestMufflingUpdatePacket(buf.readString(32767), buf.readBlockPos());
+        return new RequestMufflingUpdatePacket(buf.readBlockPos());
     }
 
     public static class Handler {
