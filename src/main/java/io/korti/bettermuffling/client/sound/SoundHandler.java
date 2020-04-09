@@ -24,7 +24,7 @@ public final class SoundHandler {
         final BlockPos soundPos = new BlockPos(sound.getX(), sound.getY(), sound.getZ());
         MufflingCache.getCache().forEach((entry) -> {
             final BlockPos pos = entry.getKey();
-            final short range = entry.getValue();
+            final short range = entry.getValue().getRange();
             if(MathHelper.isInRange(soundPos, pos, range)){
                 sound.createAccessor(event.getManager().sndHandler); // Why? Idk :D
                 final TileMuffling tileMuffling = (TileMuffling) ClientProxy.getWorld().getTileEntity(pos);

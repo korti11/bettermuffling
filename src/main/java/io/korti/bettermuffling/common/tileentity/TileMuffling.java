@@ -155,7 +155,7 @@ public final class TileMuffling extends TileEntity implements ITickableTileEntit
     @Override
     public void onLoad() {
         if(Objects.requireNonNull(getWorld()).isRemote) {
-            MufflingCache.addMufflingPos(this.getPos(), this.range);
+            MufflingCache.addMufflingPos(this.getPos(), this);
             PacketHandler.send(PacketDistributor.SERVER.noArg(),
                     new RequestMufflingUpdatePacket(this.getDataHash(), this.getPos()));
         }
