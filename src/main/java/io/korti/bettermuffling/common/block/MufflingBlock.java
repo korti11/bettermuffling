@@ -23,6 +23,7 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
@@ -51,8 +52,10 @@ public class MufflingBlock extends Block {
         final CompoundNBT mufflingData = stack.getChildTag("tileData");
         if(mufflingData != null && BetterMufflingConfig.CLIENT.tooltipEnable.get()) {
             if (BetterMuffling.proxy.isShiftKeyDown()) {
-                tooltip.add(new StringTextComponent("Owner: " +
-                        TextFormatting.GRAY + mufflingData.getString("placerName") + TextFormatting.RESET));
+                if(mufflingData.contains("placerName")) {
+                    tooltip.add(new StringTextComponent("Owner: " +
+                            TextFormatting.GRAY + mufflingData.getString("placerName") + TextFormatting.RESET));
+                }
                 tooltip.add(new StringTextComponent(
                         I18n.format("button.muffling_block.range") + ": " +
                                 TextFormatting.GRAY + mufflingData.getShort("range") + TextFormatting.RESET));
@@ -132,18 +135,28 @@ public class MufflingBlock extends Block {
                 MufflingCache.removeMufflingPos(pos);
             }
             if(!worldIn.isRemote && !player.isCreative()) {
-                final ItemStack stack = new ItemStack(this);
-                final CompoundNBT tileData = tileMuffling.writeMufflingData(new CompoundNBT());
-                tileData.putString("placerName",
-                        worldIn.getServer().getPlayerProfileCache()
-                                .getProfileByUUID(tileData.getUniqueId("placer")).getName());
-                stack.setTagInfo("tileData", tileData);
-
+                final ItemStack stack = getStackWithTileData(tileMuffling, true);
                 final ItemEntity itemEntity = new ItemEntity(worldIn, pos.getX(), pos.getY(), pos.getZ(), stack);
                 itemEntity.setDefaultPickupDelay();
                 worldIn.addEntity(itemEntity);
             }
         }
         super.onBlockHarvested(worldIn, pos, state, player);
+    }
+
+    @Override
+    public ItemStack getPickBlock(BlockState state, RayTraceResult target, IBlockReader world, BlockPos pos, PlayerEntity player) {
+        final TileEntity te = world.getTileEntity(pos);
+        if(te instanceof TileMuffling && world instanceof World && player.isCreative()) {
+            return getStackWithTileData((TileMuffling) te, false);
+        }
+        return new ItemStack(this);
+    }
+
+    private ItemStack getStackWithTileData(TileMuffling tileMuffling, boolean writePlayerName) {
+        final ItemStack stack = new ItemStack(this);
+        final CompoundNBT tileData = tileMuffling.writeMufflingData(new CompoundNBT(), writePlayerName);
+        stack.setTagInfo("tileData", tileData);
+        return stack;
     }
 }

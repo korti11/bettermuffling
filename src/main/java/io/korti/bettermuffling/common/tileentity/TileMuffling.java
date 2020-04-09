@@ -1,5 +1,6 @@
 package io.korti.bettermuffling.common.tileentity;
 
+import io.korti.bettermuffling.BetterMuffling;
 import io.korti.bettermuffling.client.util.MufflingCache;
 import io.korti.bettermuffling.common.config.BetterMufflingConfig;
 import io.korti.bettermuffling.common.core.BetterMufflingTileEntities;
@@ -11,6 +12,7 @@ import io.korti.bettermuffling.common.util.MathHelper;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.SoundCategory;
@@ -68,6 +70,14 @@ public final class TileMuffling extends TileEntity implements ITickableTileEntit
 
     public void setPlacer(final UUID placer) {
         this.placer = placer;
+
+    }
+
+    public String getPlacerName() {
+        if(!Objects.requireNonNull(this.getWorld()).isRemote) {
+            return this.getWorld().getServer().getPlayerProfileCache().getProfileByUUID(this.placer).getName();
+        }
+        return "";
     }
 
     public void setRange(final short range) {
@@ -91,11 +101,19 @@ public final class TileMuffling extends TileEntity implements ITickableTileEntit
         return super.write(compound);
     }
 
-    public CompoundNBT writeMufflingData(CompoundNBT compound) {
+    private CompoundNBT writeMufflingData(CompoundNBT compound) {
+        return writeMufflingData(compound, false);
+    }
+
+    public CompoundNBT writeMufflingData(CompoundNBT compound, boolean writePlayerName) {
         this.writeSoundLevels(compound);
         compound.putShort("range", this.range);
         compound.putBoolean("placerOnly", this.placerOnly);
         compound.putUniqueId("placer", this.placer);
+
+        if(!Objects.requireNonNull(this.world).isRemote && writePlayerName) {
+            compound.putString("placerName", this.getPlacerName());
+        }
         return compound;
     }
 
