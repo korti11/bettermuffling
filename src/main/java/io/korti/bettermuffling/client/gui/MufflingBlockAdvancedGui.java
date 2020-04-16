@@ -31,6 +31,10 @@ public class MufflingBlockAdvancedGui extends MufflingBlockSimpleGui {
     private SoundSlider activeSoundSlider = null;
     private Button activeWhiteBlackListButton = null;
 
+    private LockIconButton lockIconButton = null;
+    private ListenAudioButton listenAudioButton = null;
+    private DeleteEntryButton deleteEntryButton = null;
+
     protected MufflingBlockAdvancedGui(TileMuffling tileMuffling) {
         super(tileMuffling, 348, 222);
         this.simpleGui = false;
@@ -91,34 +95,43 @@ public class MufflingBlockAdvancedGui extends MufflingBlockSimpleGui {
                 this.tileMuffling.getRange()));
         rangeSlider.setUpdateListener(this.tileMuffling::setRange);
 
-        LockIconButton lockIconButton = this.addButton(new LockIconButton(this.guiLeft + 315, this.guiTop + 31,
+        this.lockIconButton = this.addButton(new LockIconButton(this.guiLeft + 315, this.guiTop + 31,
                 (b) -> {
                     LockIconButton lb = (LockIconButton) b;
                     lb.setLocked(!lb.isLocked());
                     tileMuffling.setPlacerOnly(((LockIconButton) b).isLocked());
                 }));
-        lockIconButton.setLocked(tileMuffling.isPlacerOnly());
+        this.lockIconButton.setLocked(tileMuffling.isPlacerOnly());
 
-        ListenAudioButton listenAudioButton = this.addButton(new ListenAudioButton(this.guiLeft + 315, this.guiTop + 94,
+        this.listenAudioButton = this.addButton(new ListenAudioButton(this.guiLeft + 315, this.guiTop + 94,
                 20, 20, this, (b) -> {
             tileMuffling.setListening(!tileMuffling.isListening());
         }));
-        listenAudioButton.setIsListening(tileMuffling.isListening());
+        this.listenAudioButton.setIsListening(tileMuffling.isListening());
 
-        DeleteEntryButton deleteEntryButton = this.addButton(new DeleteEntryButton(this.guiLeft + 315, this.guiTop + 119,
+        this.deleteEntryButton = this.addButton(new DeleteEntryButton(this.guiLeft + 315, this.guiTop + 119,
                 20, 20, this, (b) -> {
             this.soundNamesList.removeSelectedEntry();
         }));
 
         this.soundNamesList = new ScrollList(this.guiLeft + 130, this.guiTop + 69, 181, 121);
         this.children.add(this.soundNamesList);
-
     }
 
     @Override
     public void onClose() {
         super.onClose();
         this.tileMuffling.syncToServer();
+    }
+
+    @Override
+    public void render(int mouseX, int mouseY, float partialTicks) {
+        super.render(mouseX, mouseY, partialTicks);
+
+        this.lockIconButton.renderToolTip(mouseX, mouseY);
+        this.activeWhiteBlackListButton.renderToolTip(mouseX, mouseY);
+        this.listenAudioButton.renderToolTip(mouseX, mouseY);
+        this.deleteEntryButton.renderToolTip(mouseX, mouseY);
     }
 
     @Override
@@ -341,10 +354,9 @@ public class MufflingBlockAdvancedGui extends MufflingBlockSimpleGui {
         }
 
         @Override
-        public void renderButton(int p_renderButton_1_, int p_renderButton_2_, float p_renderButton_3_) {
-            super.renderButton(p_renderButton_1_, p_renderButton_2_, p_renderButton_3_);
+        public void renderToolTip(int mouseX, int mouseY) {
             if (this.isHovered()) {
-                MufflingBlockAdvancedGui.this.renderTooltip(I18n.format("button.muffling_block.player_only"), p_renderButton_1_, p_renderButton_2_);
+                MufflingBlockAdvancedGui.this.renderTooltip(I18n.format("button.muffling_block.player_only"), mouseX, mouseY);
             }
         }
     }

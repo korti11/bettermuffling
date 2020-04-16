@@ -27,12 +27,14 @@ public class ListenAudioButton extends BetterButton {
         int xOffset = (this.width - 16) / 2;
         int yOffset = (this.height - 16) / 2;
         this.blit(this.x + xOffset, this.y + yOffset, xTexStart, yTexStart, 16, 16);
+    }
 
+    public void renderToolTip(int mouseX, int mouseY) {
         if(this.isHovered()) {
             if(xTexStart == 197) {
-                this.renderToolTip(I18n.format("tooltip.muffling_block.listening.on"), p_renderButton_1_, p_renderButton_2_);
+                this.renderToolTip(I18n.format("tooltip.muffling_block.listening.on"), mouseX, mouseY);
             } else {
-                this.renderToolTip(I18n.format("tooltip.muffling_block.listening.off"), p_renderButton_1_, p_renderButton_2_);
+                this.renderToolTip(I18n.format("tooltip.muffling_block.listening.off"), mouseX, mouseY);
             }
         }
     }

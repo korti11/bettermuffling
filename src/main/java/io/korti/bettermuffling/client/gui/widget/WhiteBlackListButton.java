@@ -28,9 +28,11 @@ public class WhiteBlackListButton extends BetterButton {
         int xOffset = (this.width - 16) / 2;
         int yOffset = (this.height - 16) / 2;
         this.blit(this.x + xOffset, this.y + yOffset, xTexStart, yTexStart, 16, 16);
+    }
 
+    public void renderToolTip(int mouesX, int mouseY) {
         if(this.isHovered()) {
-            this.renderToolTip(I18n.format("tooltip.muffling_block.black.white.list"), p_renderButton_1_, p_renderButton_2_);
+            this.renderToolTip(I18n.format("tooltip.muffling_block.black.white.list"), mouesX, mouseY);
         }
     }
 
