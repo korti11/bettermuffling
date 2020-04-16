@@ -29,6 +29,7 @@ public class MufflingBlockAdvancedGui extends MufflingBlockSimpleGui {
     private Button selectedSoundCategoryButton = null;
     private SoundCategory selectedSoundCategory = null;
     private SoundSlider activeSoundSlider = null;
+    private Button activeWhiteBlackListButton = null;
 
     protected MufflingBlockAdvancedGui(TileMuffling tileMuffling) {
         super(tileMuffling, 348, 222);
@@ -47,21 +48,38 @@ public class MufflingBlockAdvancedGui extends MufflingBlockSimpleGui {
                     tileMuffling.getSoundLevel(category).doubleValue(), category));
             soundSlider.visible = false;
             soundSlider.setListener((c, volume) -> tileMuffling.setSoundLevel(c, volume.floatValue()));
+
+            WhiteBlackListButton whiteBlackListButton = this.addButton(new WhiteBlackListButton(this.guiLeft + 315,
+                    this.guiTop + 69, 20, 20, this, (b) -> {
+                tileMuffling.setWhiteListForCategory(category, !tileMuffling.getWhiteListForCategory(category));
+            }));
+            whiteBlackListButton.setIsWhiteList(tileMuffling.getWhiteListForCategory(category));
+            whiteBlackListButton.visible = false;
+
             BetterButton button = this.addButton(new BetterButton(this.guiLeft + 11,
                     this.guiTop + 31 + (20 * buttonCount), 110, 20, I18n.format("soundCategory." + category.getName()),
                     (b) -> {
                         activeSoundSlider.visible = false;
                         activeSoundSlider = soundSlider;
                         soundSlider.visible = true;
+
+                        activeWhiteBlackListButton.visible = false;
+                        activeWhiteBlackListButton = whiteBlackListButton;
+                        whiteBlackListButton.visible = true;
+
                         selectedSoundCategoryButton.active = true;
                         selectedSoundCategoryButton = b;
                         b.active = false;
+
                         selectedSoundCategory = category;
                         this.soundNamesList.selectSoundCategory(category);
                     }));
+
             if (buttonCount == 0) {
                 this.activeSoundSlider = soundSlider;
                 soundSlider.visible = true;
+                this.activeWhiteBlackListButton = whiteBlackListButton;
+                whiteBlackListButton.visible = true;
                 this.selectedSoundCategoryButton = button;
                 button.active = false;
                 this.selectedSoundCategory = category;
@@ -81,17 +99,11 @@ public class MufflingBlockAdvancedGui extends MufflingBlockSimpleGui {
                 }));
         lockIconButton.setLocked(tileMuffling.isPlacerOnly());
 
-        WhiteBlackListButton whiteBlackListButton = this.addButton(new WhiteBlackListButton(this.guiLeft + 315,
-                this.guiTop + 69, 20, 20, this, (b) -> {
-
-        }));
-        whiteBlackListButton.setIsWhiteList(true);
-
         ListenAudioButton listenAudioButton = this.addButton(new ListenAudioButton(this.guiLeft + 315, this.guiTop + 94,
                 20, 20, this, (b) -> {
-
+            tileMuffling.setListening(!tileMuffling.isListening());
         }));
-        listenAudioButton.setIsListening(false);
+        listenAudioButton.setIsListening(tileMuffling.isListening());
 
         DeleteEntryButton deleteEntryButton = this.addButton(new DeleteEntryButton(this.guiLeft + 315, this.guiTop + 119,
                 20, 20, this, (b) -> {
@@ -101,6 +113,12 @@ public class MufflingBlockAdvancedGui extends MufflingBlockSimpleGui {
         this.soundNamesList = new ScrollList(this.guiLeft + 130, this.guiTop + 69, 181, 121);
         this.children.add(this.soundNamesList);
 
+    }
+
+    @Override
+    public void onClose() {
+        super.onClose();
+        this.tileMuffling.syncToServer();
     }
 
     @Override
@@ -154,12 +172,9 @@ public class MufflingBlockAdvancedGui extends MufflingBlockSimpleGui {
                 if (category == SoundCategory.MASTER || category == SoundCategory.MUSIC) {
                     continue;
                 }
-                soundCategoryNameMap.put(category, Pair.of(new TreeSet<>(), new LinkedList<>()));
+                soundCategoryNameMap.put(category,
+                        Pair.of(MufflingBlockAdvancedGui.this.tileMuffling.getNameSet(category), new LinkedList<>()));
                 this.selectSoundCategory(category);
-                this.soundNameSet.add("Hello sweetie.");
-                for (int i = 0; i < 50; i++) {
-                    this.soundNameSet.add(category.getName() + i);
-                }
                 this.updateSoundNames();
             }
             this.selectSoundCategory(SoundCategory.RECORDS);

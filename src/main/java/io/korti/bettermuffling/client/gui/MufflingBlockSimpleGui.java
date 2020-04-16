@@ -84,8 +84,9 @@ public class MufflingBlockSimpleGui extends Screen {
 
         this.addButton(new BetterButton(this.guiLeft + 50, this.guiTop + 142, 200, 20, I18n.format("gui.done"),
                 (button) -> {
-                    this.minecraft.displayGuiScreen(null);
-                    this.minecraft.mouseHelper.grabMouse();
+//                    this.minecraft.displayGuiScreen(null);
+//                    this.minecraft.mouseHelper.grabMouse();
+                    this.onClose();
                 }));
     }
 
@@ -132,7 +133,7 @@ public class MufflingBlockSimpleGui extends Screen {
     }
 
     private boolean isAdvancedModeOn() {
-        return this.tileMuffling.isAdvancedMode();
+        return true;
     }
 
 }

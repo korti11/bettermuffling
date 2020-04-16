@@ -28,13 +28,19 @@ public final class SoundHandler {
             if(MathHelper.isInRange(soundPos, pos, range)){
                 sound.createAccessor(event.getManager().sndHandler); // Why? Idk :D
                 final TileMuffling tileMuffling = (TileMuffling) ClientProxy.getWorld().getTileEntity(pos);
-                if(tileMuffling == null) return;
-                final float soundLevel = tileMuffling.getSoundLevel(category);
-                final ISound newSound = new SimpleSound(sound.getSoundLocation(), category,
-                        sound.getVolume() * soundLevel, sound.getPitch(), sound.canRepeat(), sound.getRepeatDelay(),
-                        sound.getAttenuationType(), sound.getX(), sound.getY(), sound.getZ(), false
-                );
-                event.setResultSound(newSound);
+                if(tileMuffling != null) {
+                    if(tileMuffling.muffleSound(category, event.getName())) {
+                        final float soundLevel = tileMuffling.getSoundLevel(category);
+                        final ISound newSound = new SimpleSound(sound.getSoundLocation(), category,
+                                sound.getVolume() * soundLevel, sound.getPitch(), sound.canRepeat(), sound.getRepeatDelay(),
+                                sound.getAttenuationType(), sound.getX(), sound.getY(), sound.getZ(), false
+                        );
+                        event.setResultSound(newSound);
+                    }
+                    if (tileMuffling.isListening()) {
+                        tileMuffling.addSoundName(category, event.getName());
+                    }
+                }
             }
         });
     }

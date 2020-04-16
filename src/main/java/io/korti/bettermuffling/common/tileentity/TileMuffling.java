@@ -12,6 +12,8 @@ import io.korti.bettermuffling.common.util.MathHelper;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.nbt.StringNBT;
 import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.SoundCategory;
@@ -27,10 +29,13 @@ public final class TileMuffling extends TileEntity implements ITickableTileEntit
 
     private final Set<ServerPlayerEntity> playerCache = new HashSet<>();
     private final Map<SoundCategory, Float> soundLevels = new HashMap<>();
+    private final Map<SoundCategory, SortedSet<String>> soundNames = new HashMap<>();
+    private final Map<SoundCategory, Boolean> whiteList = new HashMap<>();
     private short range = 6;
     private UUID placer;
     private boolean placerOnly = false;
     private boolean advancedMode = false;
+    private boolean listening = false;
 
     private int tickCount;
 
@@ -44,8 +49,12 @@ public final class TileMuffling extends TileEntity implements ITickableTileEntit
         categories.remove(SoundCategory.MASTER);
         categories.remove(SoundCategory.MUSIC);
 
-        categories.forEach(category -> this.soundLevels.put(category,
-                BetterMufflingConfig.COMMON.minVolume.get().floatValue()));
+        categories.forEach(category -> {
+            this.soundLevels.put(category,
+                    BetterMufflingConfig.COMMON.minVolume.get().floatValue());
+            this.soundNames.put(category, new TreeSet<>(String::compareTo));
+            this.whiteList.put(category, false);
+        });
     }
 
     public Float getSoundLevel(SoundCategory category) {
@@ -90,12 +99,41 @@ public final class TileMuffling extends TileEntity implements ITickableTileEntit
         this.syncToServer();
     }
 
-    public boolean isAdvancedMode() {
-        return true;
-    }
-
     public void setAdvancedMode(boolean advancedMode) {
         this.advancedMode = advancedMode;
+    }
+
+    public boolean isListening() {
+        return listening;
+    }
+
+    public void setListening(boolean listening) {
+        this.listening = listening;
+        this.syncToServer();
+    }
+
+    public boolean getWhiteListForCategory(SoundCategory category) {
+        return this.whiteList.get(category);
+    }
+
+    public void setWhiteListForCategory(SoundCategory category, boolean flag) {
+        this.whiteList.put(category, flag);
+    }
+
+    public void addSoundName(SoundCategory category, String name) {
+        this.soundNames.get(category).add(name);
+    }
+
+    public SortedSet<String> getNameSet(SoundCategory category) {
+        return this.soundNames.get(category);
+    }
+
+    public boolean muffleSound(SoundCategory category, String name) {
+        if (getWhiteListForCategory(category)) {
+            return this.soundNames.get(category).contains(name);
+        } else {
+            return !this.soundNames.get(category).contains(name);
+        }
     }
 
     @Override
@@ -110,10 +148,13 @@ public final class TileMuffling extends TileEntity implements ITickableTileEntit
 
     public CompoundNBT writeMufflingData(CompoundNBT compound, boolean writePlayerName) {
         this.writeSoundLevels(compound);
+        this.writeSoundNames(compound);
+        this.writeWhiteList(compound);
         compound.putShort("range", this.range);
         compound.putBoolean("placerOnly", this.placerOnly);
         compound.putUniqueId("placer", this.placer);
         compound.putBoolean("advancedMode", this.advancedMode);
+        compound.putBoolean("listening", this.listening);
 
         if(!Objects.requireNonNull(this.world).isRemote && writePlayerName) {
             compound.putString("placerName", this.getPlacerName());
@@ -123,6 +164,22 @@ public final class TileMuffling extends TileEntity implements ITickableTileEntit
 
     private void writeSoundLevels(CompoundNBT compound) {
         this.soundLevels.forEach((category, level) -> compound.putFloat(category.getName(), level));
+    }
+
+    private void writeSoundNames(CompoundNBT compound) {
+        if(this.advancedMode) {
+            this.soundNames.forEach(((category, strings) -> {
+                ListNBT list = new ListNBT();
+                strings.forEach((s) -> list.add(new StringNBT(s)));
+                compound.put("names_" + category.getName(), list);
+            }));
+        }
+    }
+
+    private void writeWhiteList(CompoundNBT compound) {
+        if (this.advancedMode) {
+            this.whiteList.forEach((category, b) -> compound.putBoolean("white_" + category.getName(), b));
+        }
     }
 
     @Override
@@ -135,15 +192,35 @@ public final class TileMuffling extends TileEntity implements ITickableTileEntit
     public void readMufflingData(CompoundNBT compound) {
         BetterMuffling.LOG.debug("Read muffling data.");
         this.readSoundLevels(compound);
+        this.readSoundNames(compound);
+        this.readWhiteList(compound);
         this.range = compound.getShort("range");
         this.placerOnly = compound.getBoolean("placerOnly");
         this.placer = compound.getUniqueId("placer");
         this.advancedMode = compound.getBoolean("advancedMode");
+        this.listening = compound.getBoolean("listening");
     }
 
     private void readSoundLevels(CompoundNBT compound) {
         this.soundLevels.forEach((category, level) ->
                 this.soundLevels.replace(category, level, compound.getFloat(category.getName())));
+    }
+
+    private void readSoundNames(CompoundNBT compound) {
+        if(this.advancedMode) {
+            this.soundNames.forEach(((category, strings) -> {
+                ListNBT list = compound.getList("names_" + category.getName(), 8);
+                strings.clear();
+                list.forEach(data -> strings.add(data.getString()));
+            }));
+        }
+    }
+
+    private void readWhiteList(CompoundNBT compound) {
+        if (this.advancedMode) {
+            this.whiteList.forEach((category, aBoolean) ->
+                    this.whiteList.replace(category, compound.getBoolean("white_" + category.getName())));
+        }
     }
 
     private void validateWithConfig() {
