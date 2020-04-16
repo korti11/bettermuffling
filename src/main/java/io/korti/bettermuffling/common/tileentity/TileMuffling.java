@@ -30,6 +30,7 @@ public final class TileMuffling extends TileEntity implements ITickableTileEntit
     private short range = 6;
     private UUID placer;
     private boolean placerOnly = false;
+    private boolean advancedMode = false;
 
     private int tickCount;
 
@@ -65,7 +66,6 @@ public final class TileMuffling extends TileEntity implements ITickableTileEntit
 
     public void setPlacer(final UUID placer) {
         this.placer = placer;
-
     }
 
     public String getPlacerName() {
@@ -90,6 +90,14 @@ public final class TileMuffling extends TileEntity implements ITickableTileEntit
         this.syncToServer();
     }
 
+    public boolean isAdvancedMode() {
+        return true;
+    }
+
+    public void setAdvancedMode(boolean advancedMode) {
+        this.advancedMode = advancedMode;
+    }
+
     @Override
     public CompoundNBT write(CompoundNBT compound) {
         this.writeMufflingData(compound);
@@ -105,6 +113,7 @@ public final class TileMuffling extends TileEntity implements ITickableTileEntit
         compound.putShort("range", this.range);
         compound.putBoolean("placerOnly", this.placerOnly);
         compound.putUniqueId("placer", this.placer);
+        compound.putBoolean("advancedMode", this.advancedMode);
 
         if(!Objects.requireNonNull(this.world).isRemote && writePlayerName) {
             compound.putString("placerName", this.getPlacerName());
@@ -129,6 +138,7 @@ public final class TileMuffling extends TileEntity implements ITickableTileEntit
         this.range = compound.getShort("range");
         this.placerOnly = compound.getBoolean("placerOnly");
         this.placer = compound.getUniqueId("placer");
+        this.advancedMode = compound.getBoolean("advancedMode");
     }
 
     private void readSoundLevels(CompoundNBT compound) {

@@ -14,7 +14,7 @@ public final class GuiHandler {
     public static void openMufflingGui(BlockPos pos) {
         final TileEntity te = ClientProxy.getWorld().getTileEntity(pos);
         if(te instanceof TileMuffling) {
-            Minecraft.getInstance().displayGuiScreen(new MufflingBlockGui((TileMuffling) te));
+            Minecraft.getInstance().displayGuiScreen(new MufflingBlockSimpleGui((TileMuffling) te));
         }
     }
 
