@@ -32,7 +32,7 @@ public class RequestMufflingUpdatePacket {
         public static void handle(final RequestMufflingUpdatePacket packet, final Supplier<NetworkEvent.Context> ctx) {
             ctx.get().enqueueWork(() -> {
                 final ServerPlayerEntity player = ctx.get().getSender();
-                final World world = Objects.requireNonNull(player).getServerWorld();
+                final World world = Objects.requireNonNull(player).getEntityWorld();
                 final TileEntity te = world.getTileEntity(packet.pos);
                 if(te instanceof TileMuffling) {
                     ((TileMuffling) te).syncToClient(packet, player);

@@ -8,6 +8,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.util.InputMappings;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.LogicalSide;
@@ -31,7 +32,7 @@ public class ClientProxy extends ServerProxy {
             final TileEntity te;
             if(side == LogicalSide.SERVER) {
                 final ServerPlayerEntity player = ctx.getSender();
-                world = Objects.requireNonNull(player).getServerWorld();
+                world = Objects.requireNonNull(player).getEntityWorld();
             } else {
                 world = ClientProxy.getWorld();
             }

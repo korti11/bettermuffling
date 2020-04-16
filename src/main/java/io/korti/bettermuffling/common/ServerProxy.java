@@ -20,7 +20,7 @@ public class ServerProxy {
         return () -> {
             BetterMuffling.LOG.debug("Received muffling data from the client.");
             final ServerPlayerEntity player = ctx.getSender();
-            final World world = Objects.requireNonNull(player).getServerWorld();
+            final World world = Objects.requireNonNull(player).getEntityWorld();
             final TileEntity te = world.getTileEntity(packet.getPos());
             if(te instanceof TileMuffling) {
                 ((TileMuffling) te).readMufflingData(packet.getMufflingData());
