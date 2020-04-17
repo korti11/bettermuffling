@@ -91,9 +91,12 @@ public class MufflingBlockAdvancedGui extends MufflingBlockSimpleGui {
             buttonCount++;
         }
 
-        RangeSlider rangeSlider = this.addButton(new RangeSlider(this.guiLeft + 11, this.guiTop + 195, 300, 20,
+        RangeSlider rangeSlider = this.addButton(new RangeSlider(this.guiLeft + 11, this.guiTop + 195, 158, 20,
                 this.tileMuffling.getRange()));
         rangeSlider.setUpdateListener(this.tileMuffling::setRange);
+
+        this.addButton(new BetterButton(this.guiLeft + 11 + 158 + 8, this.guiTop + 195, 158, 20,
+                I18n.format("gui.done"), (b) -> this.onClose()));
 
         this.lockIconButton = this.addButton(new LockIconButton(this.guiLeft + 315, this.guiTop + 31,
                 (b) -> {
