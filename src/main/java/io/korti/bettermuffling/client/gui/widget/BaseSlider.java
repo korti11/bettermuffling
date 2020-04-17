@@ -1,6 +1,7 @@
 package io.korti.bettermuffling.client.gui.widget;
 
 import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.widget.AbstractSlider;
@@ -20,8 +21,8 @@ public abstract class BaseSlider extends AbstractSlider {
         GlStateManager.color4f(1.0F, 1.0F, 1.0F, this.alpha);
         int i = this.getYImage(this.isHovered());
         GlStateManager.enableBlend();
-        GlStateManager.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-        GlStateManager.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+        RenderSystem.defaultBlendFunc();
+        RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
 
         int halfHeight = this.getHeight() / 2;
         int top1 = 46 + i * 20;
@@ -35,9 +36,7 @@ public abstract class BaseSlider extends AbstractSlider {
         this.renderBg(minecraft, p_renderButton_1_, p_renderButton_2_);
         int j = getFGColor();
 
-        GlStateManager.pushMatrix();
         this.drawCenteredString(fontrenderer, super.getMessage(), this.x + this.width / 2, this.y + (this.height - 8) / 2, j | MathHelper.ceil(this.alpha * 255.0F) << 24);
-        GlStateManager.popMatrix();
     }
 
     @Override

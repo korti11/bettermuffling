@@ -125,7 +125,7 @@ public class BetterMufflingConfig {
     }
 
     @SubscribeEvent
-    public static void onFileChange(final ModConfig.ConfigReloading event) {
+    public static void onFileChange(final ModConfig.Reloading event) {
         BetterMuffling.LOG.fatal(Logging.CORE, "{} config just got changed on the file system!", BetterMuffling.MOD_ID);
     }
 
