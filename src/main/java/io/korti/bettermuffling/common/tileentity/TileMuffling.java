@@ -184,7 +184,7 @@ public final class TileMuffling extends TileEntity implements ITickableTileEntit
         if(this.advancedMode) {
             this.soundNames.forEach(((category, strings) -> {
                 ListNBT list = new ListNBT();
-                strings.forEach((s) -> list.add(new StringNBT(s)));
+                strings.forEach((s) -> list.add(StringNBT.valueOf(s)));
                 compound.put("names_" + category.getName(), list);
             }));
         }
@@ -205,13 +205,13 @@ public final class TileMuffling extends TileEntity implements ITickableTileEntit
 
     public void readMufflingData(CompoundNBT compound) {
         BetterMuffling.LOG.debug("Read muffling data.");
+        this.advancedMode = compound.getBoolean("advancedMode");
         this.readSoundLevels(compound);
         this.readSoundNames(compound);
         this.readWhiteList(compound);
         this.range = compound.getShort("range");
         this.placerOnly = compound.getBoolean("placerOnly");
         this.placer = compound.getUniqueId("placer");
-        this.advancedMode = compound.getBoolean("advancedMode");
         this.listening = compound.getBoolean("listening");
         this.selectedCategory = SoundCategory
                 .values()[net.minecraft.util.math.MathHelper

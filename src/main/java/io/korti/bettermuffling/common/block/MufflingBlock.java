@@ -19,6 +19,7 @@ import net.minecraft.fluid.IFluidState;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ActionResultType;
 import net.minecraft.util.Hand;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
@@ -88,18 +89,32 @@ public class MufflingBlock extends Block {
     }
 
     @Override
-    public boolean onBlockActivated(BlockState blockState, World worldIn, BlockPos pos, PlayerEntity player, Hand hand,
-                                    BlockRayTraceResult traceResult) {
+    public ActionResultType onBlockActivated(BlockState blockState, World worldIn, BlockPos pos, PlayerEntity player,
+                                             Hand hand, BlockRayTraceResult traceResult) {
         if(!worldIn.isRemote) {
             TileEntity te = worldIn.getTileEntity(pos);
-            if(te instanceof TileMuffling && !player.isSneaking() && ((TileMuffling) te).canAccess(player)) {
+            if(te instanceof TileMuffling && !player.isCrouching() && ((TileMuffling) te).canAccess(player)) {
                 PacketHandler.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player),
                         new OpenScreenPacket(pos));
-                return true;
+                return ActionResultType.CONSUME;
             }
         }
         return super.onBlockActivated(blockState, worldIn, pos, player, hand, traceResult);
     }
+
+    //    @Override
+//    public boolean onBlockActivated(BlockState blockState, World worldIn, BlockPos pos, PlayerEntity player, Hand hand,
+//                                    BlockRayTraceResult traceResult) {
+//        if(!worldIn.isRemote) {
+//            TileEntity te = worldIn.getTileEntity(pos);
+//            if(te instanceof TileMuffling && !player.isSneaking() && ((TileMuffling) te).canAccess(player)) {
+//                PacketHandler.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player),
+//                        new OpenScreenPacket(pos));
+//                return true;
+//            }
+//        }
+//        return super.onBlockActivated(blockState, worldIn, pos, player, hand, traceResult);
+//    }
 
     @Override
     public void onBlockPlacedBy(World worldIn, BlockPos blockPos, BlockState blockState,
