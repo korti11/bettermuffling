@@ -96,25 +96,11 @@ public class MufflingBlock extends Block {
             if(te instanceof TileMuffling && !player.isCrouching() && ((TileMuffling) te).canAccess(player)) {
                 PacketHandler.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player),
                         new OpenScreenPacket(pos));
-                return ActionResultType.CONSUME;
+                return ActionResultType.SUCCESS;
             }
         }
-        return super.onBlockActivated(blockState, worldIn, pos, player, hand, traceResult);
+        return ActionResultType.SUCCESS;
     }
-
-    //    @Override
-//    public boolean onBlockActivated(BlockState blockState, World worldIn, BlockPos pos, PlayerEntity player, Hand hand,
-//                                    BlockRayTraceResult traceResult) {
-//        if(!worldIn.isRemote) {
-//            TileEntity te = worldIn.getTileEntity(pos);
-//            if(te instanceof TileMuffling && !player.isSneaking() && ((TileMuffling) te).canAccess(player)) {
-//                PacketHandler.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player),
-//                        new OpenScreenPacket(pos));
-//                return true;
-//            }
-//        }
-//        return super.onBlockActivated(blockState, worldIn, pos, player, hand, traceResult);
-//    }
 
     @Override
     public void onBlockPlacedBy(World worldIn, BlockPos blockPos, BlockState blockState,
