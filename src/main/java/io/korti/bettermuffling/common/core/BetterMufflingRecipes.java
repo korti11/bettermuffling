@@ -2,6 +2,7 @@ package io.korti.bettermuffling.common.core;
 
 
 import io.korti.bettermuffling.BetterMuffling;
+import io.korti.bettermuffling.common.recipe.AdvancedMufflingBlockRecipeSerializer;
 import io.korti.bettermuffling.common.recipe.MufflingBlockCloningRecipe;
 import io.korti.bettermuffling.common.recipe.MufflingBlockCloningRecipeSerializer;
 import net.minecraft.item.crafting.IRecipeSerializer;
@@ -16,6 +17,9 @@ final public class BetterMufflingRecipes {
     @ObjectHolder(BetterMuffling.MOD_ID + ":muffling_block_cloning_recipe")
     public static MufflingBlockCloningRecipeSerializer mufflingBlockCloningRecipeSerializer;
 
+    @ObjectHolder(BetterMuffling.MOD_ID + ":muffling_block_advanced_recipe")
+    public static AdvancedMufflingBlockRecipeSerializer advancedMufflingBlockRecipeSerializer;
+
     @Mod.EventBusSubscriber(modid = BetterMuffling.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
     public static class Registration {
 
@@ -25,6 +29,8 @@ final public class BetterMufflingRecipes {
 
             recipeRegistry.register(new MufflingBlockCloningRecipeSerializer(MufflingBlockCloningRecipe::new)
                     .setRegistryName(BetterMuffling.MOD_ID, "muffling_block_cloning_recipe"));
+            recipeRegistry.register(new AdvancedMufflingBlockRecipeSerializer()
+                    .setRegistryName(BetterMuffling.MOD_ID, "muffling_block_advanced_recipe"));
         }
 
     }
