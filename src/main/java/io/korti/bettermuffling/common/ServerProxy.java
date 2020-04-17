@@ -25,6 +25,7 @@ public class ServerProxy {
             if(te instanceof TileMuffling) {
                 ((TileMuffling) te).readMufflingData(packet.getMufflingData());
                 te.markDirty();
+                ((TileMuffling) te).syncToAllClients();
             }
         };
     }

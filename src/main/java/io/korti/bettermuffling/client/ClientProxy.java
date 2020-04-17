@@ -30,9 +30,11 @@ public class ClientProxy extends ServerProxy {
             final LogicalSide side = ctx.getDirection().getReceptionSide();
             final World world;
             final TileEntity te;
+            boolean lanWorld = false;
             if(side == LogicalSide.SERVER) {
                 final ServerPlayerEntity player = ctx.getSender();
                 world = Objects.requireNonNull(player).getEntityWorld();
+                lanWorld = Objects.requireNonNull(world.getServer()).getPublic();
             } else {
                 world = ClientProxy.getWorld();
             }
@@ -40,6 +42,9 @@ public class ClientProxy extends ServerProxy {
             if(te instanceof TileMuffling) {
                 ((TileMuffling) te).readMufflingData(packet.getMufflingData());
                 te.markDirty();
+                if (lanWorld) {
+                    ((TileMuffling) te).syncToAllClients();
+                }
             }
         };
     }

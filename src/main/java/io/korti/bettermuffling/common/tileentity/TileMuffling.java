@@ -263,6 +263,13 @@ public final class TileMuffling extends TileEntity implements ITickableTileEntit
         }
     }
 
+    public void syncToAllClients() {
+        BetterMuffling.LOG.debug("Sending muffling data to all data.");
+        final CompoundNBT mufflingData = new CompoundNBT();
+        this.writeMufflingData(mufflingData);
+        PacketHandler.send(PacketDistributor.ALL.noArg(), new MufflingDataPacket(this.pos, mufflingData));
+    }
+
     public void syncToClient(final RequestMufflingUpdatePacket packet, final ServerPlayerEntity player) {
         BetterMuffling.LOG.debug("Sending muffling data to the client.");
         final CompoundNBT mufflingData = new CompoundNBT();
