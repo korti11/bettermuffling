@@ -37,7 +37,6 @@ public class MufflingBlockAdvancedGui extends MufflingBlockSimpleGui {
 
     protected MufflingBlockAdvancedGui(TileMuffling tileMuffling) {
         super(tileMuffling, 348, 222);
-        this.simpleGui = false;
     }
 
     @Override

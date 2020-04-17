@@ -103,6 +103,10 @@ public final class TileMuffling extends TileEntity implements ITickableTileEntit
         this.advancedMode = advancedMode;
     }
 
+    public boolean isAdvancedMode() {
+        return advancedMode;
+    }
+
     public boolean isListening() {
         return listening;
     }

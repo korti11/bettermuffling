@@ -42,7 +42,6 @@ public class MufflingBlock extends Block {
 
     public MufflingBlock() {
         super(Properties.create(Material.WOOL).sound(SoundType.CLOTH).noDrops());
-        this.setRegistryName(BetterMuffling.MOD_ID, "muffling_block");
     }
 
     @OnlyIn(Dist.CLIENT)

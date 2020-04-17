@@ -1,6 +1,7 @@
 {
   "_comment": "Blocks",
   "block.bettermuffling.muffling_block": "Muffling Block",
+  "block.bettermuffling.muffling_block_advanced": "Advanced Muffling Block",
 
   "_comment": "Gui Elemente",
   "gui.muffling_block.title": "Muffling Options",

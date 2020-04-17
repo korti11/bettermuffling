@@ -26,12 +26,9 @@ public class MufflingBlockSimpleGui extends Screen {
     protected int guiTop = 0;
     protected int guiLeft = 0;
 
-    protected boolean simpleGui;
-
     protected MufflingBlockSimpleGui(TileMuffling tileMuffling, int xSize, int ySize) {
         super(new TranslationTextComponent(titleKey));
         this.tileMuffling = tileMuffling;
-        this.simpleGui = true;
         this.xSize = xSize;
         this.ySize = ySize;
     }
@@ -44,12 +41,7 @@ public class MufflingBlockSimpleGui extends Screen {
     protected void init() {
         this.guiTop = (this.height - this.ySize) / 2;
         this.guiLeft = (this.width - this.xSize) / 2;
-
-        if(isAdvancedModeOn() && simpleGui) {
-            this.minecraft.displayGuiScreen(new MufflingBlockAdvancedGui(this.tileMuffling));
-        } else {
-            this.initGui();
-        }
+        this.initGui();
     }
 
     protected void initGui() {
