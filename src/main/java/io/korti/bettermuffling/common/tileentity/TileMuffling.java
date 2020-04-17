@@ -33,6 +33,7 @@ public final class TileMuffling extends TileEntity implements ITickableTileEntit
     private final Map<SoundCategory, Boolean> whiteList = new HashMap<>();
     private short range = 6;
     private UUID placer;
+    private SoundCategory selectedCategory = SoundCategory.RECORDS;
     private boolean placerOnly = false;
     private boolean advancedMode = false;
     private boolean listening = false;
@@ -140,6 +141,14 @@ public final class TileMuffling extends TileEntity implements ITickableTileEntit
         }
     }
 
+    public SoundCategory getSelectedCategory() {
+        return selectedCategory;
+    }
+
+    public void setSelectedCategory(SoundCategory selectedCategory) {
+        this.selectedCategory = selectedCategory;
+    }
+
     @Override
     public CompoundNBT write(CompoundNBT compound) {
         this.writeMufflingData(compound);
@@ -159,6 +168,7 @@ public final class TileMuffling extends TileEntity implements ITickableTileEntit
         compound.putUniqueId("placer", this.placer);
         compound.putBoolean("advancedMode", this.advancedMode);
         compound.putBoolean("listening", this.listening);
+        compound.putShort("selectedCategory", (short) this.selectedCategory.ordinal());
 
         if(!Objects.requireNonNull(this.world).isRemote && writePlayerName) {
             compound.putString("placerName", this.getPlacerName());
@@ -203,6 +213,9 @@ public final class TileMuffling extends TileEntity implements ITickableTileEntit
         this.placer = compound.getUniqueId("placer");
         this.advancedMode = compound.getBoolean("advancedMode");
         this.listening = compound.getBoolean("listening");
+        this.selectedCategory = SoundCategory
+                .values()[net.minecraft.util.math.MathHelper
+                .clamp(compound.getShort("selectedCategory"), SoundCategory.RECORDS.ordinal(), SoundCategory.VOICE.ordinal())];
     }
 
     private void readSoundLevels(CompoundNBT compound) {

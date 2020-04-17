@@ -75,10 +75,11 @@ public class MufflingBlockAdvancedGui extends MufflingBlockSimpleGui {
                         b.active = false;
 
                         selectedSoundCategory = category;
+                        this.tileMuffling.setSelectedCategory(category);
                         this.soundNamesList.selectSoundCategory(category);
                     }));
 
-            if (buttonCount == 0) {
+            if (category == tileMuffling.getSelectedCategory()) {
                 this.activeSoundSlider = soundSlider;
                 soundSlider.visible = true;
                 this.activeWhiteBlackListButton = whiteBlackListButton;
