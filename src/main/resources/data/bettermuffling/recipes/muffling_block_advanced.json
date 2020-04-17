@@ -1,0 +1,19 @@
+{
+  "type": "bettermuffling:muffling_block_advanced_recipe",
+  "pattern": [
+    "GGG",
+    "GMG",
+    "GGG"
+  ],
+  "key": {
+    "G": {
+      "item": "minecraft:gold_ingot"
+    },
+    "M":{
+      "item": "bettermuffling:muffling_block"
+    }
+  },
+  "result": {
+    "item": "bettermuffling:muffling_block_advanced"
+  }
+}

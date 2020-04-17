@@ -13,32 +13,26 @@ import java.util.function.Supplier;
 
 public class RequestMufflingUpdatePacket {
 
-    private final String dataHash;
     private final BlockPos pos;
 
-    public RequestMufflingUpdatePacket(String dataHash, BlockPos pos) {
-        this.dataHash = dataHash;
+    public RequestMufflingUpdatePacket(BlockPos pos) {
         this.pos = pos;
     }
 
-    public String getDataHash() {
-        return dataHash;
-    }
 
     public static void encode(RequestMufflingUpdatePacket packet, PacketBuffer buf) {
-        buf.writeString(packet.dataHash);
         buf.writeBlockPos(packet.pos);
     }
 
     public static RequestMufflingUpdatePacket decode(PacketBuffer buf) {
-        return new RequestMufflingUpdatePacket(buf.readString(32767), buf.readBlockPos());
+        return new RequestMufflingUpdatePacket(buf.readBlockPos());
     }
 
     public static class Handler {
         public static void handle(final RequestMufflingUpdatePacket packet, final Supplier<NetworkEvent.Context> ctx) {
             ctx.get().enqueueWork(() -> {
                 final ServerPlayerEntity player = ctx.get().getSender();
-                final World world = Objects.requireNonNull(player).getServerWorld();
+                final World world = Objects.requireNonNull(player).getEntityWorld();
                 final TileEntity te = world.getTileEntity(packet.pos);
                 if(te instanceof TileMuffling) {
                     ((TileMuffling) te).syncToClient(packet, player);

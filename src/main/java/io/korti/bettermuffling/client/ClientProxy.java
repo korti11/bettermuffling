@@ -1,5 +1,6 @@
 package io.korti.bettermuffling.client;
 
+import io.korti.bettermuffling.BetterMuffling;
 import io.korti.bettermuffling.common.ServerProxy;
 import io.korti.bettermuffling.common.network.packet.MufflingDataPacket;
 import io.korti.bettermuffling.common.tileentity.TileMuffling;
@@ -7,6 +8,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.util.InputMappings;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.LogicalSide;
@@ -24,12 +26,15 @@ public class ClientProxy extends ServerProxy {
     @Override
     public Runnable getMufflingDataPacketRunnable(MufflingDataPacket packet, NetworkEvent.Context ctx) {
         return () -> {
+            BetterMuffling.LOG.debug("Received muffling data from server.");
             final LogicalSide side = ctx.getDirection().getReceptionSide();
             final World world;
             final TileEntity te;
+            boolean lanWorld = false;
             if(side == LogicalSide.SERVER) {
                 final ServerPlayerEntity player = ctx.getSender();
-                world = Objects.requireNonNull(player).getServerWorld();
+                world = Objects.requireNonNull(player).getEntityWorld();
+                lanWorld = Objects.requireNonNull(world.getServer()).getPublic();
             } else {
                 world = ClientProxy.getWorld();
             }
@@ -37,6 +42,9 @@ public class ClientProxy extends ServerProxy {
             if(te instanceof TileMuffling) {
                 ((TileMuffling) te).readMufflingData(packet.getMufflingData());
                 te.markDirty();
+                if (lanWorld) {
+                    ((TileMuffling) te).syncToAllClients();
+                }
             }
         };
     }

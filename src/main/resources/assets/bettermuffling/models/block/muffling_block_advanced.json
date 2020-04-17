@@ -1,0 +1,7 @@
+{
+  "parent": "block/cube_all",
+  "textures": {
+    "particle": "bettermuffling:blocks/muffling_block_advanced",
+    "all": "bettermuffling:blocks/muffling_block_advanced"
+  }
+}
