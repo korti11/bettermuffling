@@ -98,7 +98,7 @@ public class MufflingBlock extends Block {
                 return true;
             }
         }
-        return super.onBlockActivated(blockState, worldIn, pos, player, hand, traceResult);
+        return true;
     }
 
     @Override
