@@ -42,6 +42,10 @@ public class MufflingBlockAdvancedGui extends MufflingBlockSimpleGui {
     @Override
     protected void initGui() {
         //super.initGui();
+
+        this.soundNamesList = new ScrollList(this.guiLeft + 130, this.guiTop + 69, 181, 121);
+        this.children.add(this.soundNamesList);
+
         int buttonCount = 0;
         for (final SoundCategory category : SoundCategory.values()) {
             if (category == SoundCategory.MASTER || category == SoundCategory.MUSIC) {
@@ -86,6 +90,7 @@ public class MufflingBlockAdvancedGui extends MufflingBlockSimpleGui {
                 whiteBlackListButton.visible = true;
                 this.selectedSoundCategoryButton = button;
                 button.active = false;
+                this.soundNamesList.selectSoundCategory(category);
                 this.selectedSoundCategory = category;
             }
             buttonCount++;
@@ -117,8 +122,6 @@ public class MufflingBlockAdvancedGui extends MufflingBlockSimpleGui {
             this.soundNamesList.removeSelectedEntry();
         }));
 
-        this.soundNamesList = new ScrollList(this.guiLeft + 130, this.guiTop + 69, 181, 121);
-        this.children.add(this.soundNamesList);
     }
 
     @Override
