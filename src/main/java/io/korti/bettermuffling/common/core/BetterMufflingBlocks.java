@@ -24,6 +24,9 @@ final public class BetterMufflingBlocks {
     @ObjectHolder(BetterMuffling.MOD_ID + ":muffling_block_advanced")
     public static AdvancedMufflingBlock advancedMufflingBlock;
 
+    @ObjectHolder(BetterMuffling.MOD_ID + ":muffling_block_advanced")
+    public static Item advancedMufflingBlockItem;
+
     @Mod.EventBusSubscriber(modid = BetterMuffling.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
     public static class Registration {
 
