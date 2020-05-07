@@ -184,7 +184,7 @@ public final class TileMuffling extends TileEntity implements ITickableTileEntit
         if(this.advancedMode) {
             this.soundNames.forEach(((category, strings) -> {
                 ListNBT list = new ListNBT();
-                strings.forEach((s) -> list.add(new StringNBT(s)));
+                strings.forEach((s) -> list.add(StringNBT.valueOf(s)));
                 compound.put("names_" + category.getName(), list);
             }));
         }
