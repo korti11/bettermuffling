@@ -3,6 +3,9 @@
   "block.bettermuffling.muffling_block": "Muffling Block",
   "block.bettermuffling.muffling_block_advanced": "Advanced Muffling Block",
 
+  "_comment": "Items",
+  "item.bettermuffling.upgrade": "Advanced Upgrade",
+
   "_comment": "Gui Elemente",
   "gui.muffling_block.title": "Muffling Options",
   "button.muffling_block.range": "Range",
