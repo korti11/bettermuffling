@@ -21,5 +21,6 @@
   "tooltip.muffling_block.entry.delete": "Delete selected entry",
 
   "_comment": "Tooltips",
-  "tooltip.hold_key.info": "Hold %s to show more infos."
+  "tooltip.hold_key.info": "Hold %s to show more infos.",
+  "tooltip.upgrade.info": "Shift + Right click on a \nmuffling block to upgrade it."
 }
