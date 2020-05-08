@@ -134,6 +134,9 @@ public final class TileMuffling extends TileEntity implements ITickableTileEntit
     }
 
     public boolean muffleSound(SoundCategory category, String name) {
+        if(!soundLevels.containsKey(category)) {
+            return false;
+        }
         if (getWhiteListForCategory(category)) {
             return this.soundNames.get(category).contains(name);
         } else {
