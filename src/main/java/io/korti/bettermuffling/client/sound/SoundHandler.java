@@ -26,10 +26,10 @@ public final class SoundHandler {
             final BlockPos pos = entry.getKey();
             final short range = entry.getValue().getRange();
             if(MathHelper.isInRange(soundPos, pos, range)){
-                sound.createAccessor(event.getManager().sndHandler); // Why? Idk :D
                 final TileMuffling tileMuffling = (TileMuffling) ClientProxy.getWorld().getTileEntity(pos);
-                if(tileMuffling != null) {
+                if(tileMuffling != null && event.getManager() != null) {
                     if(tileMuffling.muffleSound(category, event.getName())) {
+                        sound.createAccessor(event.getManager().sndHandler); // Why? Idk :D
                         final float soundLevel = tileMuffling.getSoundLevel(category);
                         final ISound newSound = new SimpleSound(sound.getSoundLocation(), category,
                                 sound.getVolume() * soundLevel, sound.getPitch(), sound.canRepeat(), sound.getRepeatDelay(),

@@ -3,6 +3,9 @@
   "block.bettermuffling.muffling_block": "Muffling Block",
   "block.bettermuffling.muffling_block_advanced": "Advanced Muffling Block",
 
+  "_comment": "Items",
+  "item.bettermuffling.upgrade": "Advanced Upgrade",
+
   "_comment": "Gui Elemente",
   "gui.muffling_block.title": "Muffling Options",
   "button.muffling_block.range": "Range",
@@ -18,5 +21,6 @@
   "tooltip.muffling_block.entry.delete": "Delete selected entry",
 
   "_comment": "Tooltips",
-  "tooltip.hold_key.info": "Hold %s to show more infos."
+  "tooltip.hold_key.info": "Hold %s to show more infos.",
+  "tooltip.upgrade.info": "Shift + Right click on a \nmuffling block to upgrade it."
 }
