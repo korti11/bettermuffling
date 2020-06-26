@@ -1,5 +1,6 @@
 package io.korti.bettermuffling.client.gui;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import io.korti.bettermuffling.BetterMuffling;
 import io.korti.bettermuffling.common.config.BetterMufflingConfig;
@@ -13,6 +14,10 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.lwjgl.opengl.GL11;
 
+import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.stream.Stream;
+
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = BetterMuffling.MOD_ID)
 public class MufflingAreaIndicator {
 
@@ -25,7 +30,7 @@ public class MufflingAreaIndicator {
             final ClientPlayerEntity clientPlayer = mc.player;
             if(clientPlayer.getPersistentData().getInt("muffling_areas") > 0 &&
                     BetterMufflingConfig.CLIENT.indicatorEnable.get()) {
-                indicator.drawIndicator();
+                indicator.drawIndicator(event.getMatrixStack());
             }
         }
     }
@@ -36,7 +41,7 @@ public class MufflingAreaIndicator {
                 new ResourceLocation(BetterMuffling.MOD_ID, "textures/blocks/muffling_block.png");
         private final Minecraft mc = Minecraft.getInstance();
 
-        private void drawIndicator() {
+        private void drawIndicator(MatrixStack stack) {
             final float size = (float)BetterMufflingConfig.CLIENT.size.get() / 100F;
             final int xPos = BetterMufflingConfig.CLIENT.xPos.get();
             final int yPos = BetterMufflingConfig.CLIENT.yPos.get();
@@ -45,7 +50,7 @@ public class MufflingAreaIndicator {
             this.mc.getTextureManager().bindTexture(INDICATOR_ICON);
             GL11.glPushMatrix();
             GL11.glScalef(size, size, size);
-            this.blit(xPos, yPos, 0, 0, 256, 256);
+            this.func_238474_b_(stack, xPos, yPos, 0, 0, 256, 256);
             GL11.glPopMatrix();
         }
     }

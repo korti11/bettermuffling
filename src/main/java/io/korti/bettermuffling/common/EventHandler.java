@@ -6,6 +6,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -15,6 +16,10 @@ public class EventHandler {
 
     @SubscribeEvent
     public static void onBreaking(final PlayerEvent.BreakSpeed event) {
+        if(event.getPos() == null) {
+            return;
+        }
+
         final PlayerEntity player = event.getPlayer();
         final World world = player.getEntityWorld();
         final BlockPos pos = event.getPos();

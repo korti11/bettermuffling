@@ -1,11 +1,16 @@
 package io.korti.bettermuffling.client.gui.widget;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import io.korti.bettermuffling.BetterMuffling;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TranslationTextComponent;
+
+import java.util.Collections;
 
 public class ListenAudioButton extends BetterButton {
 
@@ -15,27 +20,27 @@ public class ListenAudioButton extends BetterButton {
     private final int yTexStart = 16;
 
     public ListenAudioButton(int widthIn, int heightIn, int width, int height, Screen parent, Button.IPressable onPress) {
-        super(widthIn, heightIn, width, height, "", parent, onPress);
+        super(widthIn, heightIn, width, height, "", parent, "", onPress);
     }
 
     @Override
-    public void renderButton(int p_renderButton_1_, int p_renderButton_2_, float p_renderButton_3_) {
-        super.renderButton(p_renderButton_1_, p_renderButton_2_, p_renderButton_3_);
+    public void func_230431_b_(MatrixStack stack, int p_renderButton_1_, int p_renderButton_2_, float p_renderButton_3_) {
+        super.func_230431_b_(stack, p_renderButton_1_, p_renderButton_2_, p_renderButton_3_);
         Minecraft minecraft = Minecraft.getInstance();
         minecraft.getTextureManager().bindTexture(guiElements);
 
-        int xOffset = (this.width - 16) / 2;
-        int yOffset = (this.height - 16) / 2;
-        this.blit(this.x + xOffset, this.y + yOffset, xTexStart, yTexStart, 16, 16);
+        int xOffset = (this.field_230688_j_ - 16) / 2;
+        int yOffset = (this.field_230689_k_ - 16) / 2;
+        this.func_238474_b_(stack, this.field_230690_l_ + xOffset, this.field_230691_m_ + yOffset, xTexStart, yTexStart, 16, 16);
     }
 
-    public void renderToolTip(int mouseX, int mouseY) {
-        if(this.isHovered()) {
-            if(xTexStart == 197) {
-                this.renderToolTip(I18n.format("tooltip.muffling_block.listening.on"), mouseX, mouseY);
-            } else {
-                this.renderToolTip(I18n.format("tooltip.muffling_block.listening.off"), mouseX, mouseY);
-            }
+    @Override
+    protected void renderToolTip(Button button, MatrixStack stack, int mouseX, int mouseY) {
+        FontRenderer fontRenderer = Minecraft.getInstance().fontRenderer;
+        if(xTexStart == 197) {
+            this.screen.func_238654_b_(stack, Collections.singletonList(new TranslationTextComponent("tooltip.muffling_block.listening.on")), mouseX, mouseY, fontRenderer);
+        } else {
+            this.screen.func_238654_b_(stack, Collections.singletonList(new TranslationTextComponent("tooltip.muffling_block.listening.off")), mouseX, mouseY, fontRenderer);
         }
     }
 
@@ -44,8 +49,8 @@ public class ListenAudioButton extends BetterButton {
     }
 
     @Override
-    public void onPress() {
-        super.onPress();
+    public void func_230930_b_() {
+        super.func_230930_b_();
         changeTexture();
     }
 

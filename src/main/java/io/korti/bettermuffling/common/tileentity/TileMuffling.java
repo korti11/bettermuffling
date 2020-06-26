@@ -9,6 +9,7 @@ import io.korti.bettermuffling.common.network.packet.MufflingAreaEventPacket;
 import io.korti.bettermuffling.common.network.packet.MufflingDataPacket;
 import io.korti.bettermuffling.common.network.packet.RequestMufflingUpdatePacket;
 import io.korti.bettermuffling.common.util.MathHelper;
+import net.minecraft.block.BlockState;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
@@ -18,7 +19,7 @@ import net.minecraft.tileentity.ITickableTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.fml.network.PacketDistributor;
 
 import java.util.*;
@@ -200,8 +201,8 @@ public final class TileMuffling extends TileEntity implements ITickableTileEntit
     }
 
     @Override
-    public void read(CompoundNBT compound) {
-        super.read(compound);
+    public void func_230337_a_(BlockState blockState, CompoundNBT compound) {
+        super.func_230337_a_(blockState, compound);
         this.readMufflingData(compound);
         validateWithConfig();
     }
@@ -214,7 +215,9 @@ public final class TileMuffling extends TileEntity implements ITickableTileEntit
         this.readWhiteList(compound);
         this.range = compound.getShort("range");
         this.placerOnly = compound.getBoolean("placerOnly");
-        this.placer = compound.getUniqueId("placer");
+        if(compound.hasUniqueId("placer")) {
+            this.placer = compound.getUniqueId("placer");
+        }
         this.listening = compound.getBoolean("listening");
         this.selectedCategory = SoundCategory
                 .values()[net.minecraft.util.math.MathHelper
@@ -303,7 +306,7 @@ public final class TileMuffling extends TileEntity implements ITickableTileEntit
         final List<ServerPlayerEntity> playersInRange = getWorld().getEntitiesWithinAABB(ServerPlayerEntity.class,
                 calcRangeAABB(), player -> {
             if(player != null) {
-                final Vec3d pos = new Vec3d(this.getPos());
+                final Vector3d pos = Vector3d.func_237491_b_(this.getPos());
                 final double distance = Math.sqrt(player.getDistanceSq(pos.add(0.5D, 0.5D, 0.5D)));
                 return MathHelper.isInRange((float) distance, this.getRange());
             }

@@ -44,10 +44,11 @@ public class UpgradeItem extends Item {
         final World world = context.getWorld();
         final BlockPos pos = context.getPos();
         final PlayerEntity player = context.getPlayer();
+        final BlockState oldBlockState = world.getBlockState(pos);
         final BlockState newBlockState = BetterMufflingBlocks.advancedMufflingBlock.getDefaultState();
 
         if(!world.isRemote && player != null
-                && world.getBlockState(pos).getBlock().equals(BetterMufflingBlocks.mufflingBlock)) {
+                && oldBlockState.getBlock().equals(BetterMufflingBlocks.mufflingBlock)) {
             final TileEntity oldTe = world.getTileEntity(pos);
             if(oldTe instanceof TileMuffling) {
                 // Set new block without update the client.
@@ -57,7 +58,7 @@ public class UpgradeItem extends Item {
                 final TileMuffling newTe = (TileMuffling) world.getTileEntity(pos);
                 final CompoundNBT teData = new CompoundNBT();
                 oldTe.write(teData);
-                newTe.read(teData);
+                newTe.func_230337_a_(oldBlockState, teData);
                 newTe.setAdvancedMode(true);
 
                 // Notify the world of the block update
