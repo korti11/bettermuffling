@@ -80,4 +80,4 @@ jar {
     }
 }
 
-version = "1.15.2-$version"
+version = "1.16.1-$version"
