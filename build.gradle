@@ -24,9 +24,8 @@ sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = co
 
 minecraft {
     //mappings channel: mapping_channel, version: mapping_version
-    //mappings channel: 'snapshot', version: '20200119-1.14.4'  // It's again not working with the props file. Idk why. Fuuuu >:(
-    //mappings = 'stable_58-1.14.4'
-    mappings channel: 'stable', version: '58-1.14.4'
+    mappings channel: 'snapshot', version: '20200417-1.15.1'  // It's again not working with the props file. Idk why. Fuuuu >:(
+    //mappings channel: 'stable', version: '60-1.15'
 
     runs {
         client {
@@ -86,4 +85,4 @@ jar {
     }
 }
 
-version = "1.14.4-$version"
+version = "1.15.2-$version"

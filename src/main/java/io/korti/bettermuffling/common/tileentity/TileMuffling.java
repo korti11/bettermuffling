@@ -134,6 +134,9 @@ public final class TileMuffling extends TileEntity implements ITickableTileEntit
     }
 
     public boolean muffleSound(SoundCategory category, String name) {
+        if(!soundLevels.containsKey(category)) {
+            return false;
+        }
         if (getWhiteListForCategory(category)) {
             return this.soundNames.get(category).contains(name);
         } else {
@@ -184,7 +187,7 @@ public final class TileMuffling extends TileEntity implements ITickableTileEntit
         if(this.advancedMode) {
             this.soundNames.forEach(((category, strings) -> {
                 ListNBT list = new ListNBT();
-                strings.forEach((s) -> list.add(new StringNBT(s)));
+                strings.forEach((s) -> list.add(StringNBT.valueOf(s)));
                 compound.put("names_" + category.getName(), list);
             }));
         }

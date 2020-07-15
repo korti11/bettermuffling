@@ -51,7 +51,7 @@ public class ClientProxy extends ServerProxy {
 
     @Override
     public boolean isShiftKeyDown() {
-        long handler = Minecraft.getInstance().mainWindow.getHandle();
+        long handler = Minecraft.getInstance().getMainWindow().getHandle();
         return InputMappings.isKeyDown(handler, GLFW.GLFW_KEY_LEFT_SHIFT) ||
                 InputMappings.isKeyDown(handler, GLFW.GLFW_KEY_RIGHT_SHIFT);
     }
