@@ -11,7 +11,12 @@ buildscript {
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
 
-version = "$mod_version-$release_type"
+if(release_type != "") {
+    version = "$mod_version-$release_type"
+} else {
+    version = "$mod_version"
+}
+
 group = mod_group
 archivesBaseName = mod_base_name
 
