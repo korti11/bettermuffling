@@ -37,8 +37,8 @@ public class BetterButton extends Button {
 
     protected void renderToolTip(Button button, MatrixStack stack, int mouseX, int mouseY) {
         if(!toolTipKey.isEmpty()) {
-            FontRenderer fontRenderer = Minecraft.getInstance().fontRenderer;
-            this.screen.func_238654_b_(stack, Collections.singletonList(new TranslationTextComponent(toolTipKey)), mouseX, mouseY, fontRenderer);
+            this.screen.func_238654_b_(stack, Collections.singletonList(new TranslationTextComponent(toolTipKey)),
+                    mouseX, mouseY);
         }
     }
 

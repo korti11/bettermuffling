@@ -3,10 +3,8 @@ package io.korti.bettermuffling.client.gui.widget;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import io.korti.bettermuffling.BetterMuffling;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.TranslationTextComponent;
 
@@ -36,11 +34,14 @@ public class ListenAudioButton extends BetterButton {
 
     @Override
     protected void renderToolTip(Button button, MatrixStack stack, int mouseX, int mouseY) {
-        FontRenderer fontRenderer = Minecraft.getInstance().fontRenderer;
         if(xTexStart == 197) {
-            this.screen.func_238654_b_(stack, Collections.singletonList(new TranslationTextComponent("tooltip.muffling_block.listening.on")), mouseX, mouseY, fontRenderer);
+            this.screen.func_238654_b_(stack,
+                    Collections.singletonList(new TranslationTextComponent("tooltip.muffling_block.listening.on")),
+                    mouseX, mouseY);
         } else {
-            this.screen.func_238654_b_(stack, Collections.singletonList(new TranslationTextComponent("tooltip.muffling_block.listening.off")), mouseX, mouseY, fontRenderer);
+            this.screen.func_238654_b_(stack,
+                    Collections.singletonList(new TranslationTextComponent("tooltip.muffling_block.listening.off")),
+                    mouseX, mouseY);
         }
     }
 

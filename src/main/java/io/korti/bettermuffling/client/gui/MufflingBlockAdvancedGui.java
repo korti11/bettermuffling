@@ -5,11 +5,8 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import io.korti.bettermuffling.BetterMuffling;
 import io.korti.bettermuffling.client.gui.widget.*;
 import io.korti.bettermuffling.common.tileentity.TileMuffling;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.IGuiEventListener;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
@@ -350,8 +347,9 @@ public class MufflingBlockAdvancedGui extends MufflingBlockSimpleGui {
 
         @Override
         public void func_230443_a_(MatrixStack stack, int mouseX, int mouseY) {
-            FontRenderer fontRenderer = Minecraft.getInstance().fontRenderer;
-            MufflingBlockAdvancedGui.this.func_238654_b_(stack, Collections.singletonList(new TranslationTextComponent("button.muffling_block.player_only")), mouseX, mouseY, fontRenderer);
+            MufflingBlockAdvancedGui.this.func_238654_b_(stack,
+                    Collections.singletonList(new TranslationTextComponent("button.muffling_block.player_only")),
+                    mouseX, mouseY);
         }
     }
 }
