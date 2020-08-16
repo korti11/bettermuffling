@@ -15,7 +15,6 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import org.w3c.dom.ranges.Range;
 
 @OnlyIn(Dist.CLIENT)
 public class MufflingBlockSimpleGui extends Screen {
@@ -100,7 +99,7 @@ public class MufflingBlockSimpleGui extends Screen {
         String title = this.field_230704_d_.getString();
         final float x = (float) (this.field_230708_k_ / 2 - this.field_230712_o_.getStringWidth(title) / 2);
         final float y = (float) (this.guiTop + 7.5);
-        this.field_230712_o_.func_238422_b_(stack, this.field_230704_d_, x, y, 4210752);
+        this.field_230712_o_.func_243248_b(stack, this.field_230704_d_, x, y, 4210752);
     }
 
     @Override

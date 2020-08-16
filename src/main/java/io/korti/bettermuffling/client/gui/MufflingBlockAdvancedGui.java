@@ -347,7 +347,7 @@ public class MufflingBlockAdvancedGui extends MufflingBlockSimpleGui {
 
         @Override
         public void func_230443_a_(MatrixStack stack, int mouseX, int mouseY) {
-            MufflingBlockAdvancedGui.this.func_238654_b_(stack,
+            MufflingBlockAdvancedGui.this.func_243308_b(stack,
                     Collections.singletonList(new TranslationTextComponent("button.muffling_block.player_only")),
                     mouseX, mouseY);
         }

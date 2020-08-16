@@ -35,11 +35,11 @@ public class ListenAudioButton extends BetterButton {
     @Override
     protected void renderToolTip(Button button, MatrixStack stack, int mouseX, int mouseY) {
         if(xTexStart == 197) {
-            this.screen.func_238654_b_(stack,
+            this.screen.func_243308_b(stack,
                     Collections.singletonList(new TranslationTextComponent("tooltip.muffling_block.listening.on")),
                     mouseX, mouseY);
         } else {
-            this.screen.func_238654_b_(stack,
+            this.screen.func_243308_b(stack,
                     Collections.singletonList(new TranslationTextComponent("tooltip.muffling_block.listening.off")),
                     mouseX, mouseY);
         }
