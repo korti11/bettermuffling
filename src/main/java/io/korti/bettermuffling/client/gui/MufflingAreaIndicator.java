@@ -14,10 +14,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.lwjgl.opengl.GL11;
 
-import java.lang.reflect.Field;
-import java.util.Arrays;
-import java.util.stream.Stream;
-
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = BetterMuffling.MOD_ID)
 public class MufflingAreaIndicator {
 
@@ -50,7 +46,7 @@ public class MufflingAreaIndicator {
             this.mc.getTextureManager().bindTexture(INDICATOR_ICON);
             GL11.glPushMatrix();
             GL11.glScalef(size, size, size);
-            this.func_238474_b_(stack, xPos, yPos, 0, 0, 256, 256);
+            this.blit(stack, xPos, yPos, 0, 0, 256, 256);
             GL11.glPopMatrix();
         }
     }

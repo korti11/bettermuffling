@@ -7,8 +7,6 @@ import net.minecraft.block.BlockState;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.client.util.ITooltipFlag;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.InventoryHelper;
-import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
@@ -20,7 +18,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.world.World;
-import net.minecraftforge.items.ItemStackHandler;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
@@ -58,7 +55,7 @@ public class UpgradeItem extends Item {
                 final TileMuffling newTe = (TileMuffling) world.getTileEntity(pos);
                 final CompoundNBT teData = new CompoundNBT();
                 oldTe.write(teData);
-                newTe.func_230337_a_(oldBlockState, teData);
+                newTe.read(oldBlockState, teData);
                 newTe.setAdvancedMode(true);
 
                 // Notify the world of the block update

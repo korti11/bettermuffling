@@ -201,8 +201,8 @@ public final class TileMuffling extends TileEntity implements ITickableTileEntit
     }
 
     @Override
-    public void func_230337_a_(BlockState blockState, CompoundNBT compound) {
-        super.func_230337_a_(blockState, compound);
+    public void read(BlockState blockState, CompoundNBT compound) {
+        super.read(blockState, compound);
         this.readMufflingData(compound);
         validateWithConfig();
     }
@@ -306,7 +306,7 @@ public final class TileMuffling extends TileEntity implements ITickableTileEntit
         final List<ServerPlayerEntity> playersInRange = getWorld().getEntitiesWithinAABB(ServerPlayerEntity.class,
                 calcRangeAABB(), player -> {
             if(player != null) {
-                final Vector3d pos = Vector3d.func_237491_b_(this.getPos());
+                final Vector3d pos = Vector3d.copy(this.getPos());
                 final double distance = Math.sqrt(player.getDistanceSq(pos.add(0.5D, 0.5D, 0.5D)));
                 return MathHelper.isInRange((float) distance, this.getRange());
             }

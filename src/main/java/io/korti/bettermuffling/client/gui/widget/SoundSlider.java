@@ -7,7 +7,6 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.text.StringTextComponent;
 
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 public class SoundSlider extends BaseSlider {
     private final double min = BetterMufflingConfig.COMMON.minVolume.get();
@@ -18,13 +17,13 @@ public class SoundSlider extends BaseSlider {
 
     public SoundSlider(int x, int y, int width, int height, double value, SoundCategory category) {
         super(x, y, width, height, 0, "soundCategory." + category.getName());
-        this.field_230683_b_ = (value - min) / max;
+        this.sliderValue = (value - min) / max;
         this.category = category;
         this.func_230979_b_();
     }
 
     private double calcVolume() {
-        return (this.field_230683_b_ * max) + min;
+        return (this.sliderValue * max) + min;
     }
 
     public void setListener(BiConsumer<SoundCategory, Double> listener) {
@@ -33,8 +32,8 @@ public class SoundSlider extends BaseSlider {
 
     @Override
     protected void func_230979_b_() {
-        String volumeMessage = this.field_230683_b_ == 0 ? I18n.format("options.off") : (int)(calcVolume() * 100) + "%";
-        this.func_238482_a_(new StringTextComponent(I18n.format(this.titleKey) + ": " + volumeMessage));
+        String volumeMessage = this.sliderValue == 0 ? I18n.format("options.off") : (int)(calcVolume() * 100) + "%";
+        this.setMessage(new StringTextComponent(I18n.format(this.titleKey) + ": " + volumeMessage));
     }
 
     @Override

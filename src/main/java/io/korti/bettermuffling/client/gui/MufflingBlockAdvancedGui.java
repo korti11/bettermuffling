@@ -40,39 +40,39 @@ public class MufflingBlockAdvancedGui extends MufflingBlockSimpleGui {
         //super.initGui();
 
         this.soundNamesList = new ScrollList(this.guiLeft + 130, this.guiTop + 69, 181, 121);
-        this.field_230705_e_.add(this.soundNamesList);
+        this.children.add(this.soundNamesList);
 
         int buttonCount = 0;
         for (final SoundCategory category : SoundCategory.values()) {
             if (category == SoundCategory.MASTER || category == SoundCategory.MUSIC) {
                 continue;
             }
-            SoundSlider soundSlider = this.func_230480_a_(new SoundSlider(this.guiLeft + 130, this.guiTop + 31, 180, 20,
+            SoundSlider soundSlider = this.addButton(new SoundSlider(this.guiLeft + 130, this.guiTop + 31, 180, 20,
                     tileMuffling.getSoundLevel(category).doubleValue(), category));
-            soundSlider.field_230694_p_ = false;
+            soundSlider.visible = false;
             soundSlider.setListener((c, volume) -> tileMuffling.setSoundLevel(c, volume.floatValue()));
 
-            WhiteBlackListButton whiteBlackListButton = this.func_230480_a_(new WhiteBlackListButton(this.guiLeft + 315,
+            WhiteBlackListButton whiteBlackListButton = this.addButton(new WhiteBlackListButton(this.guiLeft + 315,
                     this.guiTop + 69, 20, 20, this, (b) -> {
                 tileMuffling.setWhiteListForCategory(category, !tileMuffling.getWhiteListForCategory(category));
             }));
             whiteBlackListButton.setIsWhiteList(tileMuffling.getWhiteListForCategory(category));
-            whiteBlackListButton.field_230694_p_ = false;
+            whiteBlackListButton.visible = false;
 
-            BetterButton button = this.func_230480_a_(new BetterButton(this.guiLeft + 11,
+            BetterButton button = this.addButton(new BetterButton(this.guiLeft + 11,
                     this.guiTop + 31 + (20 * buttonCount), 110, 20, I18n.format("soundCategory." + category.getName()),
                     (b) -> {
-                        activeSoundSlider.field_230694_p_ = false;
+                        activeSoundSlider.visible = false;
                         activeSoundSlider = soundSlider;
-                        soundSlider.field_230694_p_ = true;
+                        soundSlider.visible = true;
 
-                        activeWhiteBlackListButton.field_230694_p_ = false;
+                        activeWhiteBlackListButton.visible = false;
                         activeWhiteBlackListButton = whiteBlackListButton;
-                        whiteBlackListButton.field_230694_p_ = true;
+                        whiteBlackListButton.visible = true;
 
-                        selectedSoundCategoryButton.field_230693_o_ = true;
+                        selectedSoundCategoryButton.active = true;
                         selectedSoundCategoryButton = b;
-                        b.field_230693_o_ = false;
+                        b.active = false;
 
                         selectedSoundCategory = category;
                         this.tileMuffling.setSelectedCategory(category);
@@ -81,25 +81,25 @@ public class MufflingBlockAdvancedGui extends MufflingBlockSimpleGui {
 
             if (category == tileMuffling.getSelectedCategory()) {
                 this.activeSoundSlider = soundSlider;
-                soundSlider.field_230694_p_ = true;
+                soundSlider.visible = true;
                 this.activeWhiteBlackListButton = whiteBlackListButton;
-                whiteBlackListButton.field_230694_p_ = true;
+                whiteBlackListButton.visible = true;
                 this.selectedSoundCategoryButton = button;
-                button.field_230693_o_ = false;
+                button.active = false;
                 this.soundNamesList.selectSoundCategory(category);
                 this.selectedSoundCategory = category;
             }
             buttonCount++;
         }
 
-        RangeSlider rangeSlider = this.func_230480_a_(new RangeSlider(this.guiLeft + 11, this.guiTop + 195, 158, 20,
+        RangeSlider rangeSlider = this.addButton(new RangeSlider(this.guiLeft + 11, this.guiTop + 195, 158, 20,
                 this.tileMuffling.getRange()));
         rangeSlider.setUpdateListener(this.tileMuffling::setRange);
 
-        this.func_230480_a_(new BetterButton(this.guiLeft + 11 + 158 + 8, this.guiTop + 195, 158, 20,
-                I18n.format("gui.done"), (b) -> this.func_231175_as__()));
+        this.addButton(new BetterButton(this.guiLeft + 11 + 158 + 8, this.guiTop + 195, 158, 20,
+                I18n.format("gui.done"), (b) -> this.closeScreen()));
 
-        this.lockIconButton = this.func_230480_a_(new LockIconButton(this.guiLeft + 315, this.guiTop + 31,
+        this.lockIconButton = this.addButton(new LockIconButton(this.guiLeft + 315, this.guiTop + 31,
                 (b) -> {
                     LockIconButton lb = (LockIconButton) b;
                     lb.setLocked(!lb.isLocked());
@@ -107,13 +107,13 @@ public class MufflingBlockAdvancedGui extends MufflingBlockSimpleGui {
                 }));
         this.lockIconButton.setLocked(tileMuffling.isPlacerOnly());
 
-        this.listenAudioButton = this.func_230480_a_(new ListenAudioButton(this.guiLeft + 315, this.guiTop + 94,
+        this.listenAudioButton = this.addButton(new ListenAudioButton(this.guiLeft + 315, this.guiTop + 94,
                 20, 20, this, (b) -> {
             tileMuffling.setListening(!tileMuffling.isListening());
         }));
         this.listenAudioButton.setIsListening(tileMuffling.isListening());
 
-        this.deleteEntryButton = this.func_230480_a_(new DeleteEntryButton(this.guiLeft + 315, this.guiTop + 119,
+        this.deleteEntryButton = this.addButton(new DeleteEntryButton(this.guiLeft + 315, this.guiTop + 119,
                 20, 20, this, (b) -> {
             this.soundNamesList.removeSelectedEntry();
         }));
@@ -121,23 +121,23 @@ public class MufflingBlockAdvancedGui extends MufflingBlockSimpleGui {
     }
 
     @Override
-    public void func_231175_as__() {
-        super.func_231175_as__();
+    public void onClose() {
+        super.onClose();
         this.tileMuffling.syncToServer();
     }
 
     @Override
     public void renderForeground(MatrixStack stack, int mouseX, int mouseY, float partialTicks) {
         super.renderForeground(stack, mouseX, mouseY, partialTicks);
-        this.field_230712_o_.func_238421_b_(stack, I18n.format("label.muffling_block.sound.category"), (float) (this.guiLeft + 11), (float) (this.guiTop + 21), 4210752);
-        this.field_230712_o_.func_238421_b_(stack, I18n.format("label.muffling_block.volume"), (float) (this.guiLeft + 130), (float) (this.guiTop + 21), 4210752);
-        this.field_230712_o_.func_238421_b_(stack, I18n.format("label.muffling_block.sound.names"), (float) (this.guiLeft + 130), (float) (this.guiTop + 60), 4210752);
+        this.font.func_243248_b(stack, new TranslationTextComponent("label.muffling_block.sound.category"), (float) (this.guiLeft + 11), (float) (this.guiTop + 21), 4210752);
+        this.font.func_243248_b(stack, new TranslationTextComponent("label.muffling_block.volume"), (float) (this.guiLeft + 130), (float) (this.guiTop + 21), 4210752);
+        this.font.func_243248_b(stack, new TranslationTextComponent("label.muffling_block.sound.names"), (float) (this.guiLeft + 130), (float) (this.guiTop + 60), 4210752);
         this.soundNamesList.renderForeground(stack, mouseX, mouseY, partialTicks);
     }
 
     @Override
-    public void func_230446_a_(MatrixStack stack) {
-        super.func_230446_a_(stack);
+    public void renderBackground(MatrixStack stack) {
+        super.renderBackground(stack);
         this.soundNamesList.renderBackground(stack);
     }
 
@@ -197,7 +197,7 @@ public class MufflingBlockAdvancedGui extends MufflingBlockSimpleGui {
         }
 
         private void drawString(MatrixStack stack, String msg, float x, float y, int color) {
-            MufflingBlockAdvancedGui.this.field_230712_o_.func_238421_b_(stack, msg, x, y, color);
+            MufflingBlockAdvancedGui.this.font.drawString(stack, msg, x, y, color);
         }
 
         private void updateSoundNames() {
@@ -223,12 +223,12 @@ public class MufflingBlockAdvancedGui extends MufflingBlockSimpleGui {
 
         public void renderForeground(MatrixStack stack, int mouseX, int mouseY, float partialTicks) {
             GlStateManager.clearColor(1f, 1f, 1f, 1f);
-            field_230706_i_.getTextureManager().bindTexture(guiElements);
+            minecraft.getTextureManager().bindTexture(guiElements);
             int scrollBarUV = isScrollBarEnabled() ? 185 : 191;
 
             // Render scroll bar
             int yOffset = getScrollYOffset();
-            getParent().func_238474_b_(stack, this.scrollPosX, this.scrollPosY + yOffset, scrollBarUV, 0, 6, 27);
+            getParent().blit(stack, this.scrollPosX, this.scrollPosY + yOffset, scrollBarUV, 0, 6, 27);
 
             int startValue = (int) ((this.soundNameSet.size() - 12) * scrollValue);
             int maxValue = Math.min(startValue + 12, this.soundNameSet.size());
@@ -246,23 +246,23 @@ public class MufflingBlockAdvancedGui extends MufflingBlockSimpleGui {
 
         public void renderBackground(MatrixStack stack) {
             GlStateManager.clearColor(1f, 1f, 1f, 1f);
-            field_230706_i_.getTextureManager().bindTexture(guiElements);
+            minecraft.getTextureManager().bindTexture(guiElements);
             int listWidth = this.listWidth - 1;
             int halfHeight = Math.round(this.height / 2f);
             int top1 = 0;
             int top2 = 142 - halfHeight;
 
             // Render left end
-            getParent().func_238474_b_(stack, this.x, this.y, 0, top1, 1, halfHeight);
-            getParent().func_238474_b_(stack, this.x, this.y + halfHeight, 0, top2, 1, halfHeight + 1);
+            getParent().blit(stack, this.x, this.y, 0, top1, 1, halfHeight);
+            getParent().blit(stack, this.x, this.y + halfHeight, 0, top2, 1, halfHeight + 1);
 
             // Render middle
-            getParent().func_238474_b_(stack, this.x + 1, this.y, 1, top1, listWidth, halfHeight);
-            getParent().func_238474_b_(stack, this.x + 1, this.y + halfHeight, 1, top2, listWidth, halfHeight + 1);
+            getParent().blit(stack, this.x + 1, this.y, 1, top1, listWidth, halfHeight);
+            getParent().blit(stack, this.x + 1, this.y + halfHeight, 1, top2, listWidth, halfHeight + 1);
 
             // Render right end
-            getParent().func_238474_b_(stack, this.scrollPosX - 1, this.y, 177, top1, 8, halfHeight);
-            getParent().func_238474_b_(stack, this.scrollPosX - 1, this.y + halfHeight, 177, top2, 8, halfHeight + 1);
+            getParent().blit(stack, this.scrollPosX - 1, this.y, 177, top1, 8, halfHeight);
+            getParent().blit(stack, this.scrollPosX - 1, this.y + halfHeight, 177, top2, 8, halfHeight + 1);
         }
 
         private boolean isScrollBarEnabled() {
@@ -276,14 +276,14 @@ public class MufflingBlockAdvancedGui extends MufflingBlockSimpleGui {
         }
 
         @Override
-        public boolean func_231047_b_(double mouseX, double mouseY) {
+        public boolean isMouseOver(double mouseX, double mouseY) {
             return mouseX >= this.x && mouseX <= (this.x + this.width)
                     && mouseY >= this.y && mouseY <= (this.y + this.height);
         }
 
         @Override
-        public boolean func_231044_a_(double mouseX, double mouseY, int button) {
-            if (func_231047_b_(mouseX, mouseY)) {
+        public boolean mouseClicked(double mouseX, double mouseY, int button) {
+            if (isMouseOver(mouseX, mouseY)) {
                 if (this.isOverScrollBar(mouseX, mouseY)) {
                     this.scrollBarClicked = true;
                     return true;
@@ -309,13 +309,13 @@ public class MufflingBlockAdvancedGui extends MufflingBlockSimpleGui {
         }
 
         @Override
-        public boolean func_231048_c_(double p_mouseReleased_1_, double p_mouseReleased_3_, int p_mouseReleased_5_) {
+        public boolean mouseReleased(double p_mouseReleased_1_, double p_mouseReleased_3_, int p_mouseReleased_5_) {
             this.scrollBarClicked = false;
             return true;
         }
 
         @Override
-        public boolean func_231045_a_(double mouseX, double mouseY, int button, double xOffset, double yOffset) {
+        public boolean mouseDragged(double mouseX, double mouseY, int button, double xOffset, double yOffset) {
             if (!this.scrollBarClicked || !this.isScrollBarEnabled()) {
                 return false;
             }
@@ -328,7 +328,7 @@ public class MufflingBlockAdvancedGui extends MufflingBlockSimpleGui {
         }
 
         @Override
-        public boolean func_231043_a_(double mouseX, double mouseY, double yOffset) {
+        public boolean mouseScrolled(double mouseX, double mouseY, double yOffset) {
             if (!this.isScrollBarEnabled()) {
                 return false;
             }
@@ -346,7 +346,7 @@ public class MufflingBlockAdvancedGui extends MufflingBlockSimpleGui {
         }
 
         @Override
-        public void func_230443_a_(MatrixStack stack, int mouseX, int mouseY) {
+        public void renderToolTip(MatrixStack stack, int mouseX, int mouseY) {
             MufflingBlockAdvancedGui.this.func_243308_b(stack,
                     Collections.singletonList(new TranslationTextComponent("button.muffling_block.player_only")),
                     mouseX, mouseY);

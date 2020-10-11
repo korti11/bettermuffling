@@ -40,35 +40,35 @@ public class MufflingBlockSimpleGui extends Screen {
     }
 
     @Override
-    protected void func_231160_c_() {
-        this.guiTop = (this.field_230709_l_ - this.ySize) / 2;
-        this.guiLeft = (this.field_230708_k_ - this.xSize) / 2;
+    protected void init() {
+        this.guiTop = (this.height - this.ySize) / 2;
+        this.guiLeft = (this.width - this.xSize) / 2;
         this.initGui();
     }
 
     protected void initGui() {
-        this.field_230710_m_.clear();
+        this.buttons.clear();
 
         int buttonNumber = 0;
 
-        RangeSlider rangeSlider = this.func_230480_a_(new RangeSlider(this.guiLeft + 10 + buttonNumber % 2 * 145,
+        RangeSlider rangeSlider = this.addButton(new RangeSlider(this.guiLeft + 10 + buttonNumber % 2 * 145,
                 (this.guiTop + 22 + 24 * (buttonNumber >> 1)), 135, 20, tileMuffling.getRange()));
         rangeSlider.setUpdateListener(this.tileMuffling::setRange);
         buttonNumber++;
 
         String placerKey = getPlacerOnlyButtonMessage();
-        this.func_230480_a_(new BetterButton(this.guiLeft + 10 + buttonNumber % 2 * 145,
+        this.addButton(new BetterButton(this.guiLeft + 10 + buttonNumber % 2 * 145,
                 (this.guiTop + 22 + 24 * (buttonNumber >> 1)), 135, 20,
                 I18n.format(placerKey),
                 (button) -> {
                     tileMuffling.setPlacerOnly(!tileMuffling.isPlacerOnly());
-                    button.func_238482_a_(new TranslationTextComponent(getPlacerOnlyButtonMessage()));
+                    button.setMessage(new TranslationTextComponent(getPlacerOnlyButtonMessage()));
                 }));
         buttonNumber++;
 
         for (SoundCategory category : SoundCategory.values()) {
             if(category != SoundCategory.MASTER && category != SoundCategory.MUSIC) {
-                SoundSlider soundSlider = this.func_230480_a_(new SoundSlider(this.guiLeft + 10 + buttonNumber % 2 * 145,
+                SoundSlider soundSlider = this.addButton(new SoundSlider(this.guiLeft + 10 + buttonNumber % 2 * 145,
                         (this.guiTop + 22 + 24 * (buttonNumber >> 1)), 135, 20,
                         tileMuffling.getSoundLevel(category), category));
                 soundSlider.setListener(((soundCategory, volume) -> this.tileMuffling.setSoundLevel(soundCategory, volume.floatValue())));
@@ -76,38 +76,38 @@ public class MufflingBlockSimpleGui extends Screen {
             }
         }
 
-        this.func_230480_a_(new BetterButton(this.guiLeft + 50, this.guiTop + 142, 200, 20, I18n.format("gui.done"),
+        this.addButton(new BetterButton(this.guiLeft + 50, this.guiTop + 142, 200, 20, I18n.format("gui.done"),
                 (button) -> {
-                    this.func_231175_as__();
+                    this.closeScreen();
                 }));
     }
 
     @Override
-    public void func_230430_a_(MatrixStack stack, int mouseX, int mouseY, float partialTicks) {
-        this.func_230446_a_(stack);
+    public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks) {
+        this.renderBackground(stack);
         this.renderForeground(stack, mouseX, mouseY, partialTicks);
-        super.func_230430_a_(stack, mouseX, mouseY, partialTicks);
+        super.render(stack, mouseX, mouseY, partialTicks);
 
-        for(Widget widget : this.field_230710_m_) {
-            if(widget.func_230449_g_()) {
-                widget.func_230443_a_(stack, mouseX, mouseY);
+        for(Widget widget : this.buttons) {
+            if(widget.isHovered()) {
+                widget.renderToolTip(stack, mouseX, mouseY);
             }
         }
     }
 
     public void renderForeground(MatrixStack stack, int mouseX, int mouseY, float partialTicks) {
-        String title = this.field_230704_d_.getString();
-        final float x = (float) (this.field_230708_k_ / 2 - this.field_230712_o_.getStringWidth(title) / 2);
+        String title = this.title.getString();
+        final float x = (float) (this.width / 2 - this.font.getStringWidth(title) / 2);
         final float y = (float) (this.guiTop + 7.5);
-        this.field_230712_o_.func_243248_b(stack, this.field_230704_d_, x, y, 4210752);
+        this.font.func_243248_b(stack, this.title, x, y, 4210752);
     }
 
     @Override
-    public void func_230446_a_(MatrixStack stack) {
-        super.func_230446_a_(stack);
+    public void renderBackground(MatrixStack stack) {
+        super.renderBackground(stack);
 
         GlStateManager.clearColor(1F, 1F, 1F, 1F);
-        this.field_230706_i_.getTextureManager().bindTexture(background);
+        this.minecraft.getTextureManager().bindTexture(background);
 
         int halfHeight = this.ySize / 2;
         int top1 = 0;
@@ -115,14 +115,14 @@ public class MufflingBlockSimpleGui extends Screen {
         int middleWidth = this.xSize - 100;
 
         // Render left end
-        this.func_238474_b_(stack, this.guiLeft, this.guiTop, 0, top1, 50, halfHeight);
-        this.func_238474_b_(stack, this.guiLeft, this.guiTop + halfHeight, 0, top2, 50, halfHeight);
+        this.blit(stack, this.guiLeft, this.guiTop, 0, top1, 50, halfHeight);
+        this.blit(stack, this.guiLeft, this.guiTop + halfHeight, 0, top2, 50, halfHeight);
         // Render middle part
-        this.func_238474_b_(stack, this.guiLeft + 50, this.guiTop, 4, top1, middleWidth, halfHeight);
-        this.func_238474_b_(stack, this.guiLeft + 50, this.guiTop + halfHeight, 4, top2, middleWidth, halfHeight);
+        this.blit(stack, this.guiLeft + 50, this.guiTop, 4, top1, middleWidth, halfHeight);
+        this.blit(stack, this.guiLeft + 50, this.guiTop + halfHeight, 4, top2, middleWidth, halfHeight);
         // Render right end
-        this.func_238474_b_(stack, this.guiLeft + 50 + middleWidth, this.guiTop, 256 - 50, top1, 50, halfHeight);
-        this.func_238474_b_(stack, this.guiLeft + 50 + middleWidth, this.guiTop + halfHeight, 256 - 50, top2, 50, halfHeight);
+        this.blit(stack, this.guiLeft + 50 + middleWidth, this.guiTop, 256 - 50, top1, 50, halfHeight);
+        this.blit(stack, this.guiLeft + 50 + middleWidth, this.guiTop + halfHeight, 256 - 50, top2, 50, halfHeight);
 
         // Render sound category list
     }
