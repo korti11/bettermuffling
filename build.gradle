@@ -24,7 +24,7 @@ sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = co
 
 minecraft {
     //mappings channel: mapping_channel, version: mapping_version
-    mappings channel: 'snapshot', version: '20200916-1.16.2'  // It's again not working with the props file. Idk why. Fuuuu >:(
+    mappings channel: 'snapshot', version: '20201028-1.16.3'  // It's again not working with the props file. Idk why. Fuuuu >:(
     //mappings channel: 'stable', version: '60-1.15'
 
     runs {
