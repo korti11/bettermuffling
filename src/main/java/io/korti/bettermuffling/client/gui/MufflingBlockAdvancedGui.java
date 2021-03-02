@@ -77,7 +77,6 @@ public class MufflingBlockAdvancedGui extends MufflingBlockSimpleGui {
                         selectedSoundCategory = category;
                         this.tileMuffling.setSelectedCategory(category);
                         this.soundNamesList.selectSoundCategory(category);
-                        this.soundNamesList.resetScrollPosition();
                     }));
 
             if (category == tileMuffling.getSelectedCategory()) {
@@ -181,7 +180,6 @@ public class MufflingBlockAdvancedGui extends MufflingBlockSimpleGui {
                 soundCategoryNameMap.put(category,
                         Pair.of(MufflingBlockAdvancedGui.this.tileMuffling.getNameSet(category), new LinkedList<>()));
                 this.selectSoundCategory(category);
-                this.updateSoundNames();
             }
             this.selectSoundCategory(SoundCategory.RECORDS);
         }
@@ -190,15 +188,11 @@ public class MufflingBlockAdvancedGui extends MufflingBlockSimpleGui {
             return MufflingBlockAdvancedGui.this;
         }
 
-        public void resetScrollPosition() {
-            this.scrollValue = 0;
-        }
-
         private void selectSoundCategory(SoundCategory category) {
             Pair<SortedSet<String>, List<String>> pair = soundCategoryNameMap.get(category);
             this.soundNameSet = pair.getLeft();
             this.soundNames = pair.getRight();
-            this.selectedEntries.clear();
+            this.updateSoundNames();
         }
 
         private void drawString(MatrixStack stack, String msg, float x, float y, int color) {
@@ -235,10 +229,10 @@ public class MufflingBlockAdvancedGui extends MufflingBlockSimpleGui {
             int yOffset = getScrollYOffset();
             getParent().blit(stack, this.scrollPosX, this.scrollPosY + yOffset, scrollBarUV, 0, 6, 27);
 
-            int startValue = (int) ((this.soundNameSet.size() - 12) * scrollValue);
+            int startValue = Math.max((int) ((this.soundNameSet.size() - 12) * scrollValue), 0);
             int maxValue = Math.min(startValue + 12, this.soundNameSet.size());
             int elementOffset = 0;
-            for (int i = startValue; i < maxValue && i >= 0 && i < this.soundNameSet.size(); i++) {
+            for (int i = startValue; i < maxValue && i < this.soundNameSet.size() && i < this.soundNames.size(); i++) {
                 String current = soundNames.get(i);
                 if (this.selectedEntries.contains(current)) {
                     drawString(stack, current, this.x + 2, this.y + 2 + (elementOffset * 10), 16777120);
