@@ -5,7 +5,7 @@ import io.korti.bettermuffling.BetterMuffling;
 import io.korti.bettermuffling.common.recipe.AdvancedMufflingBlockRecipeSerializer;
 import io.korti.bettermuffling.common.recipe.MufflingBlockCloningRecipe;
 import io.korti.bettermuffling.common.recipe.MufflingBlockCloningRecipeSerializer;
-import net.minecraft.item.crafting.IRecipeSerializer;
+import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -24,8 +24,8 @@ final public class BetterMufflingRecipes {
     public static class Registration {
 
         @SubscribeEvent
-        public static void registerRecipeSerializer(final RegistryEvent.Register<IRecipeSerializer<?>> event) {
-            final IForgeRegistry<IRecipeSerializer<?>> recipeRegistry = event.getRegistry();
+        public static void registerRecipeSerializer(final RegistryEvent.Register<RecipeSerializer<?>> event) {
+            final IForgeRegistry<RecipeSerializer<?>> recipeRegistry = event.getRegistry();
 
             recipeRegistry.register(new MufflingBlockCloningRecipeSerializer(MufflingBlockCloningRecipe::new)
                     .setRegistryName(BetterMuffling.MOD_ID, "muffling_block_cloning_recipe"));

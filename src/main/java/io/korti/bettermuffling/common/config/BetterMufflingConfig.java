@@ -11,6 +11,11 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import static net.minecraftforge.common.ForgeConfigSpec.*;
 
+import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
+import net.minecraftforge.common.ForgeConfigSpec.Builder;
+import net.minecraftforge.common.ForgeConfigSpec.DoubleValue;
+import net.minecraftforge.common.ForgeConfigSpec.IntValue;
+
 @Mod.EventBusSubscriber(modid = BetterMuffling.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class BetterMufflingConfig {
 
@@ -117,16 +122,6 @@ public class BetterMufflingConfig {
         final Pair<Common, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(Common::new);
         commonSpecs = specPair.getRight();
         COMMON = specPair.getLeft();
-    }
-
-    @SubscribeEvent
-    public static void onLoad(final ModConfig.Loading event) {
-        BetterMuffling.LOG.debug("Loaded {} config file {}", BetterMuffling.MOD_ID, event.getConfig().getFileName());
-    }
-
-    @SubscribeEvent
-    public static void onFileChange(final ModConfig.Reloading event) {
-        BetterMuffling.LOG.fatal(Logging.CORE, "{} config just got changed on the file system!", BetterMuffling.MOD_ID);
     }
 
 }

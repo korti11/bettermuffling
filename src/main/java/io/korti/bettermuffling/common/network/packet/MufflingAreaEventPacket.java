@@ -1,9 +1,9 @@
 package io.korti.bettermuffling.common.network.packet;
 
 import io.korti.bettermuffling.client.event.MufflingAreaEvent;
-import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.FriendlyByteBuf;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
@@ -19,12 +19,12 @@ public class MufflingAreaEventPacket {
         this.type = type;
     }
 
-    public static void encoder(final MufflingAreaEventPacket packet, final PacketBuffer buf) {
-        buf.writeEnumValue(packet.type);
+    public static void encoder(final MufflingAreaEventPacket packet, final FriendlyByteBuf buf) {
+        buf.writeEnum(packet.type);
     }
 
-    public static MufflingAreaEventPacket decode(final PacketBuffer buf) {
-        return new MufflingAreaEventPacket(buf.readEnumValue(EventType.class));
+    public static MufflingAreaEventPacket decode(final FriendlyByteBuf buf) {
+        return new MufflingAreaEventPacket(buf.readEnum(EventType.class));
     }
 
     private enum EventType {

@@ -1,14 +1,14 @@
 package io.korti.bettermuffling.client.event;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.player.ClientPlayerEntity;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraftforge.eventbus.api.Event;
 
 public abstract class MufflingAreaEvent extends Event {
 
-    private final ClientPlayerEntity clientPlayer = Minecraft.getInstance().player;
+    private final LocalPlayer clientPlayer = Minecraft.getInstance().player;
 
-    public ClientPlayerEntity getClientPlayer() {
+    public LocalPlayer getClientPlayer() {
         return clientPlayer;
     }
 

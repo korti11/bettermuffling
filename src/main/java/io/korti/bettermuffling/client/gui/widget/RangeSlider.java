@@ -2,8 +2,8 @@ package io.korti.bettermuffling.client.gui.widget;
 
 import io.korti.bettermuffling.BetterMuffling;
 import io.korti.bettermuffling.common.config.BetterMufflingConfig;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.client.resources.language.I18n;
+import net.minecraft.network.chat.TextComponent;
 
 import java.util.function.Consumer;
 
@@ -14,12 +14,12 @@ public class RangeSlider extends BaseSlider {
 
     public RangeSlider(int x, int y, int width, int height, double value) {
         super(x, y, width, height + (height % 2), 0, "button.muffling_block.range");
-        this.sliderValue = (value - min) / max;
-        this.func_230979_b_();
+        this.value = (value - min) / max;
+        this.updateMessage();
     }
 
     private short calcRange() {
-        return (short)((this.sliderValue * (double)max) + (double)min);
+        return (short)((this.value * (double)max) + (double)min);
     }
 
     public void setUpdateListener(Consumer<Short> listener) {
@@ -27,12 +27,12 @@ public class RangeSlider extends BaseSlider {
     }
 
     @Override
-    protected void func_230979_b_() {
-        this.setMessage(new StringTextComponent(I18n.format(this.titleKey) + ": " + calcRange()));
+    protected void updateMessage() {
+        this.setMessage(new TextComponent(I18n.get(this.titleKey) + ": " + calcRange()));
     }
 
     @Override
-    protected void func_230972_a_() {
+    protected void applyValue() {
         if (listener == null) {
             BetterMuffling.LOG.error("Listener not set.");
             return;

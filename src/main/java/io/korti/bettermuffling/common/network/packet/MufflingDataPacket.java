@@ -1,37 +1,37 @@
 package io.korti.bettermuffling.common.network.packet;
 
 import io.korti.bettermuffling.BetterMuffling;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.core.BlockPos;
+import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
 public class MufflingDataPacket {
 
     private final BlockPos pos;
-    private final CompoundNBT mufflingData;
+    private final CompoundTag mufflingData;
 
-    public MufflingDataPacket(BlockPos pos, CompoundNBT mufflingData) {
+    public MufflingDataPacket(BlockPos pos, CompoundTag mufflingData) {
         this.pos = pos;
         this.mufflingData = mufflingData;
     }
 
-    public static void encode(final MufflingDataPacket packet, final PacketBuffer buf) {
+    public static void encode(final MufflingDataPacket packet, final FriendlyByteBuf buf) {
         buf.writeBlockPos(packet.pos);
-        buf.writeCompoundTag(packet.mufflingData);
+        buf.writeNbt(packet.mufflingData);
     }
 
-    public static MufflingDataPacket decode(final PacketBuffer buf) {
-        return new MufflingDataPacket(buf.readBlockPos(), buf.readCompoundTag());
+    public static MufflingDataPacket decode(final FriendlyByteBuf buf) {
+        return new MufflingDataPacket(buf.readBlockPos(), buf.readNbt());
     }
 
     public BlockPos getPos() {
         return pos;
     }
 
-    public CompoundNBT getMufflingData() {
+    public CompoundTag getMufflingData() {
         return mufflingData;
     }
 

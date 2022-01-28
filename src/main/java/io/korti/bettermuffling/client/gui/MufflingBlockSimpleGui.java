@@ -1,18 +1,19 @@
 package io.korti.bettermuffling.client.gui;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import io.korti.bettermuffling.BetterMuffling;
 import io.korti.bettermuffling.client.gui.widget.BetterButton;
 import io.korti.bettermuffling.client.gui.widget.RangeSlider;
 import io.korti.bettermuffling.client.gui.widget.SoundSlider;
 import io.korti.bettermuffling.common.tileentity.TileMuffling;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.Widget;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.client.gui.components.Widget;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.resources.language.I18n;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -29,7 +30,7 @@ public class MufflingBlockSimpleGui extends Screen {
     protected int guiLeft = 0;
 
     protected MufflingBlockSimpleGui(TileMuffling tileMuffling, int xSize, int ySize) {
-        super(new TranslationTextComponent(titleKey));
+        super(new TranslatableComponent(titleKey));
         this.tileMuffling = tileMuffling;
         this.xSize = xSize;
         this.ySize = ySize;
@@ -47,28 +48,28 @@ public class MufflingBlockSimpleGui extends Screen {
     }
 
     protected void initGui() {
-        this.buttons.clear();
+        this.clearWidgets();
 
         int buttonNumber = 0;
 
-        RangeSlider rangeSlider = this.addButton(new RangeSlider(this.guiLeft + 10 + buttonNumber % 2 * 145,
+        RangeSlider rangeSlider = this.addRenderableWidget(new RangeSlider(this.guiLeft + 10 + buttonNumber % 2 * 145,
                 (this.guiTop + 22 + 24 * (buttonNumber >> 1)), 135, 20, tileMuffling.getRange()));
         rangeSlider.setUpdateListener(this.tileMuffling::setRange);
         buttonNumber++;
 
         String placerKey = getPlacerOnlyButtonMessage();
-        this.addButton(new BetterButton(this.guiLeft + 10 + buttonNumber % 2 * 145,
+        this.addRenderableWidget(new BetterButton(this.guiLeft + 10 + buttonNumber % 2 * 145,
                 (this.guiTop + 22 + 24 * (buttonNumber >> 1)), 135, 20,
-                I18n.format(placerKey),
+                I18n.get(placerKey),
                 (button) -> {
                     tileMuffling.setPlacerOnly(!tileMuffling.isPlacerOnly());
-                    button.setMessage(new TranslationTextComponent(getPlacerOnlyButtonMessage()));
+                    button.setMessage(new TranslatableComponent(getPlacerOnlyButtonMessage()));
                 }));
         buttonNumber++;
 
-        for (SoundCategory category : SoundCategory.values()) {
-            if(category != SoundCategory.MASTER && category != SoundCategory.MUSIC) {
-                SoundSlider soundSlider = this.addButton(new SoundSlider(this.guiLeft + 10 + buttonNumber % 2 * 145,
+        for (SoundSource category : SoundSource.values()) {
+            if(category != SoundSource.MASTER && category != SoundSource.MUSIC) {
+                SoundSlider soundSlider = this.addRenderableWidget(new SoundSlider(this.guiLeft + 10 + buttonNumber % 2 * 145,
                         (this.guiTop + 22 + 24 * (buttonNumber >> 1)), 135, 20,
                         tileMuffling.getSoundLevel(category), category));
                 soundSlider.setListener(((soundCategory, volume) -> this.tileMuffling.setSoundLevel(soundCategory, volume.floatValue())));
@@ -76,38 +77,41 @@ public class MufflingBlockSimpleGui extends Screen {
             }
         }
 
-        this.addButton(new BetterButton(this.guiLeft + 50, this.guiTop + 142, 200, 20, I18n.format("gui.done"),
+        this.addRenderableWidget(new BetterButton(this.guiLeft + 50, this.guiTop + 142, 200, 20, I18n.get("gui.done"),
                 (button) -> {
-                    this.closeScreen();
+                    this.onClose();
                 }));
     }
 
     @Override
-    public void render(MatrixStack stack, int mouseX, int mouseY, float partialTicks) {
+    public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks) {
         this.renderBackground(stack);
         this.renderForeground(stack, mouseX, mouseY, partialTicks);
         super.render(stack, mouseX, mouseY, partialTicks);
 
-        for(Widget widget : this.buttons) {
-            if(widget.isHovered()) {
-                widget.renderToolTip(stack, mouseX, mouseY);
+        for(Widget widget : this.renderables) {
+            if (widget instanceof AbstractWidget) {
+                AbstractWidget abstractWidget = (AbstractWidget) widget;
+                if (abstractWidget.isHoveredOrFocused()) {
+                    abstractWidget.renderToolTip(stack, mouseX, mouseY);
+                }
             }
         }
     }
 
-    public void renderForeground(MatrixStack stack, int mouseX, int mouseY, float partialTicks) {
+    public void renderForeground(PoseStack stack, int mouseX, int mouseY, float partialTicks) {
         String title = this.title.getString();
-        final float x = (float) (this.width / 2 - this.font.getStringWidth(title) / 2);
+        final float x = (float) (this.width / 2 - this.font.width(title) / 2);
         final float y = (float) (this.guiTop + 7.5);
-        this.font.func_243248_b(stack, this.title, x, y, 4210752);
+        this.font.draw(stack, this.title, x, y, 4210752);
     }
 
     @Override
-    public void renderBackground(MatrixStack stack) {
+    public void renderBackground(PoseStack stack) {
         super.renderBackground(stack);
 
-        GlStateManager.clearColor(1F, 1F, 1F, 1F);
-        this.minecraft.getTextureManager().bindTexture(background);
+        GlStateManager._clearColor(1F, 1F, 1F, 1F);
+        this.minecraft.getTextureManager().bindForSetup(background);
 
         int halfHeight = this.ySize / 2;
         int top1 = 0;

@@ -1,9 +1,9 @@
 package io.korti.bettermuffling.common.network.packet;
 
 import io.korti.bettermuffling.client.gui.GuiHandler;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.math.BlockPos;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.core.BlockPos;
+import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
@@ -15,11 +15,11 @@ public class OpenScreenPacket  {
         this.pos = pos;
     }
 
-    public static void encode(final OpenScreenPacket msg, final PacketBuffer buf)  {
+    public static void encode(final OpenScreenPacket msg, final FriendlyByteBuf buf)  {
         buf.writeBlockPos(msg.pos);
     }
 
-    public static OpenScreenPacket decode(final PacketBuffer buf) {
+    public static OpenScreenPacket decode(final FriendlyByteBuf buf) {
         return new OpenScreenPacket(buf.readBlockPos());
     }
 

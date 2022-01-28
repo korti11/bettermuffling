@@ -1,15 +1,15 @@
 package io.korti.bettermuffling.common.recipe;
 
 import io.korti.bettermuffling.common.core.BetterMufflingRecipes;
-import net.minecraft.inventory.CraftingInventory;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.item.crafting.SpecialRecipe;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
+import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.CustomRecipe;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.Level;
 
-public class MufflingBlockCloningRecipe extends SpecialRecipe {
+public class MufflingBlockCloningRecipe extends CustomRecipe {
 
     private final Item item;
 
@@ -23,12 +23,12 @@ public class MufflingBlockCloningRecipe extends SpecialRecipe {
     }
 
     @Override
-    public boolean matches(CraftingInventory inv, World worldIn) {
+    public boolean matches(CraftingContainer inv, Level worldIn) {
         int i = 0;
         ItemStack itemStack = ItemStack.EMPTY;
 
-        for (int j = 0; j < inv.getSizeInventory(); j++) {
-            ItemStack itemStack1 = inv.getStackInSlot(j);
+        for (int j = 0; j < inv.getContainerSize(); j++) {
+            ItemStack itemStack1 = inv.getItem(j);
             if (!itemStack1.isEmpty()) {
                 if (itemStack1.hasTag()) {
                     if (!itemStack.isEmpty()) {
@@ -50,12 +50,12 @@ public class MufflingBlockCloningRecipe extends SpecialRecipe {
     }
 
     @Override
-    public ItemStack getCraftingResult(CraftingInventory inv) {
+    public ItemStack assemble(CraftingContainer inv) {
         int i = 0;
         ItemStack itemStack = ItemStack.EMPTY;
 
-        for (int j = 0; j < inv.getSizeInventory(); j++) {
-            ItemStack itemStack1 = inv.getStackInSlot(j);
+        for (int j = 0; j < inv.getContainerSize(); j++) {
+            ItemStack itemStack1 = inv.getItem(j);
             if (!itemStack1.isEmpty()) {
                 if (itemStack1.hasTag()) {
                     if (!itemStack.isEmpty()) {
@@ -81,12 +81,12 @@ public class MufflingBlockCloningRecipe extends SpecialRecipe {
     }
 
     @Override
-    public boolean canFit(int width, int height) {
+    public boolean canCraftInDimensions(int width, int height) {
         return width >= 3 && height >= 3;
     }
 
     @Override
-    public IRecipeSerializer<?> getSerializer() {
+    public RecipeSerializer<?> getSerializer() {
         return BetterMufflingRecipes.mufflingBlockCloningRecipeSerializer;
     }
 }

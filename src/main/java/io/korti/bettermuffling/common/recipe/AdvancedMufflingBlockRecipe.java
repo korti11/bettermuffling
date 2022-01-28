@@ -2,21 +2,21 @@ package io.korti.bettermuffling.common.recipe;
 
 import io.korti.bettermuffling.common.core.BetterMufflingBlocks;
 import io.korti.bettermuffling.common.core.BetterMufflingRecipes;
-import net.minecraft.inventory.CraftingInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.item.crafting.ShapedRecipe;
+import net.minecraft.world.inventory.CraftingContainer;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.ShapedRecipe;
 
 public class AdvancedMufflingBlockRecipe extends ShapedRecipe {
 
     public AdvancedMufflingBlockRecipe(ShapedRecipe r) {
-        super(r.getId(), r.getGroup(), r.getRecipeWidth(), r.getRecipeHeight(), r.getIngredients(), r.getRecipeOutput());
+        super(r.getId(), r.getGroup(), r.getRecipeWidth(), r.getRecipeHeight(), r.getIngredients(), r.getResultItem());
     }
 
     @Override
-    public ItemStack getCraftingResult(CraftingInventory inv) {
-        ItemStack itemStack = super.getCraftingResult(inv);
-        ItemStack muffleBlock = inv.getStackInSlot(4);
+    public ItemStack assemble(CraftingContainer inv) {
+        ItemStack itemStack = super.assemble(inv);
+        ItemStack muffleBlock = inv.getItem(4);
         if (!itemStack.isEmpty() && muffleBlock.getItem() == BetterMufflingBlocks.mufflingBlockItem) {
             if(!muffleBlock.hasTag()) {
                 return itemStack;
@@ -29,7 +29,7 @@ public class AdvancedMufflingBlockRecipe extends ShapedRecipe {
     }
 
     @Override
-    public IRecipeSerializer<?> getSerializer() {
+    public RecipeSerializer<?> getSerializer() {
         return BetterMufflingRecipes.advancedMufflingBlockRecipeSerializer;
     }
 }

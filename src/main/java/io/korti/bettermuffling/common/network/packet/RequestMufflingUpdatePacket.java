@@ -1,12 +1,12 @@
 package io.korti.bettermuffling.common.network.packet;
 
 import io.korti.bettermuffling.common.tileentity.TileMuffling;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
+import net.minecraftforge.network.NetworkEvent;
 
 import java.util.Objects;
 import java.util.function.Supplier;
@@ -20,20 +20,20 @@ public class RequestMufflingUpdatePacket {
     }
 
 
-    public static void encode(RequestMufflingUpdatePacket packet, PacketBuffer buf) {
+    public static void encode(RequestMufflingUpdatePacket packet, FriendlyByteBuf buf) {
         buf.writeBlockPos(packet.pos);
     }
 
-    public static RequestMufflingUpdatePacket decode(PacketBuffer buf) {
+    public static RequestMufflingUpdatePacket decode(FriendlyByteBuf buf) {
         return new RequestMufflingUpdatePacket(buf.readBlockPos());
     }
 
     public static class Handler {
         public static void handle(final RequestMufflingUpdatePacket packet, final Supplier<NetworkEvent.Context> ctx) {
             ctx.get().enqueueWork(() -> {
-                final ServerPlayerEntity player = ctx.get().getSender();
-                final World world = Objects.requireNonNull(player).getEntityWorld();
-                final TileEntity te = world.getTileEntity(packet.pos);
+                final ServerPlayer player = ctx.get().getSender();
+                final Level world = Objects.requireNonNull(player).getCommandSenderWorld();
+                final BlockEntity te = world.getBlockEntity(packet.pos);
                 if(te instanceof TileMuffling) {
                     ((TileMuffling) te).syncToClient(packet, player);
                 }

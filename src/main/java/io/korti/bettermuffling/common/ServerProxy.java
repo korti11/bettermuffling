@@ -3,10 +3,10 @@ package io.korti.bettermuffling.common;
 import io.korti.bettermuffling.BetterMuffling;
 import io.korti.bettermuffling.common.network.packet.MufflingDataPacket;
 import io.korti.bettermuffling.common.tileentity.TileMuffling;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.Level;
+import net.minecraftforge.network.NetworkEvent;
 
 import java.util.Objects;
 
@@ -19,12 +19,12 @@ public class ServerProxy {
     public Runnable getMufflingDataPacketRunnable(final MufflingDataPacket packet, final NetworkEvent.Context ctx) {
         return () -> {
             BetterMuffling.LOG.debug("Received muffling data from the client.");
-            final ServerPlayerEntity player = ctx.getSender();
-            final World world = Objects.requireNonNull(player).getEntityWorld();
-            final TileEntity te = world.getTileEntity(packet.getPos());
+            final ServerPlayer player = ctx.getSender();
+            final Level world = Objects.requireNonNull(player).getCommandSenderWorld();
+            final BlockEntity te = world.getBlockEntity(packet.getPos());
             if(te instanceof TileMuffling) {
                 ((TileMuffling) te).readMufflingData(packet.getMufflingData());
-                te.markDirty();
+                te.setChanged();
                 ((TileMuffling) te).syncToAllClients();
             }
         };

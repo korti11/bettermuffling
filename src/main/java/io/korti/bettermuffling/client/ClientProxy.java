@@ -5,22 +5,21 @@ import io.korti.bettermuffling.common.ServerProxy;
 import io.korti.bettermuffling.common.network.packet.MufflingDataPacket;
 import io.korti.bettermuffling.common.tileentity.TileMuffling;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.util.InputMappings;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
+import com.mojang.blaze3d.platform.InputConstants;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraftforge.network.NetworkEvent;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.Objects;
 
 public class ClientProxy extends ServerProxy {
 
-    public static ClientWorld getWorld() {
-        return Minecraft.getInstance().world;
+    public static ClientLevel getWorld() {
+        return Minecraft.getInstance().level;
     }
 
     @Override
@@ -28,20 +27,20 @@ public class ClientProxy extends ServerProxy {
         return () -> {
             BetterMuffling.LOG.debug("Received muffling data from server.");
             final LogicalSide side = ctx.getDirection().getReceptionSide();
-            final World world;
-            final TileEntity te;
+            final Level world;
+            final BlockEntity te;
             boolean lanWorld = false;
             if(side == LogicalSide.SERVER) {
-                final ServerPlayerEntity player = ctx.getSender();
-                world = Objects.requireNonNull(player).getEntityWorld();
-                lanWorld = Objects.requireNonNull(world.getServer()).getPublic();
+                final ServerPlayer player = ctx.getSender();
+                world = Objects.requireNonNull(player).getCommandSenderWorld();
+                lanWorld = Objects.requireNonNull(world.getServer()).isPublished();
             } else {
                 world = ClientProxy.getWorld();
             }
-            te = world.getTileEntity(packet.getPos());
+            te = world.getBlockEntity(packet.getPos());
             if(te instanceof TileMuffling) {
                 ((TileMuffling) te).readMufflingData(packet.getMufflingData());
-                te.markDirty();
+                te.setChanged();
                 if (lanWorld) {
                     ((TileMuffling) te).syncToAllClients();
                 }
@@ -51,8 +50,8 @@ public class ClientProxy extends ServerProxy {
 
     @Override
     public boolean isShiftKeyDown() {
-        long handler = Minecraft.getInstance().getMainWindow().getHandle();
-        return InputMappings.isKeyDown(handler, GLFW.GLFW_KEY_LEFT_SHIFT) ||
-                InputMappings.isKeyDown(handler, GLFW.GLFW_KEY_RIGHT_SHIFT);
+        long handler = Minecraft.getInstance().getWindow().getWindow();
+        return InputConstants.isKeyDown(handler, GLFW.GLFW_KEY_LEFT_SHIFT) ||
+                InputConstants.isKeyDown(handler, GLFW.GLFW_KEY_RIGHT_SHIFT);
     }
 }

@@ -3,10 +3,10 @@ package io.korti.bettermuffling.common.core;
 import io.korti.bettermuffling.BetterMuffling;
 import io.korti.bettermuffling.common.block.AdvancedMufflingBlock;
 import io.korti.bettermuffling.common.block.MufflingBlock;
-import net.minecraft.block.Block;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -41,7 +41,7 @@ final public class BetterMufflingBlocks {
         @SubscribeEvent
         public static void registerItems(final RegistryEvent.Register<Item> event) {
             final IForgeRegistry<Item> itemRegistry = event.getRegistry();
-            final Item.Properties itemBuilder = new Item.Properties().group(ItemGroup.MISC);
+            final Item.Properties itemBuilder = new Item.Properties().tab(CreativeModeTab.TAB_MISC);
 
             itemRegistry.register(new BlockItem(mufflingBlock, itemBuilder)
                     .setRegistryName(mufflingBlock.getRegistryName()));

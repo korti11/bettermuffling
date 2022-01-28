@@ -2,11 +2,10 @@ package io.korti.bettermuffling.common;
 
 import io.korti.bettermuffling.BetterMuffling;
 import io.korti.bettermuffling.common.tileentity.TileMuffling;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
-import net.minecraftforge.api.distmarker.Dist;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -16,10 +15,10 @@ public class EventHandler {
 
     @SubscribeEvent
     public static void onBreaking(final PlayerEvent.BreakSpeed event) {
-        final PlayerEntity player = event.getPlayer();
-        final World world = player.getEntityWorld();
+        final Player player = event.getPlayer();
+        final Level world = player.getCommandSenderWorld();
         final BlockPos pos = event.getPos();
-        final TileEntity te = world.getTileEntity(pos);
+        final BlockEntity te = world.getBlockEntity(pos);
 
         if (te instanceof TileMuffling) {
             event.setCanceled(!((TileMuffling) te).canAccess(player));

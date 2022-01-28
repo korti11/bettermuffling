@@ -2,42 +2,42 @@ package io.korti.bettermuffling.client.gui.widget;
 
 import io.korti.bettermuffling.BetterMuffling;
 import io.korti.bettermuffling.common.config.BetterMufflingConfig;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.client.resources.language.I18n;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.network.chat.TextComponent;
 
 import java.util.function.BiConsumer;
 
 public class SoundSlider extends BaseSlider {
     private final double min = BetterMufflingConfig.COMMON.minVolume.get();
     private final double max = BetterMufflingConfig.COMMON.maxVolume.get() - min;
-    private final SoundCategory category;
+    private final SoundSource category;
 
-    private BiConsumer<SoundCategory, Double> listener;
+    private BiConsumer<SoundSource, Double> listener;
 
-    public SoundSlider(int x, int y, int width, int height, double value, SoundCategory category) {
+    public SoundSlider(int x, int y, int width, int height, double value, SoundSource category) {
         super(x, y, width, height, 0, "soundCategory." + category.getName());
-        this.sliderValue = (value - min) / max;
+        this.value = (value - min) / max;
         this.category = category;
-        this.func_230979_b_();
+        this.updateMessage();
     }
 
     private double calcVolume() {
-        return (this.sliderValue * max) + min;
+        return (this.value * max) + min;
     }
 
-    public void setListener(BiConsumer<SoundCategory, Double> listener) {
+    public void setListener(BiConsumer<SoundSource, Double> listener) {
         this.listener = listener;
     }
 
     @Override
-    protected void func_230979_b_() {
-        String volumeMessage = this.sliderValue == 0 ? I18n.format("options.off") : (int)(calcVolume() * 100) + "%";
-        this.setMessage(new StringTextComponent(I18n.format(this.titleKey) + ": " + volumeMessage));
+    protected void updateMessage() {
+        String volumeMessage = this.value == 0 ? I18n.get("options.off") : (int)(calcVolume() * 100) + "%";
+        this.setMessage(new TextComponent(I18n.get(this.titleKey) + ": " + volumeMessage));
     }
 
     @Override
-    protected void func_230972_a_() {
+    protected void applyValue() {
         if (listener == null) {
             BetterMuffling.LOG.error("Listener not set.");
             return;

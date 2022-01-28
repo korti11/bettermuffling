@@ -1,13 +1,8 @@
 package io.korti.bettermuffling.common.core;
 
 import io.korti.bettermuffling.BetterMuffling;
-import io.korti.bettermuffling.common.block.AdvancedMufflingBlock;
-import io.korti.bettermuffling.common.block.MufflingBlock;
 import io.korti.bettermuffling.common.item.UpgradeItem;
-import net.minecraft.block.Block;
-import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
+import net.minecraft.world.item.Item;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
