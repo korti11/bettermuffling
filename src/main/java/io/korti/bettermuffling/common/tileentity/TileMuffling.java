@@ -162,10 +162,8 @@ public final class TileMuffling extends BlockEntity {
     }
 
     @Override
-    public CompoundTag serializeNBT() {
-        CompoundTag compoundTag = super.serializeNBT();
-        this.writeMufflingData(compoundTag);
-        return compoundTag;
+    protected void saveAdditional(CompoundTag compoundTag) {
+        writeMufflingData(compoundTag);
     }
 
     private CompoundTag writeMufflingData(CompoundTag compound) {
@@ -210,9 +208,9 @@ public final class TileMuffling extends BlockEntity {
     }
 
     @Override
-    public void deserializeNBT(CompoundTag nbt) {
-        super.deserializeNBT(nbt);
-        readMufflingData(nbt);
+    public void load(CompoundTag compoundTag) {
+        super.load(compoundTag);
+        readMufflingData(compoundTag);
         validateWithConfig();
     }
 

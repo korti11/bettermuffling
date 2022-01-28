@@ -6,6 +6,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.AbstractSliderButton;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.util.Mth;
 import net.minecraft.network.chat.TranslatableComponent;
 
@@ -22,8 +23,9 @@ public abstract class BaseSlider extends AbstractSliderButton {
     public void renderButton(PoseStack stack, int p_renderButton_1_, int p_renderButton_2_, float p_renderButton_3_) {
         Minecraft minecraft = Minecraft.getInstance();
         Font fontrenderer = minecraft.font;
-        minecraft.getTextureManager().bindForSetup(WIDGETS_LOCATION);
-        GlStateManager._clearColor(1.0F, 1.0F, 1.0F, this.alpha);
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, this.alpha);
+        RenderSystem.setShaderTexture(0, WIDGETS_LOCATION);
         int i = this.getYImage(this.isHovered);
         GlStateManager._enableBlend();
         RenderSystem.defaultBlendFunc();

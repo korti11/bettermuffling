@@ -7,6 +7,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.util.Mth;
 import net.minecraft.network.chat.TranslatableComponent;
 
@@ -48,8 +49,9 @@ public class BetterButton extends Button {
     public void renderButton(PoseStack stack, int p_230431_2_, int p_230431_3_, float p_230431_4_) {
         Minecraft minecraft = Minecraft.getInstance();
         Font fontRenderer = minecraft.font;
-        minecraft.getTextureManager().bindForSetup(WIDGETS_LOCATION);
-        GlStateManager._clearColor(1.0F, 1.0F, 1.0F, this.alpha);
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, this.alpha);
+        RenderSystem.setShaderTexture(0, WIDGETS_LOCATION);
         int i = this.getYImage(this.isHovered);
         GlStateManager._enableBlend();
         RenderSystem.defaultBlendFunc();

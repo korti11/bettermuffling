@@ -1,6 +1,7 @@
 package io.korti.bettermuffling.client.gui.widget;
 
 import com.mojang.blaze3d.platform.GlStateManager;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import io.korti.bettermuffling.BetterMuffling;
 import net.minecraft.client.Minecraft;
@@ -23,7 +24,7 @@ public class DeleteEntryButton extends BetterButton {
     public void renderButton(PoseStack stack, int p_renderButton_1_, int p_renderButton_2_, float p_renderButton_3_) {
         super.renderButton(stack, p_renderButton_1_, p_renderButton_2_, p_renderButton_3_);
         Minecraft minecraft = Minecraft.getInstance();
-        minecraft.getTextureManager().bindForSetup(guiElements);
+        RenderSystem.setShaderTexture(0, guiElements);
 
         int xOffset = (this.width - 16) / 2;
         int yOffset = (this.height - 16) / 2;

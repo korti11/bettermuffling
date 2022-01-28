@@ -1,5 +1,6 @@
 package io.korti.bettermuffling.client.gui;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import io.korti.bettermuffling.BetterMuffling;
@@ -10,6 +11,7 @@ import io.korti.bettermuffling.common.tileentity.TileMuffling;
 import net.minecraft.client.gui.components.Widget;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundSource;
@@ -110,8 +112,9 @@ public class MufflingBlockSimpleGui extends Screen {
     public void renderBackground(PoseStack stack) {
         super.renderBackground(stack);
 
-        GlStateManager._clearColor(1F, 1F, 1F, 1F);
-        this.minecraft.getTextureManager().bindForSetup(background);
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        RenderSystem.setShaderTexture(0, background);
 
         int halfHeight = this.ySize / 2;
         int top1 = 0;

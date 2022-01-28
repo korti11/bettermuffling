@@ -7,6 +7,7 @@ import io.korti.bettermuffling.common.network.PacketHandler;
 import io.korti.bettermuffling.common.network.packet.MufflingAreaEventPacket;
 import io.korti.bettermuffling.common.network.packet.OpenScreenPacket;
 import io.korti.bettermuffling.common.tileentity.TileMuffling;
+import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.world.item.TooltipFlag;
@@ -42,7 +43,7 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.network.PacketDistributor;
 
-public class MufflingBlock extends Block {
+public class MufflingBlock extends Block implements EntityBlock {
 
     public MufflingBlock() {
         super(Properties.of(Material.WOOL).sound(SoundType.WOOL).noDrops());
@@ -149,5 +150,11 @@ public class MufflingBlock extends Block {
         final CompoundTag tileData = tileMuffling.writeMufflingData(new CompoundTag(), writePlayerName);
         stack.addTagElement("tileData", tileData);
         return stack;
+    }
+
+    @Nullable
+    @Override
+    public BlockEntity newBlockEntity(BlockPos pos, BlockState blockState) {
+        return new TileMuffling(pos, blockState);
     }
 }
