@@ -1,18 +1,13 @@
 package io.korti.bettermuffling.common.core;
 
 import io.korti.bettermuffling.BetterMuffling;
-import io.korti.bettermuffling.common.tileentity.TileMuffling;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.block.entity.BlockEntity;
+import io.korti.bettermuffling.common.blockentity.MufflingBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.ObjectHolder;
-
-import java.util.function.Supplier;
 
 final public class BetterMufflingTileEntities {
 
@@ -28,7 +23,7 @@ final public class BetterMufflingTileEntities {
 
             tileEntityTypeRegistry.register(
                     BlockEntityType.Builder
-                            .of(TileMuffling::new, BetterMufflingBlocks.mufflingBlock,
+                            .of(MufflingBlockEntity::new, BetterMufflingBlocks.mufflingBlock,
                                     BetterMufflingBlocks.advancedMufflingBlock)
                             .build(null).setRegistryName(BetterMuffling.MOD_ID + ":muffling_block")
             );

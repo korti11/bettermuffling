@@ -5,7 +5,7 @@ import io.korti.bettermuffling.client.util.MufflingCache;
 import io.korti.bettermuffling.common.config.BetterMufflingConfig;
 import io.korti.bettermuffling.common.network.PacketHandler;
 import io.korti.bettermuffling.common.network.packet.OpenScreenPacket;
-import io.korti.bettermuffling.common.tileentity.TileMuffling;
+import io.korti.bettermuffling.common.blockentity.MufflingBlockEntity;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.client.resources.language.I18n;
@@ -84,7 +84,7 @@ public class MufflingBlock extends Block implements EntityBlock {
                                              InteractionHand hand, BlockHitResult traceResult) {
         if(!worldIn.isClientSide) {
             BlockEntity te = worldIn.getBlockEntity(pos);
-            if(te instanceof TileMuffling && !player.isCrouching() && ((TileMuffling) te).canAccess(player)) {
+            if(te instanceof MufflingBlockEntity && !player.isCrouching() && ((MufflingBlockEntity) te).canAccess(player)) {
                 PacketHandler.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
                         new OpenScreenPacket(pos));
                 return InteractionResult.SUCCESS;
@@ -98,11 +98,11 @@ public class MufflingBlock extends Block implements EntityBlock {
                                 @Nullable LivingEntity player, ItemStack itemStack) {
         if(player != null) {
             final BlockEntity te = worldIn.getBlockEntity(blockPos);
-            if(te instanceof TileMuffling) {
-                ((TileMuffling) te).setPlacer(player.getUUID());
+            if(te instanceof MufflingBlockEntity) {
+                ((MufflingBlockEntity) te).setPlacer(player.getUUID());
                 final CompoundTag tileData = itemStack.getTagElement("tileData");
                 if (tileData != null) {
-                    ((TileMuffling) te).readMufflingData(tileData);
+                    ((MufflingBlockEntity) te).readMufflingData(tileData);
                 }
             }
         }
@@ -111,8 +111,8 @@ public class MufflingBlock extends Block implements EntityBlock {
     @Override
     public void playerWillDestroy(Level worldIn, BlockPos pos, BlockState state, Player player) {
         final BlockEntity te = worldIn.getBlockEntity(pos);
-        if(te instanceof TileMuffling) {
-            final TileMuffling tileMuffling = (TileMuffling) te;
+        if(te instanceof MufflingBlockEntity) {
+            final MufflingBlockEntity tileMuffling = (MufflingBlockEntity) te;
             if(worldIn.isClientSide) {
                 MufflingCache.removeMufflingPos(pos);
             }
@@ -129,13 +129,13 @@ public class MufflingBlock extends Block implements EntityBlock {
     @Override
     public ItemStack getCloneItemStack(BlockState state, HitResult target, BlockGetter world, BlockPos pos, Player player) {
         final BlockEntity te = world.getBlockEntity(pos);
-        if(te instanceof TileMuffling && world instanceof Level && player.isCreative()) {
-            return getStackWithTileData((TileMuffling) te, false);
+        if(te instanceof MufflingBlockEntity && world instanceof Level && player.isCreative()) {
+            return getStackWithTileData((MufflingBlockEntity) te, false);
         }
         return new ItemStack(this);
     }
 
-    private ItemStack getStackWithTileData(TileMuffling tileMuffling, boolean writePlayerName) {
+    private ItemStack getStackWithTileData(MufflingBlockEntity tileMuffling, boolean writePlayerName) {
         final ItemStack stack = new ItemStack(this);
         final CompoundTag tileData = tileMuffling.writeMufflingData(new CompoundTag(), writePlayerName);
         stack.addTagElement("tileData", tileData);
@@ -145,6 +145,6 @@ public class MufflingBlock extends Block implements EntityBlock {
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState blockState) {
-        return new TileMuffling(pos, blockState);
+        return new MufflingBlockEntity(pos, blockState);
     }
 }

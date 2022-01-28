@@ -1,7 +1,6 @@
 package io.korti.bettermuffling.common.block;
 
-import io.korti.bettermuffling.BetterMuffling;
-import io.korti.bettermuffling.common.tileentity.TileMuffling;
+import io.korti.bettermuffling.common.blockentity.MufflingBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
@@ -17,8 +16,8 @@ public class AdvancedMufflingBlock extends MufflingBlock {
     public void setPlacedBy(Level worldIn, BlockPos blockPos, BlockState blockState, @Nullable LivingEntity player, ItemStack itemStack) {
         super.setPlacedBy(worldIn, blockPos, blockState, player, itemStack);
         final BlockEntity te = worldIn.getBlockEntity(blockPos);
-        if(te instanceof TileMuffling) {
-            ((TileMuffling) te).setAdvancedMode(true);
+        if(te instanceof MufflingBlockEntity) {
+            ((MufflingBlockEntity) te).setAdvancedMode(true);
         }
     }
 }

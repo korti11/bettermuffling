@@ -3,7 +3,7 @@ package io.korti.bettermuffling.client.sound;
 import io.korti.bettermuffling.BetterMuffling;
 import io.korti.bettermuffling.client.ClientProxy;
 import io.korti.bettermuffling.client.util.MufflingCache;
-import io.korti.bettermuffling.common.tileentity.TileMuffling;
+import io.korti.bettermuffling.common.blockentity.MufflingBlockEntity;
 import io.korti.bettermuffling.common.util.MathHelper;
 import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
@@ -26,7 +26,7 @@ public final class SoundHandler {
             final BlockPos pos = entry.getKey();
             final short range = entry.getValue().getRange();
             if(MathHelper.isInRange(soundPos, pos, range)){
-                final TileMuffling tileMuffling = (TileMuffling) ClientProxy.getWorld().getBlockEntity(pos);
+                final MufflingBlockEntity tileMuffling = (MufflingBlockEntity) ClientProxy.getWorld().getBlockEntity(pos);
                 if(tileMuffling != null && event.getEngine() != null) {
                     if(tileMuffling.muffleSound(category, event.getName())) {
                         sound.resolve(event.getEngine().soundManager); // Why? Idk :D

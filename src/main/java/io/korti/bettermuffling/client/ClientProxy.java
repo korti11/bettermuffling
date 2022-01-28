@@ -3,7 +3,7 @@ package io.korti.bettermuffling.client;
 import io.korti.bettermuffling.BetterMuffling;
 import io.korti.bettermuffling.common.ServerProxy;
 import io.korti.bettermuffling.common.network.packet.MufflingDataPacket;
-import io.korti.bettermuffling.common.tileentity.TileMuffling;
+import io.korti.bettermuffling.common.blockentity.MufflingBlockEntity;
 import net.minecraft.client.Minecraft;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -38,11 +38,11 @@ public class ClientProxy extends ServerProxy {
                 world = ClientProxy.getWorld();
             }
             te = world.getBlockEntity(packet.getPos());
-            if(te instanceof TileMuffling) {
-                ((TileMuffling) te).readMufflingData(packet.getMufflingData());
+            if(te instanceof MufflingBlockEntity) {
+                ((MufflingBlockEntity) te).readMufflingData(packet.getMufflingData());
                 te.setChanged();
                 if (lanWorld) {
-                    ((TileMuffling) te).syncToAllClients();
+                    ((MufflingBlockEntity) te).syncToAllClients();
                 }
             }
         };

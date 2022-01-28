@@ -2,12 +2,11 @@ package io.korti.bettermuffling.client.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.platform.GlStateManager;
 import io.korti.bettermuffling.BetterMuffling;
 import io.korti.bettermuffling.client.gui.widget.BetterButton;
 import io.korti.bettermuffling.client.gui.widget.RangeSlider;
 import io.korti.bettermuffling.client.gui.widget.SoundSlider;
-import io.korti.bettermuffling.common.tileentity.TileMuffling;
+import io.korti.bettermuffling.common.blockentity.MufflingBlockEntity;
 import net.minecraft.client.gui.components.Widget;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -24,21 +23,21 @@ public class MufflingBlockSimpleGui extends Screen {
 
     private static final String titleKey = "gui.muffling_block.title";
 
-    protected final TileMuffling tileMuffling;
+    protected final MufflingBlockEntity tileMuffling;
     protected final ResourceLocation background = new ResourceLocation(BetterMuffling.MOD_ID, "textures/gui/base_gui.png");
     protected final int xSize;
     protected final int ySize;
     protected int guiTop = 0;
     protected int guiLeft = 0;
 
-    protected MufflingBlockSimpleGui(TileMuffling tileMuffling, int xSize, int ySize) {
+    protected MufflingBlockSimpleGui(MufflingBlockEntity tileMuffling, int xSize, int ySize) {
         super(new TranslatableComponent(titleKey));
         this.tileMuffling = tileMuffling;
         this.xSize = xSize;
         this.ySize = ySize;
     }
 
-    protected MufflingBlockSimpleGui(TileMuffling tileMuffling) {
+    protected MufflingBlockSimpleGui(MufflingBlockEntity tileMuffling) {
         this(tileMuffling, 300, 170);
     }
 

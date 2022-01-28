@@ -2,10 +2,9 @@ package io.korti.bettermuffling.client.gui;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.platform.GlStateManager;
 import io.korti.bettermuffling.BetterMuffling;
 import io.korti.bettermuffling.client.gui.widget.*;
-import io.korti.bettermuffling.common.tileentity.TileMuffling;
+import io.korti.bettermuffling.common.blockentity.MufflingBlockEntity;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
@@ -21,8 +20,6 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.*;
 
-import net.minecraft.client.gui.components.Button.OnPress;
-
 public class MufflingBlockAdvancedGui extends MufflingBlockSimpleGui {
 
     private final ResourceLocation guiElements = new ResourceLocation(BetterMuffling.MOD_ID, "textures/gui/gui_elements.png");
@@ -37,7 +34,7 @@ public class MufflingBlockAdvancedGui extends MufflingBlockSimpleGui {
     private ListenAudioButton listenAudioButton = null;
     private DeleteEntryButton deleteEntryButton = null;
 
-    protected MufflingBlockAdvancedGui(TileMuffling tileMuffling) {
+    protected MufflingBlockAdvancedGui(MufflingBlockEntity tileMuffling) {
         super(tileMuffling, 348, 222);
     }
 

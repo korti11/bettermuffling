@@ -1,4 +1,4 @@
-package io.korti.bettermuffling.common.tileentity;
+package io.korti.bettermuffling.common.blockentity;
 
 import com.mojang.authlib.GameProfile;
 import io.korti.bettermuffling.BetterMuffling;
@@ -21,7 +21,7 @@ import net.minecraftforge.network.PacketDistributor;
 
 import java.util.*;
 
-public final class TileMuffling extends BlockEntity {
+public final class MufflingBlockEntity extends BlockEntity {
 
     private final Map<SoundSource, Float> soundLevels = new HashMap<>();
     private final Map<SoundSource, SortedSet<String>> soundNames = new HashMap<>();
@@ -33,7 +33,7 @@ public final class TileMuffling extends BlockEntity {
     private boolean advancedMode = false;
     private boolean listening = false;
 
-    public TileMuffling(BlockPos pos, BlockState blockState) {
+    public MufflingBlockEntity(BlockPos pos, BlockState blockState) {
         super(BetterMufflingTileEntities.MUFFLING_BLOCK, pos, blockState);
         this.init();
     }

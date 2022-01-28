@@ -1,7 +1,7 @@
 package io.korti.bettermuffling.common;
 
 import io.korti.bettermuffling.BetterMuffling;
-import io.korti.bettermuffling.common.tileentity.TileMuffling;
+import io.korti.bettermuffling.common.blockentity.MufflingBlockEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.core.BlockPos;
@@ -20,8 +20,8 @@ public class EventHandler {
         final BlockPos pos = event.getPos();
         final BlockEntity te = world.getBlockEntity(pos);
 
-        if (te instanceof TileMuffling) {
-            event.setCanceled(!((TileMuffling) te).canAccess(player));
+        if (te instanceof MufflingBlockEntity) {
+            event.setCanceled(!((MufflingBlockEntity) te).canAccess(player));
         }
     }
 

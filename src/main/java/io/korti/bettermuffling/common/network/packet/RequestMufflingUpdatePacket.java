@@ -1,6 +1,6 @@
 package io.korti.bettermuffling.common.network.packet;
 
-import io.korti.bettermuffling.common.tileentity.TileMuffling;
+import io.korti.bettermuffling.common.blockentity.MufflingBlockEntity;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -34,8 +34,8 @@ public class RequestMufflingUpdatePacket {
                 final ServerPlayer player = ctx.get().getSender();
                 final Level world = Objects.requireNonNull(player).getCommandSenderWorld();
                 final BlockEntity te = world.getBlockEntity(packet.pos);
-                if(te instanceof TileMuffling) {
-                    ((TileMuffling) te).syncToClient(packet, player);
+                if(te instanceof MufflingBlockEntity) {
+                    ((MufflingBlockEntity) te).syncToClient(packet, player);
                 }
             });
             ctx.get().setPacketHandled(true);

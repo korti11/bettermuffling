@@ -2,7 +2,7 @@ package io.korti.bettermuffling.common.item;
 
 import io.korti.bettermuffling.BetterMuffling;
 import io.korti.bettermuffling.common.core.BetterMufflingBlocks;
-import io.korti.bettermuffling.common.tileentity.TileMuffling;
+import io.korti.bettermuffling.common.blockentity.MufflingBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.world.item.TooltipFlag;
@@ -47,12 +47,12 @@ public class UpgradeItem extends Item {
         if(!world.isClientSide && player != null
                 && oldBlockState.getBlock().equals(BetterMufflingBlocks.mufflingBlock)) {
             final BlockEntity oldTe = world.getBlockEntity(pos);
-            if(oldTe instanceof TileMuffling) {
+            if(oldTe instanceof MufflingBlockEntity) {
                 // Set new block without update the client.
                 world.setBlock(pos, newBlockState, 0);
 
                 // Get the new tile entity and copy the data from the old one to the new one
-                final TileMuffling newTe = (TileMuffling) world.getBlockEntity(pos);
+                final MufflingBlockEntity newTe = (MufflingBlockEntity) world.getBlockEntity(pos);
                 final CompoundTag teData = oldTe.serializeNBT();
                 newTe.deserializeNBT(teData);
                 newTe.setAdvancedMode(true);

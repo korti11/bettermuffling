@@ -2,7 +2,7 @@ package io.korti.bettermuffling.client.util;
 
 import com.google.common.collect.ImmutableSet;
 import io.korti.bettermuffling.BetterMuffling;
-import io.korti.bettermuffling.common.tileentity.TileMuffling;
+import io.korti.bettermuffling.common.blockentity.MufflingBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -13,9 +13,9 @@ import java.util.Map;
 
 public final class MufflingCache {
 
-    private static final Map<BlockPos, TileMuffling> cache = new HashMap<>();
+    private static final Map<BlockPos, MufflingBlockEntity> cache = new HashMap<>();
 
-    public static void addMufflingPos(final BlockPos pos, final TileMuffling tile) {
+    public static void addMufflingPos(final BlockPos pos, final MufflingBlockEntity tile) {
         cache.put(pos, tile);
     }
 
@@ -27,7 +27,7 @@ public final class MufflingCache {
         cache.clear();
     }
 
-    public static ImmutableSet<Map.Entry<BlockPos, TileMuffling>> getCache() {
+    public static ImmutableSet<Map.Entry<BlockPos, MufflingBlockEntity>> getCache() {
         return ImmutableSet.copyOf(cache.entrySet());
     }
 
