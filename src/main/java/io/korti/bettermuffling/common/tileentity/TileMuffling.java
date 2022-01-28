@@ -6,15 +6,9 @@ import io.korti.bettermuffling.client.util.MufflingCache;
 import io.korti.bettermuffling.common.config.BetterMufflingConfig;
 import io.korti.bettermuffling.common.core.BetterMufflingTileEntities;
 import io.korti.bettermuffling.common.network.PacketHandler;
-import io.korti.bettermuffling.common.network.packet.MufflingAreaEventPacket;
 import io.korti.bettermuffling.common.network.packet.MufflingDataPacket;
 import io.korti.bettermuffling.common.network.packet.RequestMufflingUpdatePacket;
-import io.korti.bettermuffling.common.util.MathHelper;
 import net.minecraft.core.BlockPos;
-import net.minecraft.network.Connection;
-import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
-import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.level.block.entity.TickingBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.server.level.ServerPlayer;
@@ -23,17 +17,12 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.network.PacketDistributor;
 
 import java.util.*;
-import java.util.function.Consumer;
-import java.util.stream.Stream;
 
 public final class TileMuffling extends BlockEntity {
 
-    private final Set<ServerPlayer> playerCache = new HashSet<>();
     private final Map<SoundSource, Float> soundLevels = new HashMap<>();
     private final Map<SoundSource, SortedSet<String>> soundNames = new HashMap<>();
     private final Map<SoundSource, Boolean> whiteList = new HashMap<>();
@@ -43,8 +32,6 @@ public final class TileMuffling extends BlockEntity {
     private boolean placerOnly = false;
     private boolean advancedMode = false;
     private boolean listening = false;
-
-    private int tickCount;
 
     public TileMuffling(BlockPos pos, BlockState blockState) {
         super(BetterMufflingTileEntities.MUFFLING_BLOCK, pos, blockState);
@@ -298,51 +285,4 @@ public final class TileMuffling extends BlockEntity {
         PacketHandler.send(PacketDistributor.SERVER.noArg(), new MufflingDataPacket(this.getBlockPos(), mufflingData));
     }
 
-    private void handleIndicator() {
-        final List<ServerPlayer> playersInRange = getLevel().getEntitiesOfClass(ServerPlayer.class,
-                calcRangeAABB(), player -> {
-            if(player != null) {
-                final Vec3 pos = Vec3.atLowerCornerOf(this.getBlockPos());
-                final double distance = Math.sqrt(player.distanceToSqr(pos.add(0.5D, 0.5D, 0.5D)));
-                return MathHelper.isInRange((float) distance, this.getRange());
-            }
-            return false;
-        });
-
-        if(!playersInRange.isEmpty()) {
-            final Stream<ServerPlayer> s = playersInRange.stream();
-            final Consumer<ServerPlayer> send = (player) -> {
-                PacketHandler
-                    .send(PacketDistributor.PLAYER.with(() -> player), MufflingAreaEventPacket.PLAYER_ENTERED);
-                this.playerCache.add(player);
-            };
-            if (this.playerCache.isEmpty()) {
-                s.forEach(send);
-            } else {
-                s.filter(player -> !this.playerCache.contains(player)).forEach(send);
-            }
-        }
-        if (!playerCache.isEmpty()) {
-            final Stream<ServerPlayer> s = new HashSet<>(this.playerCache).stream();
-            final Consumer<ServerPlayer> send = (player) -> {
-                PacketHandler
-                    .send(PacketDistributor.PLAYER.with(() -> player), MufflingAreaEventPacket.PLAYER_LEFT);
-                this.playerCache.remove(player);
-            };
-            if (playersInRange.isEmpty()) {
-                s.forEach(send);
-            } else {
-                s.filter(player -> !playersInRange.contains(player)).forEach(send);
-            }
-        }
-    }
-
-    private AABB calcRangeAABB() {
-        final int xPos = this.getBlockPos().getX();
-        final int yPos = this.getBlockPos().getY();
-        final int zPos = this.getBlockPos().getZ();
-        final short range = this.getRange();
-        return new AABB(xPos - range - 1, yPos - range - 1, zPos - range - 1,
-                xPos + range + 1, yPos + range + 1, zPos + range + 1);
-    }
 }

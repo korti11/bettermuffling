@@ -4,7 +4,6 @@ import io.korti.bettermuffling.BetterMuffling;
 import io.korti.bettermuffling.client.util.MufflingCache;
 import io.korti.bettermuffling.common.config.BetterMufflingConfig;
 import io.korti.bettermuffling.common.network.PacketHandler;
-import io.korti.bettermuffling.common.network.packet.MufflingAreaEventPacket;
 import io.korti.bettermuffling.common.network.packet.OpenScreenPacket;
 import io.korti.bettermuffling.common.tileentity.TileMuffling;
 import net.minecraft.world.level.block.EntityBlock;
@@ -15,7 +14,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -108,14 +106,6 @@ public class MufflingBlock extends Block implements EntityBlock {
                 }
             }
         }
-    }
-
-    @Override
-    public boolean onDestroyedByPlayer(BlockState state, Level world, BlockPos pos, Player player, boolean willHarvest, FluidState fluid) {
-        if (!world.isClientSide()) {
-            PacketHandler.send(PacketDistributor.ALL.noArg(), MufflingAreaEventPacket.PLAYER_LEFT);
-        }
-        return super.onDestroyedByPlayer(state, world, pos, player, willHarvest, fluid);
     }
 
     @Override

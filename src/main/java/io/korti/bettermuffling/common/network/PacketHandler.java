@@ -1,7 +1,6 @@
 package io.korti.bettermuffling.common.network;
 
 import io.korti.bettermuffling.BetterMuffling;
-import io.korti.bettermuffling.common.network.packet.MufflingAreaEventPacket;
 import io.korti.bettermuffling.common.network.packet.MufflingDataPacket;
 import io.korti.bettermuffling.common.network.packet.OpenScreenPacket;
 import io.korti.bettermuffling.common.network.packet.RequestMufflingUpdatePacket;
@@ -30,8 +29,6 @@ public final class PacketHandler {
                 RequestMufflingUpdatePacket::decode, RequestMufflingUpdatePacket.Handler::handle);
         HANDLER.registerMessage(id++, MufflingDataPacket.class, MufflingDataPacket::encode, MufflingDataPacket::decode,
                 MufflingDataPacket.Handler::handle);
-        HANDLER.registerMessage(id, MufflingAreaEventPacket.class, MufflingAreaEventPacket::encoder,
-                MufflingAreaEventPacket::decode, MufflingAreaEventPacket.Handler::handle);
     }
 
     public static <MSG> void send(final PacketDistributor.PacketTarget target, MSG message) {
