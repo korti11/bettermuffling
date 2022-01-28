@@ -1,5 +1,6 @@
 package io.korti.bettermuffling.client.gui;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import io.korti.bettermuffling.BetterMuffling;
@@ -10,6 +11,7 @@ import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundSource;
@@ -51,19 +53,19 @@ public class MufflingBlockAdvancedGui extends MufflingBlockSimpleGui {
             if (category == SoundSource.MASTER || category == SoundSource.MUSIC) {
                 continue;
             }
-            SoundSlider soundSlider = this.addWidget(new SoundSlider(this.guiLeft + 130, this.guiTop + 31, 180, 20,
+            SoundSlider soundSlider = this.addRenderableWidget(new SoundSlider(this.guiLeft + 130, this.guiTop + 31, 180, 20,
                     tileMuffling.getSoundLevel(category).doubleValue(), category));
             soundSlider.visible = false;
             soundSlider.setListener((c, volume) -> tileMuffling.setSoundLevel(c, volume.floatValue()));
 
-            WhiteBlackListButton whiteBlackListButton = this.addWidget(new WhiteBlackListButton(this.guiLeft + 315,
+            WhiteBlackListButton whiteBlackListButton = this.addRenderableWidget(new WhiteBlackListButton(this.guiLeft + 315,
                     this.guiTop + 69, 20, 20, this, (b) -> {
                 tileMuffling.setWhiteListForCategory(category, !tileMuffling.getWhiteListForCategory(category));
             }));
             whiteBlackListButton.setIsWhiteList(tileMuffling.getWhiteListForCategory(category));
             whiteBlackListButton.visible = false;
 
-            BetterButton button = this.addWidget(new BetterButton(this.guiLeft + 11,
+            BetterButton button = this.addRenderableWidget(new BetterButton(this.guiLeft + 11,
                     this.guiTop + 31 + (20 * buttonCount), 110, 20, I18n.get("soundCategory." + category.getName()),
                     (b) -> {
                         activeSoundSlider.visible = false;
@@ -96,14 +98,14 @@ public class MufflingBlockAdvancedGui extends MufflingBlockSimpleGui {
             buttonCount++;
         }
 
-        RangeSlider rangeSlider = this.addWidget(new RangeSlider(this.guiLeft + 11, this.guiTop + 195, 158, 20,
+        RangeSlider rangeSlider = this.addRenderableWidget(new RangeSlider(this.guiLeft + 11, this.guiTop + 195, 158, 20,
                 this.tileMuffling.getRange()));
         rangeSlider.setUpdateListener(this.tileMuffling::setRange);
 
-        this.addWidget(new BetterButton(this.guiLeft + 11 + 158 + 8, this.guiTop + 195, 158, 20,
+        this.addRenderableWidget(new BetterButton(this.guiLeft + 11 + 158 + 8, this.guiTop + 195, 158, 20,
                 I18n.get("gui.done"), (b) -> this.onClose()));
 
-        this.lockIconButton = this.addWidget(new LockIconButton(this.guiLeft + 315, this.guiTop + 31,
+        this.lockIconButton = this.addRenderableWidget(new LockIconButton(this.guiLeft + 315, this.guiTop + 31,
                 (b) -> {
                     LockIconButton lb = (LockIconButton) b;
                     lb.setLocked(!lb.isLocked());
@@ -111,13 +113,13 @@ public class MufflingBlockAdvancedGui extends MufflingBlockSimpleGui {
                 }));
         this.lockIconButton.setLocked(tileMuffling.isPlacerOnly());
 
-        this.listenAudioButton = this.addWidget(new ListenAudioButton(this.guiLeft + 315, this.guiTop + 94,
+        this.listenAudioButton = this.addRenderableWidget(new ListenAudioButton(this.guiLeft + 315, this.guiTop + 94,
                 20, 20, this, (b) -> {
             tileMuffling.setListening(!tileMuffling.isListening());
         }));
         this.listenAudioButton.setIsListening(tileMuffling.isListening());
 
-        this.deleteEntryButton = this.addWidget(new DeleteEntryButton(this.guiLeft + 315, this.guiTop + 119,
+        this.deleteEntryButton = this.addRenderableWidget(new DeleteEntryButton(this.guiLeft + 315, this.guiTop + 119,
                 20, 20, this, (b) -> {
             this.soundNamesList.removeSelectedEntry();
         }));
@@ -225,8 +227,9 @@ public class MufflingBlockAdvancedGui extends MufflingBlockSimpleGui {
         }
 
         public void renderForeground(PoseStack stack, int mouseX, int mouseY, float partialTicks) {
-            GlStateManager._clearColor(1f, 1f, 1f, 1f);
-            minecraft.getTextureManager().bindForSetup(guiElements);
+            RenderSystem.setShader(GameRenderer::getPositionTexShader);
+            RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+            RenderSystem.setShaderTexture(0, guiElements);
             int scrollBarUV = isScrollBarEnabled() ? 185 : 191;
 
             // Render scroll bar
@@ -248,8 +251,9 @@ public class MufflingBlockAdvancedGui extends MufflingBlockSimpleGui {
         }
 
         public void renderBackground(PoseStack stack) {
-            GlStateManager._clearColor(1f, 1f, 1f, 1f);
-            minecraft.getTextureManager().bindForSetup(guiElements);
+            RenderSystem.setShader(GameRenderer::getPositionTexShader);
+            RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+            RenderSystem.setShaderTexture(0, guiElements);
             int listWidth = this.listWidth - 1;
             int halfHeight = Math.round(this.height / 2f);
             int top1 = 0;
