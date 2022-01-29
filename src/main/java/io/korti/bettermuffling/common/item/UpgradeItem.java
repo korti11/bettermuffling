@@ -49,15 +49,15 @@ public class UpgradeItem extends Item {
         if (!world.isClientSide && player != null
                 && oldBlockState.getBlock().equals(BetterMufflingBlocks.mufflingBlock)) {
             final BlockEntity oldBlockEntity = world.getBlockEntity(pos);
-            if (oldBlockEntity instanceof MufflingBlockEntity) {
+            if (oldBlockEntity instanceof MufflingBlockEntity oldMufflingBlockEntity) {
                 // Set new block without update the client.
                 world.setBlock(pos, newBlockState, 0);
 
                 // Get the new tile entity and copy the data from the old one to the new one
                 final MufflingBlockEntity newBlockEntity = (MufflingBlockEntity) world.getBlockEntity(pos);
                 if (newBlockEntity != null) {
-                    final CompoundTag teData = oldBlockEntity.serializeNBT();
-                    newBlockEntity.deserializeNBT(teData);
+                    final CompoundTag teData = oldMufflingBlockEntity.writeMufflingData(new CompoundTag(), false);
+                    newBlockEntity.readMufflingData(teData);
                     newBlockEntity.setAdvancedMode(true);
 
                     // Notify the world of the block update
