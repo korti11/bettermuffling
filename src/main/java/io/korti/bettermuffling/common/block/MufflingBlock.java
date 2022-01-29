@@ -2,44 +2,44 @@ package io.korti.bettermuffling.common.block;
 
 import io.korti.bettermuffling.BetterMuffling;
 import io.korti.bettermuffling.client.util.MufflingCache;
+import io.korti.bettermuffling.common.blockentity.MufflingBlockEntity;
 import io.korti.bettermuffling.common.config.BetterMufflingConfig;
 import io.korti.bettermuffling.common.network.PacketHandler;
 import io.korti.bettermuffling.common.network.packet.OpenScreenPacket;
-import io.korti.bettermuffling.common.blockentity.MufflingBlockEntity;
-import net.minecraft.world.level.block.EntityBlock;
-import net.minecraft.world.level.material.Material;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.resources.language.I18n;
-import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.sounds.SoundSource;
-import net.minecraft.core.BlockPos;
-import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.HitResult;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.ChatFormatting;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.network.PacketDistributor;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
-
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.SoundType;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.network.PacketDistributor;
 
 public class MufflingBlock extends Block implements EntityBlock {
 
@@ -49,12 +49,12 @@ public class MufflingBlock extends Block implements EntityBlock {
 
     @OnlyIn(Dist.CLIENT)
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable BlockGetter worldIn, List<Component> tooltip,
-                               TooltipFlag flagIn) {
+    public void appendHoverText(ItemStack stack, @Nullable BlockGetter worldIn, @Nonnull List<Component> tooltip,
+                                @Nonnull TooltipFlag flagIn) {
         final CompoundTag mufflingData = stack.getTagElement("tileData");
-        if(mufflingData != null && BetterMufflingConfig.CLIENT.tooltipEnable.get()) {
+        if (mufflingData != null && BetterMufflingConfig.CLIENT.tooltipEnable.get()) {
             if (BetterMuffling.proxy.isShiftKeyDown()) {
-                if(mufflingData.contains("placerName")) {
+                if (mufflingData.contains("placerName")) {
                     tooltip.add(new TextComponent("Owner: " +
                             ChatFormatting.GRAY + mufflingData.getString("placerName") + ChatFormatting.RESET));
                 }
@@ -68,7 +68,7 @@ public class MufflingBlock extends Block implements EntityBlock {
                                     I18n.get("soundCategory." + category.getName()) + ": ";
                             final float value = mufflingData.getFloat(category.getName());
                             final String categoryValue = value == 0.0F ? I18n.get("options.off") :
-                                    (int)(value * 100) + "%";
+                                    (int) (value * 100) + "%";
                             tooltip.add(new TextComponent(categoryName +
                                     ChatFormatting.GRAY + categoryValue + ChatFormatting.RESET));
                         });
@@ -80,11 +80,13 @@ public class MufflingBlock extends Block implements EntityBlock {
     }
 
     @Override
-    public InteractionResult use(BlockState blockState, Level worldIn, BlockPos pos, Player player,
-                                             InteractionHand hand, BlockHitResult traceResult) {
-        if(!worldIn.isClientSide) {
+    @Nonnull
+    @SuppressWarnings("deprecation")
+    public InteractionResult use(@Nonnull BlockState blockState, Level worldIn, @Nonnull BlockPos pos, @Nonnull Player player,
+                                 @Nonnull InteractionHand hand, @Nonnull BlockHitResult traceResult) {
+        if (!worldIn.isClientSide) {
             BlockEntity te = worldIn.getBlockEntity(pos);
-            if(te instanceof MufflingBlockEntity && !player.isCrouching() && ((MufflingBlockEntity) te).canAccess(player)) {
+            if (te instanceof MufflingBlockEntity && !player.isCrouching() && ((MufflingBlockEntity) te).canAccess(player)) {
                 PacketHandler.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player),
                         new OpenScreenPacket(pos));
                 return InteractionResult.SUCCESS;
@@ -94,11 +96,11 @@ public class MufflingBlock extends Block implements EntityBlock {
     }
 
     @Override
-    public void setPlacedBy(Level worldIn, BlockPos blockPos, BlockState blockState,
-                                @Nullable LivingEntity player, ItemStack itemStack) {
-        if(player != null) {
+    public void setPlacedBy(@Nonnull Level worldIn, @Nonnull BlockPos blockPos, @Nonnull BlockState blockState,
+                            @Nullable LivingEntity player, @Nonnull ItemStack itemStack) {
+        if (player != null) {
             final BlockEntity te = worldIn.getBlockEntity(blockPos);
-            if(te instanceof MufflingBlockEntity) {
+            if (te instanceof MufflingBlockEntity) {
                 ((MufflingBlockEntity) te).setPlacer(player.getUUID());
                 final CompoundTag tileData = itemStack.getTagElement("tileData");
                 if (tileData != null) {
@@ -109,15 +111,14 @@ public class MufflingBlock extends Block implements EntityBlock {
     }
 
     @Override
-    public void playerWillDestroy(Level worldIn, BlockPos pos, BlockState state, Player player) {
-        final BlockEntity te = worldIn.getBlockEntity(pos);
-        if(te instanceof MufflingBlockEntity) {
-            final MufflingBlockEntity tileMuffling = (MufflingBlockEntity) te;
-            if(worldIn.isClientSide) {
+    public void playerWillDestroy(Level worldIn, @Nonnull BlockPos pos, @Nonnull BlockState state, @Nonnull Player player) {
+        final BlockEntity blockEntity = worldIn.getBlockEntity(pos);
+        if (blockEntity instanceof final MufflingBlockEntity mufflingBlockEntity) {
+            if (worldIn.isClientSide) {
                 MufflingCache.removeMufflingPos(pos);
             }
-            if(!worldIn.isClientSide && !player.isCreative()) {
-                final ItemStack stack = getStackWithTileData(tileMuffling, true);
+            if (!worldIn.isClientSide && !player.isCreative()) {
+                final ItemStack stack = getStackWithTileData(mufflingBlockEntity, true);
                 final ItemEntity itemEntity = new ItemEntity(worldIn, pos.getX(), pos.getY(), pos.getZ(), stack);
                 itemEntity.setDefaultPickUpDelay();
                 worldIn.addFreshEntity(itemEntity);
@@ -129,7 +130,7 @@ public class MufflingBlock extends Block implements EntityBlock {
     @Override
     public ItemStack getCloneItemStack(BlockState state, HitResult target, BlockGetter world, BlockPos pos, Player player) {
         final BlockEntity te = world.getBlockEntity(pos);
-        if(te instanceof MufflingBlockEntity && world instanceof Level && player.isCreative()) {
+        if (te instanceof MufflingBlockEntity && world instanceof Level && player.isCreative()) {
             return getStackWithTileData((MufflingBlockEntity) te, false);
         }
         return new ItemStack(this);
@@ -144,7 +145,7 @@ public class MufflingBlock extends Block implements EntityBlock {
 
     @Nullable
     @Override
-    public BlockEntity newBlockEntity(BlockPos pos, BlockState blockState) {
+    public BlockEntity newBlockEntity(@Nonnull BlockPos pos, @Nonnull BlockState blockState) {
         return new MufflingBlockEntity(pos, blockState);
     }
 }

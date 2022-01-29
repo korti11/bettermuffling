@@ -7,16 +7,18 @@ import io.korti.bettermuffling.client.gui.widget.BetterButton;
 import io.korti.bettermuffling.client.gui.widget.RangeSlider;
 import io.korti.bettermuffling.client.gui.widget.SoundSlider;
 import io.korti.bettermuffling.common.blockentity.MufflingBlockEntity;
+import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Widget;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.resources.language.I18n;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+
+import javax.annotation.Nonnull;
 
 @OnlyIn(Dist.CLIENT)
 public class MufflingBlockSimpleGui extends Screen {
@@ -53,14 +55,14 @@ public class MufflingBlockSimpleGui extends Screen {
 
         int buttonNumber = 0;
 
-        RangeSlider rangeSlider = this.addRenderableWidget(new RangeSlider(this.guiLeft + 10 + buttonNumber % 2 * 145,
-                (this.guiTop + 22 + 24 * (buttonNumber >> 1)), 135, 20, tileMuffling.getRange()));
+        RangeSlider rangeSlider = this.addRenderableWidget(new RangeSlider(this.guiLeft + 10,
+                (this.guiTop + 22), 135, 20, tileMuffling.getRange()));
         rangeSlider.setUpdateListener(this.tileMuffling::setRange);
         buttonNumber++;
 
         String placerKey = getPlacerOnlyButtonMessage();
         this.addRenderableWidget(new BetterButton(this.guiLeft + 10 + buttonNumber % 2 * 145,
-                (this.guiTop + 22 + 24 * (buttonNumber >> 1)), 135, 20,
+                (this.guiTop + 22), 135, 20,
                 I18n.get(placerKey),
                 (button) -> {
                     tileMuffling.setPlacerOnly(!tileMuffling.isPlacerOnly());
@@ -69,7 +71,7 @@ public class MufflingBlockSimpleGui extends Screen {
         buttonNumber++;
 
         for (SoundSource category : SoundSource.values()) {
-            if(category != SoundSource.MASTER && category != SoundSource.MUSIC) {
+            if (category != SoundSource.MASTER && category != SoundSource.MUSIC) {
                 SoundSlider soundSlider = this.addRenderableWidget(new SoundSlider(this.guiLeft + 10 + buttonNumber % 2 * 145,
                         (this.guiTop + 22 + 24 * (buttonNumber >> 1)), 135, 20,
                         tileMuffling.getSoundLevel(category), category));
@@ -79,20 +81,17 @@ public class MufflingBlockSimpleGui extends Screen {
         }
 
         this.addRenderableWidget(new BetterButton(this.guiLeft + 50, this.guiTop + 142, 200, 20, I18n.get("gui.done"),
-                (button) -> {
-                    this.onClose();
-                }));
+                (button) -> this.onClose()));
     }
 
     @Override
-    public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks) {
+    public void render(@Nonnull PoseStack stack, int mouseX, int mouseY, float partialTicks) {
         this.renderBackground(stack);
         this.renderForeground(stack, mouseX, mouseY, partialTicks);
         super.render(stack, mouseX, mouseY, partialTicks);
 
-        for(Widget widget : this.renderables) {
-            if (widget instanceof AbstractWidget) {
-                AbstractWidget abstractWidget = (AbstractWidget) widget;
+        for (Widget widget : this.renderables) {
+            if (widget instanceof AbstractWidget abstractWidget) {
                 if (abstractWidget.isHoveredOrFocused()) {
                     abstractWidget.renderToolTip(stack, mouseX, mouseY);
                 }
@@ -108,7 +107,7 @@ public class MufflingBlockSimpleGui extends Screen {
     }
 
     @Override
-    public void renderBackground(PoseStack stack) {
+    public void renderBackground(@Nonnull PoseStack stack) {
         super.renderBackground(stack);
 
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
@@ -129,17 +128,11 @@ public class MufflingBlockSimpleGui extends Screen {
         // Render right end
         this.blit(stack, this.guiLeft + 50 + middleWidth, this.guiTop, 256 - 50, top1, 50, halfHeight);
         this.blit(stack, this.guiLeft + 50 + middleWidth, this.guiTop + halfHeight, 256 - 50, top2, 50, halfHeight);
-
-        // Render sound category list
     }
 
     private String getPlacerOnlyButtonMessage() {
         return tileMuffling.isPlacerOnly() ? "button.muffling_block.placer_only.on" :
                 "button.muffling_block.placer_only.off";
-    }
-
-    private boolean isAdvancedModeOn() {
-        return true;
     }
 
 }

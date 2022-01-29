@@ -2,10 +2,10 @@ package io.korti.bettermuffling.common;
 
 import io.korti.bettermuffling.BetterMuffling;
 import io.korti.bettermuffling.common.blockentity.MufflingBlockEntity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;

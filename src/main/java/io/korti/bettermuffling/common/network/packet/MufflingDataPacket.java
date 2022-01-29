@@ -1,22 +1,14 @@
 package io.korti.bettermuffling.common.network.packet;
 
 import io.korti.bettermuffling.BetterMuffling;
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.core.BlockPos;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-public class MufflingDataPacket {
-
-    private final BlockPos pos;
-    private final CompoundTag mufflingData;
-
-    public MufflingDataPacket(BlockPos pos, CompoundTag mufflingData) {
-        this.pos = pos;
-        this.mufflingData = mufflingData;
-    }
+public record MufflingDataPacket(BlockPos pos, CompoundTag mufflingData) {
 
     public static void encode(final MufflingDataPacket packet, final FriendlyByteBuf buf) {
         buf.writeBlockPos(packet.pos);

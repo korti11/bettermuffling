@@ -1,15 +1,15 @@
 package io.korti.bettermuffling.client;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import io.korti.bettermuffling.BetterMuffling;
 import io.korti.bettermuffling.common.ServerProxy;
-import io.korti.bettermuffling.common.network.packet.MufflingDataPacket;
 import io.korti.bettermuffling.common.blockentity.MufflingBlockEntity;
+import io.korti.bettermuffling.common.network.packet.MufflingDataPacket;
 import net.minecraft.client.Minecraft;
-import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.network.NetworkEvent;
 import org.lwjgl.glfw.GLFW;
@@ -30,7 +30,7 @@ public class ClientProxy extends ServerProxy {
             final Level world;
             final BlockEntity te;
             boolean lanWorld = false;
-            if(side == LogicalSide.SERVER) {
+            if (side == LogicalSide.SERVER) {
                 final ServerPlayer player = ctx.getSender();
                 world = Objects.requireNonNull(player).getCommandSenderWorld();
                 lanWorld = Objects.requireNonNull(world.getServer()).isPublished();
@@ -38,7 +38,7 @@ public class ClientProxy extends ServerProxy {
                 world = ClientProxy.getWorld();
             }
             te = world.getBlockEntity(packet.getPos());
-            if(te instanceof MufflingBlockEntity) {
+            if (te instanceof MufflingBlockEntity) {
                 ((MufflingBlockEntity) te).readMufflingData(packet.getMufflingData());
                 te.setChanged();
                 if (lanWorld) {

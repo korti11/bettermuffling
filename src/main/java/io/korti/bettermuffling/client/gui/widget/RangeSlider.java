@@ -19,7 +19,7 @@ public class RangeSlider extends BaseSlider {
     }
 
     private short calcRange() {
-        return (short)((this.value * (double)max) + (double)min);
+        return (short) ((this.value * (double) max) + (double) min);
     }
 
     public void setUpdateListener(Consumer<Short> listener) {

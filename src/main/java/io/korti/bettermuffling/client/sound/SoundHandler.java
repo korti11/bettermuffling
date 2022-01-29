@@ -5,10 +5,10 @@ import io.korti.bettermuffling.client.ClientProxy;
 import io.korti.bettermuffling.client.util.MufflingCache;
 import io.korti.bettermuffling.common.blockentity.MufflingBlockEntity;
 import io.korti.bettermuffling.common.util.MathHelper;
-import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
-import net.minecraft.sounds.SoundSource;
+import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.core.BlockPos;
+import net.minecraft.sounds.SoundSource;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.sound.PlaySoundEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -25,10 +25,10 @@ public final class SoundHandler {
         MufflingCache.getCache().forEach((entry) -> {
             final BlockPos pos = entry.getKey();
             final short range = entry.getValue().getRange();
-            if(MathHelper.isInRange(soundPos, pos, range)){
+            if (MathHelper.isInRange(soundPos, pos, range)) {
                 final MufflingBlockEntity tileMuffling = (MufflingBlockEntity) ClientProxy.getWorld().getBlockEntity(pos);
-                if(tileMuffling != null && event.getEngine() != null) {
-                    if(tileMuffling.muffleSound(category, event.getName())) {
+                if (tileMuffling != null && event.getEngine() != null) {
+                    if (tileMuffling.muffleSound(category, event.getName())) {
                         sound.resolve(event.getEngine().soundManager); // Why? Idk :D
                         final float soundLevel = tileMuffling.getSoundLevel(category);
                         final SoundInstance newSound = new SimpleSoundInstance(sound.getLocation(), category,

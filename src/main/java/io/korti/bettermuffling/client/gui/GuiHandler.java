@@ -4,8 +4,8 @@ import io.korti.bettermuffling.client.ClientProxy;
 import io.korti.bettermuffling.common.blockentity.MufflingBlockEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -13,14 +13,13 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 public final class GuiHandler {
 
     public static void openMufflingGui(BlockPos pos) {
-        final BlockEntity te = ClientProxy.getWorld().getBlockEntity(pos);
-        if(te instanceof MufflingBlockEntity) {
-            MufflingBlockEntity tile = (MufflingBlockEntity) te;
+        final BlockEntity blockEntity = ClientProxy.getWorld().getBlockEntity(pos);
+        if (blockEntity instanceof MufflingBlockEntity mufflingBlockEntity) {
             Screen screen;
-            if(tile.isAdvancedMode()) {
-                screen = new MufflingBlockAdvancedGui(tile);
+            if (mufflingBlockEntity.isAdvancedMode()) {
+                screen = new MufflingBlockAdvancedGui(mufflingBlockEntity);
             } else {
-                screen = new MufflingBlockSimpleGui(tile);
+                screen = new MufflingBlockSimpleGui(mufflingBlockEntity);
             }
             Minecraft.getInstance().setScreen(screen);
         }

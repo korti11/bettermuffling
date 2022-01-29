@@ -3,15 +3,17 @@ package io.korti.bettermuffling.common.core;
 import io.korti.bettermuffling.BetterMuffling;
 import io.korti.bettermuffling.common.block.AdvancedMufflingBlock;
 import io.korti.bettermuffling.common.block.MufflingBlock;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.ObjectHolder;
+
+import java.util.Objects;
 
 final public class BetterMufflingBlocks {
 
@@ -23,9 +25,6 @@ final public class BetterMufflingBlocks {
 
     @ObjectHolder(BetterMuffling.MOD_ID + ":muffling_block_advanced")
     public static AdvancedMufflingBlock advancedMufflingBlock;
-
-    @ObjectHolder(BetterMuffling.MOD_ID + ":muffling_block_advanced")
-    public static Item advancedMufflingBlockItem;
 
     @Mod.EventBusSubscriber(modid = BetterMuffling.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
     public static class Registration {
@@ -44,9 +43,9 @@ final public class BetterMufflingBlocks {
             final Item.Properties itemBuilder = new Item.Properties().tab(CreativeModeTab.TAB_MISC);
 
             itemRegistry.register(new BlockItem(mufflingBlock, itemBuilder)
-                    .setRegistryName(mufflingBlock.getRegistryName()));
+                    .setRegistryName(Objects.requireNonNull(mufflingBlock.getRegistryName())));
             itemRegistry.register(new BlockItem(advancedMufflingBlock, itemBuilder)
-                    .setRegistryName(advancedMufflingBlock.getRegistryName()));
+                    .setRegistryName(Objects.requireNonNull(advancedMufflingBlock.getRegistryName())));
         }
     }
 

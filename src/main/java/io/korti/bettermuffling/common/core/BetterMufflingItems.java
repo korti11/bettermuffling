@@ -7,12 +7,8 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.IForgeRegistry;
-import net.minecraftforge.registries.ObjectHolder;
 
 public final class BetterMufflingItems {
-
-    @ObjectHolder(BetterMuffling.MOD_ID + ":upgrade")
-    public static Item upgradeItem;
 
     @Mod.EventBusSubscriber(modid = BetterMuffling.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
     public static class Registration {

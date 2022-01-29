@@ -9,16 +9,17 @@ import io.korti.bettermuffling.common.network.PacketHandler;
 import io.korti.bettermuffling.common.network.packet.MufflingDataPacket;
 import io.korti.bettermuffling.common.network.packet.RequestMufflingUpdatePacket;
 import net.minecraft.core.BlockPos;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
-import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.network.PacketDistributor;
 
+import javax.annotation.Nonnull;
 import java.util.*;
 
 public final class MufflingBlockEntity extends BlockEntity {
@@ -72,7 +73,9 @@ public final class MufflingBlockEntity extends BlockEntity {
     }
 
     public String getPlacerName() {
-        if(!Objects.requireNonNull(this.getLevel()).isClientSide) {
+        Objects.requireNonNull(this.getLevel());
+        if (!this.getLevel().isClientSide) {
+            Objects.requireNonNull(this.getLevel().getServer());
             Optional<GameProfile> gameProfile = this.getLevel().getServer().getProfileCache().get(this.placer);
             if (gameProfile.isPresent()) {
                 return gameProfile.get().getName();
@@ -130,7 +133,7 @@ public final class MufflingBlockEntity extends BlockEntity {
     }
 
     public boolean muffleSound(SoundSource category, String name) {
-        if(!soundLevels.containsKey(category)) {
+        if (!soundLevels.containsKey(category)) {
             return false;
         }
         if (getWhiteListForCategory(category)) {
@@ -149,12 +152,12 @@ public final class MufflingBlockEntity extends BlockEntity {
     }
 
     @Override
-    protected void saveAdditional(CompoundTag compoundTag) {
+    protected void saveAdditional(@Nonnull CompoundTag compoundTag) {
         writeMufflingData(compoundTag);
     }
 
-    private CompoundTag writeMufflingData(CompoundTag compound) {
-        return writeMufflingData(compound, false);
+    private void writeMufflingData(CompoundTag compound) {
+        writeMufflingData(compound, false);
     }
 
     public CompoundTag writeMufflingData(CompoundTag compound, boolean writePlayerName) {
@@ -168,7 +171,7 @@ public final class MufflingBlockEntity extends BlockEntity {
         compound.putBoolean("listening", this.listening);
         compound.putShort("selectedCategory", (short) this.selectedCategory.ordinal());
 
-        if(!Objects.requireNonNull(this.level).isClientSide && writePlayerName) {
+        if (!Objects.requireNonNull(this.level).isClientSide && writePlayerName) {
             compound.putString("placerName", this.getPlacerName());
         }
         return compound;
@@ -179,7 +182,7 @@ public final class MufflingBlockEntity extends BlockEntity {
     }
 
     private void writeSoundNames(CompoundTag compound) {
-        if(this.advancedMode) {
+        if (this.advancedMode) {
             this.soundNames.forEach(((category, strings) -> {
                 ListTag list = new ListTag();
                 strings.forEach((s) -> list.add(StringTag.valueOf(s)));
@@ -195,7 +198,7 @@ public final class MufflingBlockEntity extends BlockEntity {
     }
 
     @Override
-    public void load(CompoundTag compoundTag) {
+    public void load(@Nonnull CompoundTag compoundTag) {
         super.load(compoundTag);
         readMufflingData(compoundTag);
         validateWithConfig();
@@ -209,7 +212,7 @@ public final class MufflingBlockEntity extends BlockEntity {
         this.readWhiteList(compound);
         this.range = compound.getShort("range");
         this.placerOnly = compound.getBoolean("placerOnly");
-        if(compound.hasUUID("placer")) {
+        if (compound.hasUUID("placer")) {
             this.placer = compound.getUUID("placer");
         }
         this.listening = compound.getBoolean("listening");
@@ -224,7 +227,7 @@ public final class MufflingBlockEntity extends BlockEntity {
     }
 
     private void readSoundNames(CompoundTag compound) {
-        if(this.advancedMode) {
+        if (this.advancedMode) {
             this.soundNames.forEach(((category, strings) -> {
                 ListTag list = compound.getList("names_" + category.getName(), 8);
                 strings.clear();
@@ -244,7 +247,7 @@ public final class MufflingBlockEntity extends BlockEntity {
         BetterMuffling.LOG.debug("Validating muffle data with config.");
         this.range = (short) net.minecraft.util.Mth
                 .clamp(this.range, 2, BetterMufflingConfig.COMMON.maxRange.get());
-        for(Map.Entry<SoundSource, Float> soundLevel : soundLevels.entrySet()) {
+        for (Map.Entry<SoundSource, Float> soundLevel : soundLevels.entrySet()) {
             soundLevels.replace(soundLevel.getKey(),
                     net.minecraft.util.Mth
                             .clamp(soundLevel.getValue(),
@@ -255,7 +258,7 @@ public final class MufflingBlockEntity extends BlockEntity {
 
     @Override
     public void onLoad() {
-        if(Objects.requireNonNull(getLevel()).isClientSide) {
+        if (Objects.requireNonNull(getLevel()).isClientSide) {
             MufflingCache.addMufflingPos(this.getBlockPos(), this);
             BetterMuffling.LOG.debug("Request init muffling data from server.");
             PacketHandler.send(PacketDistributor.SERVER.noArg(),
@@ -270,7 +273,7 @@ public final class MufflingBlockEntity extends BlockEntity {
         PacketHandler.send(PacketDistributor.ALL.noArg(), new MufflingDataPacket(this.worldPosition, mufflingData));
     }
 
-    public void syncToClient(final RequestMufflingUpdatePacket packet, final ServerPlayer player) {
+    public void syncToClient(final ServerPlayer player) {
         BetterMuffling.LOG.debug("Sending muffling data to the client.");
         final CompoundTag mufflingData = new CompoundTag();
         this.writeMufflingData(mufflingData);

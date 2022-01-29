@@ -18,7 +18,7 @@ public class BetterMuffling {
     public static final Logger LOG = LogManager.getLogger();
 
     public static BetterMuffling instance;
-    public static ServerProxy proxy = DistExecutor.runForDist(() -> ClientProxy::new, () -> ServerProxy::new);
+    public static ServerProxy proxy = DistExecutor.safeRunForDist(() -> ClientProxy::new, () -> ServerProxy::new);
 
     public BetterMuffling() {
         BetterMuffling.instance = this;

@@ -1,13 +1,15 @@
 package io.korti.bettermuffling.common.recipe;
 
 import io.korti.bettermuffling.common.core.BetterMufflingRecipes;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.CustomRecipe;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
+
+import javax.annotation.Nonnull;
 
 public class MufflingBlockCloningRecipe extends CustomRecipe {
 
@@ -23,7 +25,7 @@ public class MufflingBlockCloningRecipe extends CustomRecipe {
     }
 
     @Override
-    public boolean matches(CraftingContainer inv, Level worldIn) {
+    public boolean matches(CraftingContainer inv, @Nonnull Level worldIn) {
         int i = 0;
         ItemStack itemStack = ItemStack.EMPTY;
 
@@ -50,6 +52,7 @@ public class MufflingBlockCloningRecipe extends CustomRecipe {
     }
 
     @Override
+    @Nonnull
     public ItemStack assemble(CraftingContainer inv) {
         int i = 0;
         ItemStack itemStack = ItemStack.EMPTY;
@@ -86,6 +89,7 @@ public class MufflingBlockCloningRecipe extends CustomRecipe {
     }
 
     @Override
+    @Nonnull
     public RecipeSerializer<?> getSerializer() {
         return BetterMufflingRecipes.mufflingBlockCloningRecipeSerializer;
     }

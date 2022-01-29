@@ -1,14 +1,16 @@
 package io.korti.bettermuffling.client.gui.widget;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.AbstractSliderButton;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.util.Mth;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.util.Mth;
+
+import javax.annotation.Nonnull;
 
 public abstract class BaseSlider extends AbstractSliderButton {
 
@@ -20,7 +22,7 @@ public abstract class BaseSlider extends AbstractSliderButton {
     }
 
     @Override
-    public void renderButton(PoseStack stack, int p_renderButton_1_, int p_renderButton_2_, float p_renderButton_3_) {
+    public void renderButton(@Nonnull PoseStack stack, int p_renderButton_1_, int p_renderButton_2_, float p_renderButton_3_) {
         Minecraft minecraft = Minecraft.getInstance();
         Font fontrenderer = minecraft.font;
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
@@ -47,7 +49,7 @@ public abstract class BaseSlider extends AbstractSliderButton {
     }
 
     @Override
-    protected void renderBg(PoseStack stack, Minecraft minecraft, int p_renderBg_2_, int p_renderBg_3_) {
+    protected void renderBg(@Nonnull PoseStack stack, Minecraft minecraft, int p_renderBg_2_, int p_renderBg_3_) {
         minecraft.getTextureManager().bindForSetup(WIDGETS_LOCATION);
         GlStateManager._clearColor(1.0F, 1.0F, 1.0F, this.alpha);
         int i = (this.isHovered ? 2 : 1) * 20;
@@ -55,10 +57,10 @@ public abstract class BaseSlider extends AbstractSliderButton {
         int top1 = 46 + i;
         int top2 = 46 + i + (20 - height);
         // Render the button in quads instead of a pair
-        this.blit(stack, this.x + (int)(this.value * (double)(this.width - 8)), this.y, 0, top1, 4, height);
-        this.blit(stack, this.x + (int)(this.value * (double)(this.width - 8)), this.y + height, 0, top2, 4, height);
-        this.blit(stack, this.x + (int)(this.value * (double)(this.width - 8)) + 4, this.y, 196, top1, 4, height);
-        this.blit(stack, this.x + (int)(this.value * (double)(this.width - 8)) + 4, this.y + height, 196, top2, 4, height);
+        this.blit(stack, this.x + (int) (this.value * (double) (this.width - 8)), this.y, 0, top1, 4, height);
+        this.blit(stack, this.x + (int) (this.value * (double) (this.width - 8)), this.y + height, 0, top2, 4, height);
+        this.blit(stack, this.x + (int) (this.value * (double) (this.width - 8)) + 4, this.y, 196, top1, 4, height);
+        this.blit(stack, this.x + (int) (this.value * (double) (this.width - 8)) + 4, this.y + height, 196, top2, 4, height);
     }
 
 }

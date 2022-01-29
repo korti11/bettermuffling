@@ -2,15 +2,14 @@ package io.korti.bettermuffling.common.config;
 
 import io.korti.bettermuffling.BetterMuffling;
 import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.config.ModConfig;
-import org.apache.commons.lang3.tuple.Pair;
-
 import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
 import net.minecraftforge.common.ForgeConfigSpec.Builder;
 import net.minecraftforge.common.ForgeConfigSpec.DoubleValue;
 import net.minecraftforge.common.ForgeConfigSpec.IntValue;
+import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.config.ModConfig;
+import org.apache.commons.lang3.tuple.Pair;
 
 @Mod.EventBusSubscriber(modid = BetterMuffling.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class BetterMufflingConfig {
@@ -61,7 +60,7 @@ public class BetterMufflingConfig {
             builder.comment("Client only configuration settings.").push("client");
 
             tooltipEnable = builder.comment("Show sound levels and range in the tool tip of the muffling block.",
-                    "This tooltip is only shown if it has data saved on it.")
+                            "This tooltip is only shown if it has data saved on it.")
                     .translation("config.muffling_tooltip.enable")
                     .define("tooltipEnable", true);
 
@@ -72,6 +71,7 @@ public class BetterMufflingConfig {
 
     static final ForgeConfigSpec clientSpecs;
     public static final Client CLIENT;
+
     static {
         final Pair<Client, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(Client::new);
         clientSpecs = specPair.getRight();
@@ -80,6 +80,7 @@ public class BetterMufflingConfig {
 
     static final ForgeConfigSpec commonSpecs;
     public static final Common COMMON;
+
     static {
         final Pair<Common, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(Common::new);
         commonSpecs = specPair.getRight();
