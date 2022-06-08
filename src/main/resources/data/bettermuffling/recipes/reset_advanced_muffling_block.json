@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "bettermuffling:muffling_block_advanced"
+    }
+  ],
+  "result": {
+    "item": "bettermuffling:muffling_block_advanced"
+  }
+}
