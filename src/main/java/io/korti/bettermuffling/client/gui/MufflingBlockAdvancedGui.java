@@ -12,7 +12,7 @@ import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.resources.language.I18n;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
@@ -119,9 +119,9 @@ public class MufflingBlockAdvancedGui extends MufflingBlockSimpleGui {
     @Override
     public void renderForeground(PoseStack stack, int mouseX, int mouseY, float partialTicks) {
         super.renderForeground(stack, mouseX, mouseY, partialTicks);
-        this.font.draw(stack, new TranslatableComponent("label.muffling_block.sound.category"), (float) (this.guiLeft + 11), (float) (this.guiTop + 21), 4210752);
-        this.font.draw(stack, new TranslatableComponent("label.muffling_block.volume"), (float) (this.guiLeft + 130), (float) (this.guiTop + 21), 4210752);
-        this.font.draw(stack, new TranslatableComponent("label.muffling_block.sound.names"), (float) (this.guiLeft + 130), (float) (this.guiTop + 60), 4210752);
+        this.font.draw(stack, Component.translatable("label.muffling_block.sound.category"), (float) (this.guiLeft + 11), (float) (this.guiTop + 21), 4210752);
+        this.font.draw(stack, Component.translatable("label.muffling_block.volume"), (float) (this.guiLeft + 130), (float) (this.guiTop + 21), 4210752);
+        this.font.draw(stack, Component.translatable("label.muffling_block.sound.names"), (float) (this.guiLeft + 130), (float) (this.guiTop + 60), 4210752);
         this.soundNamesList.renderForeground(stack);
     }
 
@@ -349,7 +349,7 @@ public class MufflingBlockAdvancedGui extends MufflingBlockSimpleGui {
         @Override
         public void renderToolTip(@Nonnull PoseStack stack, int mouseX, int mouseY) {
             MufflingBlockAdvancedGui.this.renderComponentTooltip(stack,
-                    Collections.singletonList(new TranslatableComponent("button.muffling_block.player_only")),
+                    Collections.singletonList(Component.translatable("button.muffling_block.player_only")),
                     mouseX, mouseY);
         }
     }

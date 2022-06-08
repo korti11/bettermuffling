@@ -12,7 +12,7 @@ import net.minecraft.client.gui.components.Widget;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.resources.language.I18n;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundSource;
 import net.minecraftforge.api.distmarker.Dist;
@@ -33,7 +33,7 @@ public class MufflingBlockSimpleGui extends Screen {
     protected int guiLeft = 0;
 
     protected MufflingBlockSimpleGui(MufflingBlockEntity tileMuffling, int xSize, int ySize) {
-        super(new TranslatableComponent(titleKey));
+        super(Component.translatable(titleKey));
         this.tileMuffling = tileMuffling;
         this.xSize = xSize;
         this.ySize = ySize;
@@ -66,7 +66,7 @@ public class MufflingBlockSimpleGui extends Screen {
                 I18n.get(placerKey),
                 (button) -> {
                     tileMuffling.setPlacerOnly(!tileMuffling.isPlacerOnly());
-                    button.setMessage(new TranslatableComponent(getPlacerOnlyButtonMessage()));
+                    button.setMessage(Component.translatable(getPlacerOnlyButtonMessage()));
                 }));
         buttonNumber++;
 

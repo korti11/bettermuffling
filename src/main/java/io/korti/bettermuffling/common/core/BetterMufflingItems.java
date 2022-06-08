@@ -2,11 +2,11 @@ package io.korti.bettermuffling.common.core;
 
 import io.korti.bettermuffling.BetterMuffling;
 import io.korti.bettermuffling.common.item.UpgradeItem;
-import net.minecraft.world.item.Item;
-import net.minecraftforge.event.RegistryEvent;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegisterEvent;
 
 public final class BetterMufflingItems {
 
@@ -14,10 +14,10 @@ public final class BetterMufflingItems {
     public static class Registration {
 
         @SubscribeEvent
-        public static void registerItems(final RegistryEvent.Register<Item> event) {
-            final IForgeRegistry<Item> itemRegistry = event.getRegistry();
-
-            itemRegistry.register(new UpgradeItem());
+        public static void registerItems(final RegisterEvent event) {
+            event.register(ForgeRegistries.Keys.ITEMS, helper -> {
+                helper.register(new ResourceLocation(BetterMuffling.MOD_ID, "upgrade"), new UpgradeItem());
+            });
         }
     }
 

@@ -3,7 +3,7 @@ package io.korti.bettermuffling.client.gui.widget;
 import io.korti.bettermuffling.BetterMuffling;
 import io.korti.bettermuffling.common.config.BetterMufflingConfig;
 import net.minecraft.client.resources.language.I18n;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 
 import java.util.function.Consumer;
 
@@ -28,7 +28,7 @@ public class RangeSlider extends BaseSlider {
 
     @Override
     protected void updateMessage() {
-        this.setMessage(new TextComponent(I18n.get(this.titleKey) + ": " + calcRange()));
+        this.setMessage(Component.literal(I18n.get(this.titleKey) + ": " + calcRange()));
     }
 
     @Override

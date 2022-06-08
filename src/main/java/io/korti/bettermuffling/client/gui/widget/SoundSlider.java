@@ -3,7 +3,7 @@ package io.korti.bettermuffling.client.gui.widget;
 import io.korti.bettermuffling.BetterMuffling;
 import io.korti.bettermuffling.common.config.BetterMufflingConfig;
 import net.minecraft.client.resources.language.I18n;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundSource;
 
 import java.util.function.BiConsumer;
@@ -33,7 +33,7 @@ public class SoundSlider extends BaseSlider {
     @Override
     protected void updateMessage() {
         String volumeMessage = this.value == 0 ? I18n.get("options.off") : (int) (calcVolume() * 100) + "%";
-        this.setMessage(new TextComponent(I18n.get(this.titleKey) + ": " + volumeMessage));
+        this.setMessage(Component.literal(I18n.get(this.titleKey) + ": " + volumeMessage));
     }
 
     @Override

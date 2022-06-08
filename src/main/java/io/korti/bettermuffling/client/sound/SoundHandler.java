@@ -9,6 +9,7 @@ import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.RandomSource;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.sound.PlaySoundEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -16,6 +17,8 @@ import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber(value = Dist.CLIENT, modid = BetterMuffling.MOD_ID)
 public final class SoundHandler {
+
+    private static final RandomSource RANDOM_SOURCE = RandomSource.create();
 
     @SubscribeEvent
     public static void onSoundPlaying(final PlaySoundEvent event) {
@@ -32,8 +35,9 @@ public final class SoundHandler {
                         sound.resolve(event.getEngine().soundManager); // Why? Idk :D
                         final float soundLevel = tileMuffling.getSoundLevel(category);
                         final SoundInstance newSound = new SimpleSoundInstance(sound.getLocation(), category,
-                                sound.getVolume() * soundLevel, sound.getPitch(), sound.isLooping(), sound.getDelay(),
-                                sound.getAttenuation(), sound.getX(), sound.getY(), sound.getZ(), false
+                                sound.getVolume() * soundLevel, sound.getPitch(), RANDOM_SOURCE, sound.isLooping(),
+                                sound.getDelay(), sound.getAttenuation(), sound.getX(), sound.getY(), sound.getZ(),
+                                false
                         );
                         event.setSound(newSound);
                     }

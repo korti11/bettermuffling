@@ -5,7 +5,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import io.korti.bettermuffling.BetterMuffling;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nonnull;
@@ -35,11 +35,11 @@ public class ListenAudioButton extends BetterButton {
     protected void renderToolTip(Button button, PoseStack stack, int mouseX, int mouseY) {
         if (xTexStart == 197) {
             this.screen.renderComponentTooltip(stack,
-                    Collections.singletonList(new TranslatableComponent("tooltip.muffling_block.listening.on")),
+                    Collections.singletonList(Component.translatable("tooltip.muffling_block.listening.on")),
                     mouseX, mouseY);
         } else {
             this.screen.renderComponentTooltip(stack,
-                    Collections.singletonList(new TranslatableComponent("tooltip.muffling_block.listening.off")),
+                    Collections.singletonList(Component.translatable("tooltip.muffling_block.listening.off")),
                     mouseX, mouseY);
         }
     }

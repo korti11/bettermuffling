@@ -8,7 +8,7 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 
 import javax.annotation.Nonnull;
@@ -26,7 +26,7 @@ public class BetterButton extends Button {
     }
 
     public BetterButton(int widthIn, int heightIn, int width, int height, String textKey, Screen screen, String toolTipKey, OnPress onPress) {
-        super(widthIn, heightIn, width, height + (height % 2), new TranslatableComponent(textKey), onPress);
+        super(widthIn, heightIn, width, height + (height % 2), Component.translatable(textKey), onPress);
         this.screen = screen;
         this.toolTipKey = toolTipKey;
         this.tooltip = this::renderToolTip;
@@ -39,7 +39,7 @@ public class BetterButton extends Button {
 
     protected void renderToolTip(Button button, PoseStack stack, int mouseX, int mouseY) {
         if (!toolTipKey.isEmpty()) {
-            this.screen.renderComponentTooltip(stack, Collections.singletonList(new TranslatableComponent(toolTipKey)),
+            this.screen.renderComponentTooltip(stack, Collections.singletonList(Component.translatable(toolTipKey)),
                     mouseX, mouseY);
         }
     }

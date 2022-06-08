@@ -6,13 +6,12 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.ForgeRegistryEntry;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.function.BiFunction;
 
-public class MufflingBlockCloningRecipeSerializer extends ForgeRegistryEntry<RecipeSerializer<?>> implements RecipeSerializer<MufflingBlockCloningRecipe> {
+public class MufflingBlockCloningRecipeSerializer implements RecipeSerializer<MufflingBlockCloningRecipe> {
 
     private final BiFunction<ResourceLocation, Item, MufflingBlockCloningRecipe> constructor;
 

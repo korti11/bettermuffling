@@ -11,8 +11,6 @@ import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -44,7 +42,7 @@ import java.util.List;
 public class MufflingBlock extends Block implements EntityBlock {
 
     public MufflingBlock() {
-        super(Properties.of(Material.WOOL).sound(SoundType.WOOL).noDrops());
+        super(Properties.of(Material.WOOL).sound(SoundType.WOOL).noLootTable());
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -55,10 +53,10 @@ public class MufflingBlock extends Block implements EntityBlock {
         if (mufflingData != null && BetterMufflingConfig.CLIENT.tooltipEnable.get()) {
             if (BetterMuffling.proxy.isShiftKeyDown()) {
                 if (mufflingData.contains("placerName")) {
-                    tooltip.add(new TextComponent("Owner: " +
+                    tooltip.add(Component.literal("Owner: " +
                             ChatFormatting.GRAY + mufflingData.getString("placerName") + ChatFormatting.RESET));
                 }
-                tooltip.add(new TextComponent(
+                tooltip.add(Component.literal(
                         I18n.get("button.muffling_block.range") + ": " +
                                 ChatFormatting.GRAY + mufflingData.getShort("range") + ChatFormatting.RESET));
                 Arrays.stream(SoundSource.values())
@@ -69,11 +67,11 @@ public class MufflingBlock extends Block implements EntityBlock {
                             final float value = mufflingData.getFloat(category.getName());
                             final String categoryValue = value == 0.0F ? I18n.get("options.off") :
                                     (int) (value * 100) + "%";
-                            tooltip.add(new TextComponent(categoryName +
+                            tooltip.add(Component.literal(categoryName +
                                     ChatFormatting.GRAY + categoryValue + ChatFormatting.RESET));
                         });
             } else {
-                tooltip.add(new TranslatableComponent("tooltip.hold_key.info",
+                tooltip.add(Component.translatable("tooltip.hold_key.info",
                         ChatFormatting.UNDERLINE + "Shift" + ChatFormatting.RESET));
             }
         }

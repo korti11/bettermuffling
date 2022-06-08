@@ -7,7 +7,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.AbstractSliderButton;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 
 import javax.annotation.Nonnull;
@@ -17,7 +17,7 @@ public abstract class BaseSlider extends AbstractSliderButton {
     protected final String titleKey;
 
     protected BaseSlider(int xIn, int yIn, int widthIn, int heightIn, double valueIn, String titleKey) {
-        super(xIn, yIn, widthIn, heightIn + (heightIn % 2), new TranslatableComponent(titleKey), valueIn);
+        super(xIn, yIn, widthIn, heightIn + (heightIn % 2), Component.translatable(titleKey), valueIn);
         this.titleKey = titleKey;
     }
 

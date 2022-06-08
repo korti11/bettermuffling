@@ -8,6 +8,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CustomRecipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nonnull;
 
@@ -21,7 +22,7 @@ public class MufflingBlockCloningRecipe extends CustomRecipe {
     }
 
     public ResourceLocation getItemId() {
-        return item.getRegistryName();
+        return ForgeRegistries.ITEMS.getKey(item);
     }
 
     @Override

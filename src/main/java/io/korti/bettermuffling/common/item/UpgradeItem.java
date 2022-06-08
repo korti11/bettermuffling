@@ -1,13 +1,11 @@
 package io.korti.bettermuffling.common.item;
 
-import io.korti.bettermuffling.BetterMuffling;
 import io.korti.bettermuffling.common.blockentity.MufflingBlockEntity;
 import io.korti.bettermuffling.common.core.BetterMufflingBlocks;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.CreativeModeTab;
@@ -28,13 +26,12 @@ public class UpgradeItem extends Item {
 
     public UpgradeItem() {
         super(new Properties().tab(CreativeModeTab.TAB_MISC));
-        setRegistryName(BetterMuffling.MOD_ID, "upgrade");
     }
 
     @Override
     public void appendHoverText(@Nonnull ItemStack stack, @Nullable Level worldIn, @Nonnull List<Component> tooltip, @Nonnull TooltipFlag flagIn) {
         final String[] lines = I18n.get("tooltip.upgrade.info").split("\n");
-        Arrays.stream(lines).forEach(l -> tooltip.add(new TextComponent(l)));
+        Arrays.stream(lines).forEach(l -> tooltip.add(Component.literal(l)));
     }
 
     @Override
