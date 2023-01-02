@@ -10,18 +10,23 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
+import java.util.Optional;
+
 @Mod.EventBusSubscriber(modid = BetterMuffling.MOD_ID)
 public class EventHandler {
 
     @SubscribeEvent
     public static void onBreaking(final PlayerEvent.BreakSpeed event) {
-        final Player player = event.getPlayer();
+        final Player player = event.getEntity();
         final Level world = player.getCommandSenderWorld();
-        final BlockPos pos = event.getPos();
-        final BlockEntity te = world.getBlockEntity(pos);
+        final Optional<BlockPos> pos = event.getPosition();
 
-        if (te instanceof MufflingBlockEntity) {
-            event.setCanceled(!((MufflingBlockEntity) te).canAccess(player));
+        if(pos.isPresent()) {
+            final BlockEntity te = world.getBlockEntity(pos.get());
+
+            if (te instanceof MufflingBlockEntity mufflingBlockEntity) {
+                event.setCanceled(!mufflingBlockEntity.canAccess(player));
+            }
         }
     }
 
