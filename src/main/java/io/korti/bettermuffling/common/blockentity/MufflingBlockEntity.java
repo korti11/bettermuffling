@@ -5,10 +5,10 @@ import io.korti.bettermuffling.BetterMuffling;
 import io.korti.bettermuffling.client.util.MufflingCache;
 import io.korti.bettermuffling.common.config.BetterMufflingConfig;
 import io.korti.bettermuffling.common.core.BetterMufflingTileEntities;
-import io.korti.bettermuffling.common.network.PacketHandler;
 import io.korti.bettermuffling.common.network.packet.MufflingDataPacket;
 import io.korti.bettermuffling.common.network.packet.RequestMufflingUpdatePacket;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
@@ -17,7 +17,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -35,7 +35,7 @@ public final class MufflingBlockEntity extends BlockEntity {
     private boolean listening = false;
 
     public MufflingBlockEntity(BlockPos pos, BlockState blockState) {
-        super(BetterMufflingTileEntities.MUFFLING_BLOCK, pos, blockState);
+        super(BetterMufflingTileEntities.MUFFLING_BLOCK.get(), pos, blockState);
         this.init();
     }
 
@@ -152,7 +152,8 @@ public final class MufflingBlockEntity extends BlockEntity {
     }
 
     @Override
-    protected void saveAdditional(@Nonnull CompoundTag compoundTag) {
+    protected void saveAdditional(@Nonnull CompoundTag compoundTag, HolderLookup.Provider registries) {
+        super.saveAdditional(compoundTag, registries);
         writeMufflingData(compoundTag);
     }
 
@@ -198,8 +199,8 @@ public final class MufflingBlockEntity extends BlockEntity {
     }
 
     @Override
-    public void load(@Nonnull CompoundTag compoundTag) {
-        super.load(compoundTag);
+    protected void loadAdditional(@Nonnull CompoundTag compoundTag, HolderLookup.Provider registries) {
+        super.loadAdditional(compoundTag, registries);
         readMufflingData(compoundTag);
         validateWithConfig();
     }
@@ -261,31 +262,28 @@ public final class MufflingBlockEntity extends BlockEntity {
         if (Objects.requireNonNull(getLevel()).isClientSide) {
             MufflingCache.addMufflingPos(this.getBlockPos(), this);
             BetterMuffling.LOG.debug("Request init muffling data from server.");
-            PacketHandler.send(PacketDistributor.SERVER.noArg(),
-                    new RequestMufflingUpdatePacket(this.getBlockPos()));
+            PacketDistributor.sendToServer(new RequestMufflingUpdatePacket(this.getBlockPos()));
         }
     }
 
     public void syncToAllClients() {
-        BetterMuffling.LOG.debug("Sending muffling data to all data.");
+        BetterMuffling.LOG.debug("Sending muffling data to all clients.");
         final CompoundTag mufflingData = new CompoundTag();
         this.writeMufflingData(mufflingData);
-        PacketHandler.send(PacketDistributor.ALL.noArg(), new MufflingDataPacket(this.worldPosition, mufflingData));
+        PacketDistributor.sendToAllPlayers(new MufflingDataPacket(this.worldPosition, mufflingData));
     }
 
     public void syncToClient(final ServerPlayer player) {
         BetterMuffling.LOG.debug("Sending muffling data to the client.");
         final CompoundTag mufflingData = new CompoundTag();
         this.writeMufflingData(mufflingData);
-        PacketHandler.send(PacketDistributor.PLAYER.with(() -> player),
-                new MufflingDataPacket(this.getBlockPos(), mufflingData));
+        PacketDistributor.sendToPlayer(player, new MufflingDataPacket(this.getBlockPos(), mufflingData));
     }
 
     public void syncToServer() {
         BetterMuffling.LOG.debug("Sending muffling data to the server.");
         final CompoundTag mufflingData = new CompoundTag();
         this.writeMufflingData(mufflingData);
-        PacketHandler.send(PacketDistributor.SERVER.noArg(), new MufflingDataPacket(this.getBlockPos(), mufflingData));
+        PacketDistributor.sendToServer(new MufflingDataPacket(this.getBlockPos(), mufflingData));
     }
-
 }

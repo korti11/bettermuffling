@@ -2,23 +2,25 @@ package io.korti.bettermuffling.common.core;
 
 import io.korti.bettermuffling.BetterMuffling;
 import io.korti.bettermuffling.common.item.UpgradeItem;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegisterEvent;
+import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraft.world.item.Item;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
+import net.neoforged.neoforge.registries.DeferredItem;
+import net.neoforged.neoforge.registries.DeferredRegister;
 
+@EventBusSubscriber(modid = BetterMuffling.MOD_ID)
 public final class BetterMufflingItems {
 
-    @Mod.EventBusSubscriber(modid = BetterMuffling.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
-    public static class Registration {
+    public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(BetterMuffling.MOD_ID);
 
-        @SubscribeEvent
-        public static void registerItems(final RegisterEvent event) {
-            event.register(ForgeRegistries.Keys.ITEMS, helper -> {
-                helper.register(new ResourceLocation(BetterMuffling.MOD_ID, "upgrade"), new UpgradeItem());
-            });
+    public static final DeferredItem<UpgradeItem> UPGRADE = ITEMS.register("upgrade", UpgradeItem::new);
+
+    @SubscribeEvent
+    public static void addToCreativeTab(BuildCreativeModeTabContentsEvent event) {
+        if (event.getTabKey() == CreativeModeTabs.TOOLS_AND_UTILITIES) {
+            event.accept(UPGRADE);
         }
     }
-
 }

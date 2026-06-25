@@ -8,7 +8,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -18,18 +17,17 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 
 public class UpgradeItem extends Item {
 
     public UpgradeItem() {
-        super(new Properties().tab(CreativeModeTab.TAB_MISC));
+        super(new Properties());
     }
 
     @Override
-    public void appendHoverText(@Nonnull ItemStack stack, @Nullable Level worldIn, @Nonnull List<Component> tooltip, @Nonnull TooltipFlag flagIn) {
+    public void appendHoverText(@Nonnull ItemStack stack, Item.TooltipContext context, @Nonnull List<Component> tooltip, @Nonnull TooltipFlag flagIn) {
         final String[] lines = I18n.get("tooltip.upgrade.info").split("\n");
         Arrays.stream(lines).forEach(l -> tooltip.add(Component.literal(l)));
     }
@@ -41,10 +39,10 @@ public class UpgradeItem extends Item {
         final BlockPos pos = context.getClickedPos();
         final Player player = context.getPlayer();
         final BlockState oldBlockState = world.getBlockState(pos);
-        final BlockState newBlockState = BetterMufflingBlocks.advancedMufflingBlock.defaultBlockState();
+        final BlockState newBlockState = BetterMufflingBlocks.MUFFLING_BLOCK_ADVANCED.get().defaultBlockState();
 
         if (!world.isClientSide && player != null
-                && oldBlockState.getBlock().equals(BetterMufflingBlocks.mufflingBlock)) {
+                && oldBlockState.getBlock().equals(BetterMufflingBlocks.MUFFLING_BLOCK.get())) {
             final BlockEntity oldBlockEntity = world.getBlockEntity(pos);
             if (oldBlockEntity instanceof MufflingBlockEntity oldMufflingBlockEntity) {
                 // Set new block without update the client.

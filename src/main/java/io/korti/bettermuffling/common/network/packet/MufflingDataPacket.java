@@ -1,38 +1,62 @@
 package io.korti.bettermuffling.common.network.packet;
 
 import io.korti.bettermuffling.BetterMuffling;
+import io.korti.bettermuffling.common.blockentity.MufflingBlockEntity;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.fml.loading.FMLEnvironment;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-import java.util.function.Supplier;
+public record MufflingDataPacket(BlockPos pos, CompoundTag mufflingData) implements CustomPacketPayload {
 
-public record MufflingDataPacket(BlockPos pos, CompoundTag mufflingData) {
+    public static final Type<MufflingDataPacket> TYPE =
+            new Type<>(ResourceLocation.fromNamespaceAndPath(BetterMuffling.MOD_ID, "muffling_data"));
 
-    public static void encode(final MufflingDataPacket packet, final FriendlyByteBuf buf) {
-        buf.writeBlockPos(packet.pos);
-        buf.writeNbt(packet.mufflingData);
+    public static final StreamCodec<FriendlyByteBuf, MufflingDataPacket> STREAM_CODEC =
+            StreamCodec.composite(
+                    BlockPos.STREAM_CODEC, MufflingDataPacket::pos,
+                    ByteBufCodecs.COMPOUND_TAG, MufflingDataPacket::mufflingData,
+                    MufflingDataPacket::new
+            );
+
+    @Override
+    public Type<MufflingDataPacket> type() {
+        return TYPE;
     }
 
-    public static MufflingDataPacket decode(final FriendlyByteBuf buf) {
-        return new MufflingDataPacket(buf.readBlockPos(), buf.readNbt());
+    public static void handleServer(MufflingDataPacket packet, IPayloadContext ctx) {
+        ctx.enqueueWork(() -> {
+            BetterMuffling.LOG.debug("Received muffling data from the client.");
+            ServerPlayer player = (ServerPlayer) ctx.player();
+            BlockEntity te = player.level().getBlockEntity(packet.pos());
+            if (te instanceof MufflingBlockEntity mbe) {
+                mbe.readMufflingData(packet.mufflingData());
+                te.setChanged();
+                mbe.syncToAllClients();
+            }
+        });
     }
 
-    public BlockPos getPos() {
-        return pos;
-    }
-
-    public CompoundTag getMufflingData() {
-        return mufflingData;
-    }
-
-    public static class Handler {
-
-        public static void handle(final MufflingDataPacket packet, final Supplier<NetworkEvent.Context> ctx) {
-            ctx.get().enqueueWork(BetterMuffling.proxy.getMufflingDataPacketRunnable(packet, ctx.get()));
-            ctx.get().setPacketHandled(true);
-        }
-
+    public static void handleClient(MufflingDataPacket packet, IPayloadContext ctx) {
+        ctx.enqueueWork(() -> {
+            BetterMuffling.LOG.debug("Received muffling data from server.");
+            ClientLevel level = Minecraft.getInstance().level;
+            if (level == null) return;
+            BlockEntity te = level.getBlockEntity(packet.pos());
+            if (te instanceof MufflingBlockEntity mbe) {
+                mbe.readMufflingData(packet.mufflingData());
+                te.setChanged();
+            }
+        });
     }
 }

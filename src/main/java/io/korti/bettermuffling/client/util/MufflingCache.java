@@ -4,9 +4,9 @@ import com.google.common.collect.ImmutableSet;
 import io.korti.bettermuffling.BetterMuffling;
 import io.korti.bettermuffling.common.blockentity.MufflingBlockEntity;
 import net.minecraft.core.BlockPos;
-import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,14 +31,12 @@ public final class MufflingCache {
         return ImmutableSet.copyOf(cache.entrySet());
     }
 
-    @Mod.EventBusSubscriber(modid = BetterMuffling.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
+    @EventBusSubscriber(modid = BetterMuffling.MOD_ID)
     public static class ResetHandler {
 
         @SubscribeEvent
         public static void onPlayerLogOut(final PlayerEvent.PlayerLoggedOutEvent event) {
             MufflingCache.reset();
         }
-
     }
-
 }

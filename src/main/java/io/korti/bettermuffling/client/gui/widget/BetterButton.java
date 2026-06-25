@@ -1,73 +1,46 @@
 package io.korti.bettermuffling.client.gui.widget;
 
-import com.mojang.blaze3d.platform.GlStateManager;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 
 import javax.annotation.Nonnull;
-import java.util.Collections;
 
 public class BetterButton extends Button {
 
-    private final String toolTipKey;
-    private final Button.OnTooltip tooltip;
+    private static final ResourceLocation BUTTON_SPRITE = ResourceLocation.withDefaultNamespace("widget/button");
+    private static final ResourceLocation HIGHLIGHTED_BUTTON_SPRITE = ResourceLocation.withDefaultNamespace("widget/button_highlighted");
+    private static final ResourceLocation DISABLED_BUTTON_SPRITE = ResourceLocation.withDefaultNamespace("widget/button_disabled");
 
     protected final Screen screen;
 
     public BetterButton(int widthIn, int heightIn, int width, int height, String textKey, OnPress onPress) {
-        this(widthIn, heightIn, width, height + (height % 2), textKey, null, "", onPress);
+        this(widthIn, heightIn, width, height, textKey, null, "", onPress);
     }
 
     public BetterButton(int widthIn, int heightIn, int width, int height, String textKey, Screen screen, String toolTipKey, OnPress onPress) {
-        super(widthIn, heightIn, width, height + (height % 2), Component.translatable(textKey), onPress);
+        super(widthIn, heightIn, width, height + (height % 2), Component.literal(textKey), onPress, Button.DEFAULT_NARRATION);
         this.screen = screen;
-        this.toolTipKey = toolTipKey;
-        this.tooltip = this::renderToolTip;
-    }
-
-    @Override
-    public void renderToolTip(@Nonnull PoseStack stack, int posX, int posY) {
-        this.tooltip.onTooltip(this, stack, posX, posY);
-    }
-
-    protected void renderToolTip(Button button, PoseStack stack, int mouseX, int mouseY) {
         if (!toolTipKey.isEmpty()) {
-            this.screen.renderComponentTooltip(stack, Collections.singletonList(Component.translatable(toolTipKey)),
-                    mouseX, mouseY);
+            this.setTooltip(Tooltip.create(Component.translatable(toolTipKey)));
         }
     }
 
     @Override
-    public void renderButton(@Nonnull PoseStack stack, int posX, int posY, float p_230431_4_) {
-        Minecraft minecraft = Minecraft.getInstance();
-        Font fontRenderer = minecraft.font;
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, this.alpha);
-        RenderSystem.setShaderTexture(0, WIDGETS_LOCATION);
-        int i = this.getYImage(this.isHovered);
-        GlStateManager._enableBlend();
-        RenderSystem.defaultBlendFunc();
-        RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+    public void renderWidget(@Nonnull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+        Font fontRenderer = Minecraft.getInstance().font;
 
-        int halfHeight = this.height / 2;
-        int top1 = 46 + i * 20;
-        int top2 = 46 + i * 20 + (20 - halfHeight);
+        ResourceLocation sprite = !this.active ? DISABLED_BUTTON_SPRITE : this.isHoveredOrFocused() ? HIGHLIGHTED_BUTTON_SPRITE : BUTTON_SPRITE;
+        guiGraphics.blitSprite(sprite, this.getX(), this.getY(), this.width, this.height);
 
-        this.blit(stack, this.x, this.y, 0, top1, this.width / 2, halfHeight);
-        this.blit(stack, this.x, this.y + halfHeight, 0, top2, this.width / 2, halfHeight);
-        this.blit(stack, this.x + this.width / 2, this.y, 200 - this.width / 2, top1, this.width / 2, halfHeight);
-        this.blit(stack, this.x + this.width / 2, this.y + halfHeight, 200 - this.width / 2, top2, this.width / 2, halfHeight);
-
-        this.renderBg(stack, minecraft, posX, posY);
-        int j = this.getFGColor();
-
-        drawCenteredString(stack, fontRenderer, super.getMessage(), this.x + this.width / 2, this.y + (this.height - 8) / 2, j | Mth.ceil(this.alpha * 255.0F) << 24);
+        int textColor = this.active ? 0xFFFFFF : 0xA0A0A0;
+        int color = textColor | Mth.ceil(this.alpha * 255.0F) << 24;
+        guiGraphics.drawCenteredString(fontRenderer, this.getMessage(), this.getX() + this.width / 2, this.getY() + (this.height - 8) / 2, color);
     }
 }

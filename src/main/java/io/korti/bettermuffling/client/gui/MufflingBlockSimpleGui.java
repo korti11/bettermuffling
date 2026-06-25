@@ -1,22 +1,18 @@
 package io.korti.bettermuffling.client.gui;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import io.korti.bettermuffling.BetterMuffling;
 import io.korti.bettermuffling.client.gui.widget.BetterButton;
 import io.korti.bettermuffling.client.gui.widget.RangeSlider;
 import io.korti.bettermuffling.client.gui.widget.SoundSlider;
 import io.korti.bettermuffling.common.blockentity.MufflingBlockEntity;
-import net.minecraft.client.gui.components.AbstractWidget;
-import net.minecraft.client.gui.components.Widget;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundSource;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 import javax.annotation.Nonnull;
 
@@ -26,7 +22,7 @@ public class MufflingBlockSimpleGui extends Screen {
     private static final String titleKey = "gui.muffling_block.title";
 
     protected final MufflingBlockEntity tileMuffling;
-    protected final ResourceLocation background = new ResourceLocation(BetterMuffling.MOD_ID, "textures/gui/base_gui.png");
+    protected final ResourceLocation background = ResourceLocation.fromNamespaceAndPath(BetterMuffling.MOD_ID, "textures/gui/base_gui.png");
     protected final int xSize;
     protected final int ySize;
     protected int guiTop = 0;
@@ -85,34 +81,21 @@ public class MufflingBlockSimpleGui extends Screen {
     }
 
     @Override
-    public void render(@Nonnull PoseStack stack, int mouseX, int mouseY, float partialTicks) {
-        this.renderBackground(stack);
-        this.renderForeground(stack, mouseX, mouseY, partialTicks);
-        super.render(stack, mouseX, mouseY, partialTicks);
-
-        for (Widget widget : this.renderables) {
-            if (widget instanceof AbstractWidget abstractWidget) {
-                if (abstractWidget.isHoveredOrFocused()) {
-                    abstractWidget.renderToolTip(stack, mouseX, mouseY);
-                }
-            }
-        }
+    public void render(@Nonnull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+        super.render(guiGraphics, mouseX, mouseY, partialTicks);
+        this.renderForeground(guiGraphics, mouseX, mouseY, partialTicks);
     }
 
-    public void renderForeground(PoseStack stack, int mouseX, int mouseY, float partialTicks) {
+    public void renderForeground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
         String title = this.title.getString();
-        final float x = (float) (this.width / 2 - this.font.width(title) / 2);
-        final float y = (float) (this.guiTop + 7.5);
-        this.font.draw(stack, this.title, x, y, 4210752);
+        final int x = this.width / 2 - this.font.width(title) / 2;
+        final int y = this.guiTop + 7;
+        guiGraphics.drawString(this.font, this.title, x, y, 4210752, false);
     }
 
     @Override
-    public void renderBackground(@Nonnull PoseStack stack) {
-        super.renderBackground(stack);
-
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        RenderSystem.setShaderTexture(0, background);
+    public void renderBackground(@Nonnull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+        super.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
 
         int halfHeight = this.ySize / 2;
         int top1 = 0;
@@ -120,14 +103,14 @@ public class MufflingBlockSimpleGui extends Screen {
         int middleWidth = this.xSize - 100;
 
         // Render left end
-        this.blit(stack, this.guiLeft, this.guiTop, 0, top1, 50, halfHeight);
-        this.blit(stack, this.guiLeft, this.guiTop + halfHeight, 0, top2, 50, halfHeight);
+        guiGraphics.blit(background, this.guiLeft, this.guiTop, 0, top1, 50, halfHeight);
+        guiGraphics.blit(background, this.guiLeft, this.guiTop + halfHeight, 0, top2, 50, halfHeight);
         // Render middle part
-        this.blit(stack, this.guiLeft + 50, this.guiTop, 4, top1, middleWidth, halfHeight);
-        this.blit(stack, this.guiLeft + 50, this.guiTop + halfHeight, 4, top2, middleWidth, halfHeight);
+        guiGraphics.blit(background, this.guiLeft + 50, this.guiTop, 4, top1, middleWidth, halfHeight);
+        guiGraphics.blit(background, this.guiLeft + 50, this.guiTop + halfHeight, 4, top2, middleWidth, halfHeight);
         // Render right end
-        this.blit(stack, this.guiLeft + 50 + middleWidth, this.guiTop, 256 - 50, top1, 50, halfHeight);
-        this.blit(stack, this.guiLeft + 50 + middleWidth, this.guiTop + halfHeight, 256 - 50, top2, 50, halfHeight);
+        guiGraphics.blit(background, this.guiLeft + 50 + middleWidth, this.guiTop, 256 - 50, top1, 50, halfHeight);
+        guiGraphics.blit(background, this.guiLeft + 50 + middleWidth, this.guiTop + halfHeight, 256 - 50, top2, 50, halfHeight);
     }
 
     private String getPlacerOnlyButtonMessage() {

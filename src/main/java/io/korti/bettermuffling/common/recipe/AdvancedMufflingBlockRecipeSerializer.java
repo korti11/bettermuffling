@@ -1,27 +1,26 @@
 package io.korti.bettermuffling.common.recipe;
 
-import com.google.gson.JsonObject;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.resources.ResourceLocation;
+import com.mojang.serialization.MapCodec;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.ShapedRecipe;
 
-import javax.annotation.Nonnull;
+public class AdvancedMufflingBlockRecipeSerializer implements RecipeSerializer<AdvancedMufflingBlockRecipe> {
 
-public class AdvancedMufflingBlockRecipeSerializer extends ShapedRecipe.Serializer {
+    private static final MapCodec<AdvancedMufflingBlockRecipe> CODEC =
+            new ShapedRecipe.Serializer().codec().xmap(AdvancedMufflingBlockRecipe::new, AdvancedMufflingBlockRecipe::inner);
+
+    private static final StreamCodec<RegistryFriendlyByteBuf, AdvancedMufflingBlockRecipe> STREAM_CODEC =
+            new ShapedRecipe.Serializer().streamCodec().map(AdvancedMufflingBlockRecipe::new, AdvancedMufflingBlockRecipe::inner);
 
     @Override
-    @Nonnull
-    public ShapedRecipe fromJson(@Nonnull ResourceLocation recipeId, @Nonnull JsonObject json) {
-        ShapedRecipe recipe = super.fromJson(recipeId, json);
-        return new AdvancedMufflingBlockRecipe(recipe);
+    public MapCodec<AdvancedMufflingBlockRecipe> codec() {
+        return CODEC;
     }
 
     @Override
-    public ShapedRecipe fromNetwork(@Nonnull ResourceLocation recipeId, @Nonnull FriendlyByteBuf buffer) {
-        ShapedRecipe recipe = super.fromNetwork(recipeId, buffer);
-        if (recipe == null) {
-            return null;
-        }
-        return new AdvancedMufflingBlockRecipe(recipe);
+    public StreamCodec<RegistryFriendlyByteBuf, AdvancedMufflingBlockRecipe> streamCodec() {
+        return STREAM_CODEC;
     }
 }

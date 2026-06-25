@@ -1,14 +1,17 @@
 package io.korti.bettermuffling.common.recipe;
 
 import io.korti.bettermuffling.common.core.BetterMufflingRecipes;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingBookCategory;
+import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.CustomRecipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraft.core.component.DataComponents;
 
 import javax.annotation.Nonnull;
 
@@ -16,34 +19,36 @@ public class MufflingBlockCloningRecipe extends CustomRecipe {
 
     private final Item item;
 
-    public MufflingBlockCloningRecipe(ResourceLocation idIn, Item item) {
-        super(idIn);
+    public MufflingBlockCloningRecipe(CraftingBookCategory category, Item item) {
+        super(category);
         this.item = item;
     }
 
+    public Item getItem() {
+        return item;
+    }
+
     public ResourceLocation getItemId() {
-        return ForgeRegistries.ITEMS.getKey(item);
+        return BuiltInRegistries.ITEM.getKey(item);
     }
 
     @Override
-    public boolean matches(CraftingContainer inv, @Nonnull Level worldIn) {
+    public boolean matches(CraftingInput inv, @Nonnull Level worldIn) {
         int i = 0;
         ItemStack itemStack = ItemStack.EMPTY;
 
-        for (int j = 0; j < inv.getContainerSize(); j++) {
+        for (int j = 0; j < inv.size(); j++) {
             ItemStack itemStack1 = inv.getItem(j);
             if (!itemStack1.isEmpty()) {
-                if (itemStack1.hasTag()) {
+                if (itemStack1.has(DataComponents.CUSTOM_DATA)) {
                     if (!itemStack.isEmpty()) {
                         return false;
                     }
-
                     itemStack = itemStack1;
                 } else {
                     if (itemStack1.getItem() != item) {
                         return false;
                     }
-
                     i++;
                 }
             }
@@ -54,14 +59,14 @@ public class MufflingBlockCloningRecipe extends CustomRecipe {
 
     @Override
     @Nonnull
-    public ItemStack assemble(CraftingContainer inv) {
+    public ItemStack assemble(CraftingInput inv, HolderLookup.Provider registries) {
         int i = 0;
         ItemStack itemStack = ItemStack.EMPTY;
 
-        for (int j = 0; j < inv.getContainerSize(); j++) {
+        for (int j = 0; j < inv.size(); j++) {
             ItemStack itemStack1 = inv.getItem(j);
             if (!itemStack1.isEmpty()) {
-                if (itemStack1.hasTag()) {
+                if (itemStack1.has(DataComponents.CUSTOM_DATA)) {
                     if (!itemStack.isEmpty()) {
                         return ItemStack.EMPTY;
                     }
@@ -70,7 +75,6 @@ public class MufflingBlockCloningRecipe extends CustomRecipe {
                     if (itemStack1.getItem() != item) {
                         return ItemStack.EMPTY;
                     }
-
                     i++;
                 }
             }
@@ -92,6 +96,6 @@ public class MufflingBlockCloningRecipe extends CustomRecipe {
     @Override
     @Nonnull
     public RecipeSerializer<?> getSerializer() {
-        return BetterMufflingRecipes.mufflingBlockCloningRecipeSerializer;
+        return BetterMufflingRecipes.MUFFLING_BLOCK_CLONING_RECIPE.get();
     }
 }

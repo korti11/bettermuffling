@@ -14,11 +14,12 @@ import javax.annotation.Nullable;
 public class AdvancedMufflingBlock extends MufflingBlock {
 
     @Override
-    public void setPlacedBy(@NotNull Level worldIn, @NotNull BlockPos blockPos, @NotNull BlockState blockState, @Nullable LivingEntity player, @NotNull ItemStack itemStack) {
+    public void setPlacedBy(@NotNull Level worldIn, @NotNull BlockPos blockPos, @NotNull BlockState blockState,
+                            @Nullable LivingEntity player, @NotNull ItemStack itemStack) {
         super.setPlacedBy(worldIn, blockPos, blockState, player, itemStack);
         final BlockEntity te = worldIn.getBlockEntity(blockPos);
-        if (te instanceof MufflingBlockEntity) {
-            ((MufflingBlockEntity) te).setAdvancedMode(true);
+        if (te instanceof MufflingBlockEntity mbe) {
+            mbe.setAdvancedMode(true);
         }
     }
 }

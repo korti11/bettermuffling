@@ -1,27 +1,24 @@
 package io.korti.bettermuffling.common.config;
 
 import io.korti.bettermuffling.BetterMuffling;
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
-import net.minecraftforge.common.ForgeConfigSpec.Builder;
-import net.minecraftforge.common.ForgeConfigSpec.DoubleValue;
-import net.minecraftforge.common.ForgeConfigSpec.IntValue;
-import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.config.ModConfig;
+import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.config.ModConfig;
+import net.neoforged.neoforge.common.ModConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec.BooleanValue;
+import net.neoforged.neoforge.common.ModConfigSpec.Builder;
+import net.neoforged.neoforge.common.ModConfigSpec.DoubleValue;
+import net.neoforged.neoforge.common.ModConfigSpec.IntValue;
 import org.apache.commons.lang3.tuple.Pair;
 
-@Mod.EventBusSubscriber(modid = BetterMuffling.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class BetterMufflingConfig {
 
-    public static void register() {
-        ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, clientSpecs);
-        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, commonSpecs);
+    public static void register(ModContainer container) {
+        container.registerConfig(ModConfig.Type.CLIENT, clientSpecs);
+        container.registerConfig(ModConfig.Type.COMMON, commonSpecs);
     }
 
     public static class Common {
         public final IntValue maxRange;
-
         public final DoubleValue minVolume;
         public final DoubleValue maxVolume;
 
@@ -53,7 +50,6 @@ public class BetterMufflingConfig {
     }
 
     public static class Client {
-
         public final BooleanValue tooltipEnable;
 
         Client(Builder builder) {
@@ -66,25 +62,23 @@ public class BetterMufflingConfig {
 
             builder.pop();
         }
-
     }
 
-    static final ForgeConfigSpec clientSpecs;
+    static final ModConfigSpec clientSpecs;
     public static final Client CLIENT;
 
     static {
-        final Pair<Client, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(Client::new);
+        final Pair<Client, ModConfigSpec> specPair = new ModConfigSpec.Builder().configure(Client::new);
         clientSpecs = specPair.getRight();
         CLIENT = specPair.getLeft();
     }
 
-    static final ForgeConfigSpec commonSpecs;
+    static final ModConfigSpec commonSpecs;
     public static final Common COMMON;
 
     static {
-        final Pair<Common, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder().configure(Common::new);
+        final Pair<Common, ModConfigSpec> specPair = new ModConfigSpec.Builder().configure(Common::new);
         commonSpecs = specPair.getRight();
         COMMON = specPair.getLeft();
     }
-
 }

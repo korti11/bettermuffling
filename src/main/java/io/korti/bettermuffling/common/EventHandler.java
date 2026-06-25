@@ -6,13 +6,13 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 
 import java.util.Optional;
 
-@Mod.EventBusSubscriber(modid = BetterMuffling.MOD_ID)
+@EventBusSubscriber(modid = BetterMuffling.MOD_ID)
 public class EventHandler {
 
     @SubscribeEvent
@@ -21,13 +21,11 @@ public class EventHandler {
         final Level world = player.getCommandSenderWorld();
         final Optional<BlockPos> pos = event.getPosition();
 
-        if(pos.isPresent()) {
+        if (pos.isPresent()) {
             final BlockEntity te = world.getBlockEntity(pos.get());
-
             if (te instanceof MufflingBlockEntity mufflingBlockEntity) {
                 event.setCanceled(!mufflingBlockEntity.canAccess(player));
             }
         }
     }
-
 }
