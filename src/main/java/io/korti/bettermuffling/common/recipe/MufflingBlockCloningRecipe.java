@@ -54,7 +54,7 @@ public class MufflingBlockCloningRecipe extends CustomRecipe {
             }
         }
 
-        return !itemStack.isEmpty() && i > 0;
+        return !itemStack.isEmpty() && itemStack.getItem() == item && i > 0;
     }
 
     @Override
@@ -80,7 +80,7 @@ public class MufflingBlockCloningRecipe extends CustomRecipe {
             }
         }
 
-        if (!itemStack.isEmpty() && i >= 1) {
+        if (!itemStack.isEmpty() && itemStack.getItem() == item && i >= 1) {
             ItemStack itemStack1 = itemStack.copy();
             itemStack1.setCount(i + 1);
             return itemStack1;
