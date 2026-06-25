@@ -25,15 +25,15 @@ No automated tests exist in this project.
 
 ## Project Overview
 
-**Better Muffling** is a Minecraft Forge mod (currently targeting 1.19.2, Forge 43.2.3, Java 17) that adds configurable sound-muffling blocks. Players place a Muffling Block, open its GUI, and dial per-category volume multipliers for sounds within a configurable radius.
+**Better Muffling** is a Minecraft NeoForge mod (targeting 1.21.1, NeoForge 21.1.234, Java 21) that adds configurable sound-muffling blocks. Players place a Muffling Block, open its GUI, and dial per-category volume multipliers for sounds within a configurable radius.
 
-Mod ID: `bettermuffling` | Group: `io.korti.bettermuffling` | Version: `1.1.1`
+Mod ID: `bettermuffling` | Group: `io.korti.bettermuffling` | Version: injected at build time via `mod_version` in `gradle.properties`
 
 ## Architecture
 
 ### Client/Server Split
 
-The mod uses Forge's `DistExecutor` proxy pattern. `BetterMuffling.java` (entry point) initializes either `ClientProxy` or `ServerProxy`. All sound interception and GUI rendering is client-only code under `client/`.
+`BetterMuffling.java` (entry point) registers all deferred registries and hooks `PacketHandler::register` onto the mod event bus. Client-only code (sound interception, GUI) lives under `client/` and is gated via `@EventBusSubscriber(value = Dist.CLIENT, ...)` or NeoForge's dist-conditional annotations — there is no `DistExecutor`/`ClientProxy`/`ServerProxy` pattern.
 
 ### Data Flow
 
@@ -46,7 +46,7 @@ The mod uses Forge's `DistExecutor` proxy pattern. `BetterMuffling.java` (entry 
 - **`MufflingBlockEntity`** — The central data store. Holds per-`SoundSource` maps for volume levels, sound name include/exclude mode flags, and name sets. All config persists via `writeMufflingData`/`readMufflingData` (NBT).
 - **`SoundHandler`** (client-only) — Subscribes to `PlaySoundEvent`. For each sound, checks `MufflingCache` for nearby muffling blocks and applies the appropriate volume multiplier. If `listening` mode is on, records the sound name into the block entity.
 - **`MufflingCache`** (client-only) — Local cache of active muffling block positions, used by `SoundHandler` for fast lookup without iterating all loaded chunks.
-- **`PacketHandler`** — Registers 3 packet types (IDs 0–2) on a single network channel. Bidirectional for `MufflingDataPacket`, server→client for `OpenScreenPacket`, client→server for `RequestMufflingUpdatePacket`.
+- **`PacketHandler`** — Registers 3 typed payload types via NeoForge's `RegisterPayloadHandlersEvent`/`PayloadRegistrar`. `OpenScreenPacket` is server→client, `RequestMufflingUpdatePacket` is client→server, `MufflingDataPacket` is bidirectional (uses `DirectionalPayloadHandler`).
 - **`EventHandler`** — Prevents unauthorized players from breaking placer-only muffling blocks by intercepting `PlayerEvent.BreakSpeed`.
 
 ### Block Variants
@@ -64,6 +64,7 @@ Block-level settings (per block entity): `range`, `placerOnly`, `advancedMode`, 
 
 ### Resources
 
-- `src/main/resources/META-INF/mods.toml` — mod metadata and Forge/MC version constraints
+- `src/main/templates/META-INF/neoforge.mods.toml` — mod metadata template; `build.gradle` expands `${...}` placeholders from `gradle.properties` into `build/generated/sources/modMetadata/` at build time
 - `src/main/resources/assets/bettermuffling/` — blockstates, models, textures, lang (`en_us.json`)
 - `src/main/resources/data/bettermuffling/recipes/` — JSON crafting recipes including special cloning and reset recipes handled by custom `RecipeSerializer` classes
+- `src/generated/resources/` — output directory for `./gradlew data`; included as a resource source set
