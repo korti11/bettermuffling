@@ -31,7 +31,7 @@ public class MufflingBlockAdvancedGui extends MufflingBlockSimpleGui {
     private Button selectedSoundCategoryButton = null;
     private SoundSlider activeSoundSlider = null;
 
-    private WhiteBlackListButton activeWhiteBlackListButton = null;
+    private IncludeExcludeButton activeIncludeExcludeButton = null;
 
     protected MufflingBlockAdvancedGui(MufflingBlockEntity tileMuffling) {
         super(tileMuffling, 348, 222);
@@ -52,10 +52,10 @@ public class MufflingBlockAdvancedGui extends MufflingBlockSimpleGui {
             soundSlider.visible = false;
             soundSlider.setListener((c, volume) -> tileMuffling.setSoundLevel(c, volume.floatValue()));
 
-            WhiteBlackListButton whiteBlackListButton = this.addRenderableWidget(new WhiteBlackListButton(this.guiLeft + 315,
-                    this.guiTop + 69, 20, 20, this, (b) -> tileMuffling.setWhiteListForCategory(category, !tileMuffling.getWhiteListForCategory(category))));
-            whiteBlackListButton.setIsWhiteList(tileMuffling.getWhiteListForCategory(category));
-            whiteBlackListButton.visible = false;
+            IncludeExcludeButton includeExcludeButton = this.addRenderableWidget(new IncludeExcludeButton(this.guiLeft + 315,
+                    this.guiTop + 69, 20, 20, this, (b) -> tileMuffling.setIncludeModeForCategory(category, !tileMuffling.getIncludeModeForCategory(category))));
+            includeExcludeButton.setIsInclude(tileMuffling.getIncludeModeForCategory(category));
+            includeExcludeButton.visible = false;
 
             BetterButton button = this.addRenderableWidget(new BetterButton(this.guiLeft + 11,
                     this.guiTop + 31 + (20 * buttonCount), 110, 20, I18n.get("soundCategory." + category.getName()),
@@ -64,9 +64,9 @@ public class MufflingBlockAdvancedGui extends MufflingBlockSimpleGui {
                         activeSoundSlider = soundSlider;
                         soundSlider.visible = true;
 
-                        activeWhiteBlackListButton.visible = false;
-                        activeWhiteBlackListButton = whiteBlackListButton;
-                        whiteBlackListButton.visible = true;
+                        activeIncludeExcludeButton.visible = false;
+                        activeIncludeExcludeButton = includeExcludeButton;
+                        includeExcludeButton.visible = true;
 
                         selectedSoundCategoryButton.active = true;
                         selectedSoundCategoryButton = b;
@@ -79,8 +79,8 @@ public class MufflingBlockAdvancedGui extends MufflingBlockSimpleGui {
             if (category == tileMuffling.getSelectedCategory()) {
                 this.activeSoundSlider = soundSlider;
                 soundSlider.visible = true;
-                this.activeWhiteBlackListButton = whiteBlackListButton;
-                whiteBlackListButton.visible = true;
+                this.activeIncludeExcludeButton = includeExcludeButton;
+                includeExcludeButton.visible = true;
                 this.selectedSoundCategoryButton = button;
                 button.active = false;
                 this.soundNamesList.selectSoundCategory(category);

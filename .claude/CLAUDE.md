@@ -43,7 +43,7 @@ The mod uses Forge's `DistExecutor` proxy pattern. `BetterMuffling.java` (entry 
 
 ### Core Classes
 
-- **`MufflingBlockEntity`** — The central data store. Holds per-`SoundSource` maps for volume levels, sound name whitelists/blacklists, and mode flags. All config persists via `writeMufflingData`/`readMufflingData` (NBT).
+- **`MufflingBlockEntity`** — The central data store. Holds per-`SoundSource` maps for volume levels, sound name include/exclude mode flags, and name sets. All config persists via `writeMufflingData`/`readMufflingData` (NBT).
 - **`SoundHandler`** (client-only) — Subscribes to `PlaySoundEvent`. For each sound, checks `MufflingCache` for nearby muffling blocks and applies the appropriate volume multiplier. If `listening` mode is on, records the sound name into the block entity.
 - **`MufflingCache`** (client-only) — Local cache of active muffling block positions, used by `SoundHandler` for fast lookup without iterating all loaded chunks.
 - **`PacketHandler`** — Registers 3 packet types (IDs 0–2) on a single network channel. Bidirectional for `MufflingDataPacket`, server→client for `OpenScreenPacket`, client→server for `RequestMufflingUpdatePacket`.
@@ -52,7 +52,7 @@ The mod uses Forge's `DistExecutor` proxy pattern. `BetterMuffling.java` (entry 
 ### Block Variants
 
 - **`MufflingBlock`** — Basic variant. GUI shows per-category sliders only.
-- **`AdvancedMufflingBlock`** — Extended variant. Adds whitelist/blacklist UI and listening mode to collect live sound names. Both use the same `MufflingBlockEntity` type; `advancedMode` flag on the entity distinguishes behavior.
+- **`AdvancedMufflingBlock`** — Extended variant. Adds include/exclude UI and listening mode to collect live sound names. Both use the same `MufflingBlockEntity` type; `advancedMode` flag on the entity distinguishes behavior.
 
 ### Configuration
 
@@ -60,7 +60,7 @@ Forge config (`BetterMufflingConfig`):
 - **Client:** `tooltipEnable` — show block stats in item tooltip
 - **Common:** `maxRange` (2–64, default 16), `minVolume` (0.0–0.99), `maxVolume` (0.01–1.0)
 
-Block-level settings (per block entity): `range`, `placerOnly`, `advancedMode`, `listening`, and per-`SoundSource` level/whitelist maps.
+Block-level settings (per block entity): `range`, `placerOnly`, `advancedMode`, `listening`, and per-`SoundSource` level/include-mode maps.
 
 ### Resources
 

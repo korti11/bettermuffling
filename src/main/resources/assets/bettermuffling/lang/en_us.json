@@ -15,7 +15,7 @@
   "label.muffling_block.sound.category": "Category",
   "label.muffling_block.volume": "Volume",
   "label.muffling_block.sound.names": "Sound names",
-  "tooltip.muffling_block.black.white.list": "White/Black List",
+  "tooltip.muffling_block.include.exclude": "Include/Exclude",
   "tooltip.muffling_block.listening.on": "Listening for sounds: on",
   "tooltip.muffling_block.listening.off": "Listening for sound: off",
   "tooltip.muffling_block.entry.delete": "Delete selected entry",

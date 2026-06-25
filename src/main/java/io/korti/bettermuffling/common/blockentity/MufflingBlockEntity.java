@@ -26,7 +26,7 @@ public final class MufflingBlockEntity extends BlockEntity {
 
     private final Map<SoundSource, Float> soundLevels = new HashMap<>();
     private final Map<SoundSource, SortedSet<String>> soundNames = new HashMap<>();
-    private final Map<SoundSource, Boolean> whiteList = new HashMap<>();
+    private final Map<SoundSource, Boolean> includeMode = new HashMap<>();
     private short range = 6;
     private UUID placer;
     private SoundSource selectedCategory = SoundSource.RECORDS;
@@ -48,7 +48,7 @@ public final class MufflingBlockEntity extends BlockEntity {
             this.soundLevels.put(category,
                     BetterMufflingConfig.COMMON.minVolume.get().floatValue());
             this.soundNames.put(category, new TreeSet<>(String::compareTo));
-            this.whiteList.put(category, false);
+            this.includeMode.put(category, false);
         });
     }
 
@@ -116,12 +116,12 @@ public final class MufflingBlockEntity extends BlockEntity {
         this.syncToServer();
     }
 
-    public boolean getWhiteListForCategory(SoundSource category) {
-        return this.whiteList.get(category);
+    public boolean getIncludeModeForCategory(SoundSource category) {
+        return this.includeMode.get(category);
     }
 
-    public void setWhiteListForCategory(SoundSource category, boolean flag) {
-        this.whiteList.put(category, flag);
+    public void setIncludeModeForCategory(SoundSource category, boolean flag) {
+        this.includeMode.put(category, flag);
     }
 
     public void addSoundName(SoundSource category, String name) {
@@ -136,7 +136,7 @@ public final class MufflingBlockEntity extends BlockEntity {
         if (!soundLevels.containsKey(category)) {
             return false;
         }
-        if (getWhiteListForCategory(category)) {
+        if (getIncludeModeForCategory(category)) {
             return this.soundNames.get(category).contains(name);
         } else {
             return !this.soundNames.get(category).contains(name);
@@ -164,7 +164,7 @@ public final class MufflingBlockEntity extends BlockEntity {
     public CompoundTag writeMufflingData(CompoundTag compound, boolean writePlayerName) {
         this.writeSoundLevels(compound);
         this.writeSoundNames(compound);
-        this.writeWhiteList(compound);
+        this.writeIncludeMode(compound);
         compound.putShort("range", this.range);
         compound.putBoolean("placerOnly", this.placerOnly);
         compound.putUUID("placer", this.placer);
@@ -192,9 +192,9 @@ public final class MufflingBlockEntity extends BlockEntity {
         }
     }
 
-    private void writeWhiteList(CompoundTag compound) {
+    private void writeIncludeMode(CompoundTag compound) {
         if (this.advancedMode) {
-            this.whiteList.forEach((category, b) -> compound.putBoolean("white_" + category.getName(), b));
+            this.includeMode.forEach((category, b) -> compound.putBoolean("include_" + category.getName(), b));
         }
     }
 
@@ -210,7 +210,7 @@ public final class MufflingBlockEntity extends BlockEntity {
         this.advancedMode = compound.getBoolean("advancedMode");
         this.readSoundLevels(compound);
         this.readSoundNames(compound);
-        this.readWhiteList(compound);
+        this.readIncludeMode(compound);
         this.range = compound.getShort("range");
         this.placerOnly = compound.getBoolean("placerOnly");
         if (compound.hasUUID("placer")) {
@@ -237,10 +237,14 @@ public final class MufflingBlockEntity extends BlockEntity {
         }
     }
 
-    private void readWhiteList(CompoundTag compound) {
+    private void readIncludeMode(CompoundTag compound) {
         if (this.advancedMode) {
-            this.whiteList.forEach((category, aBoolean) ->
-                    this.whiteList.replace(category, compound.getBoolean("white_" + category.getName())));
+            this.includeMode.forEach((category, aBoolean) -> {
+                String key = compound.contains("include_" + category.getName())
+                        ? "include_" + category.getName()
+                        : "white_" + category.getName();
+                this.includeMode.replace(category, compound.getBoolean(key));
+            });
         }
     }
 

@@ -32,7 +32,7 @@ G G G
 ```
 `G` = gold ingot, `M` = Muffling Block
 
-Adds whitelist/blacklist filtering by sound name and a **Listening Mode** that passively captures the names of sounds playing nearby — useful for building precise filters.
+Adds include/exclude filtering by sound name and a **Listening Mode** that passively captures the names of sounds playing nearby — useful for building precise filters.
 
 ### Advanced Upgrade (item)
 Surround a wool block with gold ingots:

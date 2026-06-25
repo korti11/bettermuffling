@@ -7,14 +7,14 @@ import net.minecraft.resources.ResourceLocation;
 
 import javax.annotation.Nonnull;
 
-public class WhiteBlackListButton extends BetterButton {
+public class IncludeExcludeButton extends BetterButton {
 
     private static final ResourceLocation GUI_ELEMENTS = ResourceLocation.fromNamespaceAndPath(BetterMuffling.MOD_ID, "textures/gui/gui_elements.png");
 
     private int xTexStart = 197;
 
-    public WhiteBlackListButton(int widthIn, int heightIn, int width, int height, Screen parent, OnPress onPress) {
-        super(widthIn, heightIn, width, height, "", parent, "tooltip.muffling_block.black.white.list", onPress);
+    public IncludeExcludeButton(int widthIn, int heightIn, int width, int height, Screen parent, OnPress onPress) {
+        super(widthIn, heightIn, width, height, "", parent, "tooltip.muffling_block.include.exclude", onPress);
     }
 
     @Override
@@ -26,7 +26,7 @@ public class WhiteBlackListButton extends BetterButton {
         guiGraphics.blit(GUI_ELEMENTS, this.getX() + xOffset, this.getY() + yOffset, xTexStart, 0, 16, 16);
     }
 
-    public void setIsWhiteList(boolean flag) {
+    public void setIsInclude(boolean flag) {
         this.xTexStart = flag ? 197 : 213;
     }
 
