@@ -4,6 +4,8 @@
   "block.bettermuffling.muffling_block_advanced": "Advanced Muffling Block",
 
   "_comment": "Items",
+  "item.bettermuffling.muffling_block": "Muffling Block",
+  "item.bettermuffling.muffling_block_advanced": "Advanced Muffling Block",
   "item.bettermuffling.upgrade": "Advanced Upgrade",
 
   "_comment": "Gui Elemente",

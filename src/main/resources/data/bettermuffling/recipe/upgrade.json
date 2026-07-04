@@ -1,5 +1,6 @@
 {
   "type": "minecraft:crafting_shaped",
+  "category": "misc",
   "pattern": [
     "GGG",
     "GWG",
@@ -14,6 +15,7 @@
     }
   },
   "result": {
+    "count": 1,
     "id": "bettermuffling:upgrade"
   }
 }

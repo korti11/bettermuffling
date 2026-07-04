@@ -1,19 +1,17 @@
 {
   "type": "bettermuffling:muffling_block_advanced_recipe",
+  "category": "misc",
   "pattern": [
     "GGG",
     "GMG",
     "GGG"
   ],
   "key": {
-    "G": {
-      "item": "minecraft:gold_ingot"
-    },
-    "M":{
-      "item": "bettermuffling:muffling_block"
-    }
+    "G": "minecraft:gold_ingot",
+    "M": "bettermuffling:muffling_block"
   },
   "result": {
+    "count": 1,
     "id": "bettermuffling:muffling_block_advanced"
   }
 }

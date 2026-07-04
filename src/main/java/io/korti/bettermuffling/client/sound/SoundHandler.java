@@ -8,6 +8,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.neoforged.api.distmarker.Dist;
@@ -32,16 +34,17 @@ public final class SoundHandler {
             if (MathHelper.isInRange(soundPos, pos, range)) {
                 final MufflingBlockEntity tileMuffling = (MufflingBlockEntity) Minecraft.getInstance().level.getBlockEntity(pos);
                 if (tileMuffling != null && event.getEngine() != null) {
-                    final String soundName = sound.getLocation().toString();
+                    final String soundName = sound.getIdentifier().toString();
                     if (tileMuffling.muffleSound(category, soundName)) {
                         sound.resolve(event.getEngine().soundManager);
                         final float soundLevel = tileMuffling.getSoundLevel(category);
-                        final SoundInstance newSound = new SimpleSoundInstance(sound.getLocation(), category,
-                                sound.getVolume() * soundLevel, sound.getPitch(), RANDOM_SOURCE, sound.isLooping(),
-                                sound.getDelay(), sound.getAttenuation(), sound.getX(), sound.getY(), sound.getZ(),
-                                false
-                        );
-                        event.setSound(newSound);
+                        SoundEvent soundEvent = BuiltInRegistries.SOUND_EVENT.getValue(sound.getIdentifier());
+                        if (soundEvent != null) {
+                            final SoundInstance newSound = new SimpleSoundInstance(soundEvent, category,
+                                    sound.getVolume() * soundLevel, sound.getPitch(), RANDOM_SOURCE,
+                                    sound.getX(), sound.getY(), sound.getZ());
+                            event.setSound(newSound);
+                        }
                     }
                     if (tileMuffling.isListening()) {
                         tileMuffling.addSoundName(category, soundName);

@@ -11,6 +11,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -18,18 +19,18 @@ import net.minecraft.world.level.block.state.BlockState;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
-import java.util.List;
+import java.util.function.Consumer;
 
 public class UpgradeItem extends Item {
 
-    public UpgradeItem() {
-        super(new Properties());
+    public UpgradeItem(Properties properties) {
+        super(properties);
     }
 
     @Override
-    public void appendHoverText(@Nonnull ItemStack stack, Item.TooltipContext context, @Nonnull List<Component> tooltip, @Nonnull TooltipFlag flagIn) {
+    public void appendHoverText(@Nonnull ItemStack stack, Item.TooltipContext context, TooltipDisplay display, @Nonnull Consumer<Component> builder, @Nonnull TooltipFlag flagIn) {
         final String[] lines = I18n.get("tooltip.upgrade.info").split("\n");
-        Arrays.stream(lines).forEach(l -> tooltip.add(Component.literal(l)));
+        Arrays.stream(lines).forEach(l -> builder.accept(Component.literal(l)));
     }
 
     @Override
@@ -41,24 +42,20 @@ public class UpgradeItem extends Item {
         final BlockState oldBlockState = world.getBlockState(pos);
         final BlockState newBlockState = BetterMufflingBlocks.MUFFLING_BLOCK_ADVANCED.get().defaultBlockState();
 
-        if (!world.isClientSide && player != null
+        if (!world.isClientSide() && player != null
                 && oldBlockState.getBlock().equals(BetterMufflingBlocks.MUFFLING_BLOCK.get())) {
             final BlockEntity oldBlockEntity = world.getBlockEntity(pos);
             if (oldBlockEntity instanceof MufflingBlockEntity oldMufflingBlockEntity) {
-                // Set new block without update the client.
                 world.setBlock(pos, newBlockState, 0);
 
-                // Get the new tile entity and copy the data from the old one to the new one
                 final MufflingBlockEntity newBlockEntity = (MufflingBlockEntity) world.getBlockEntity(pos);
                 if (newBlockEntity != null) {
                     final CompoundTag teData = oldMufflingBlockEntity.writeMufflingData(new CompoundTag(), false);
                     newBlockEntity.readMufflingData(teData);
                     newBlockEntity.setAdvancedMode(true);
 
-                    // Notify the world of the block update
                     world.sendBlockUpdated(pos, newBlockState, newBlockState, 3);
 
-                    // Reduce the upgrade stack by one
                     player.getItemInHand(context.getHand()).grow(-1);
                 }
             }

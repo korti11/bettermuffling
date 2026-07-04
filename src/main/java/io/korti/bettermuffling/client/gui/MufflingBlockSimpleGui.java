@@ -5,24 +5,20 @@ import io.korti.bettermuffling.client.gui.widget.BetterButton;
 import io.korti.bettermuffling.client.gui.widget.RangeSlider;
 import io.korti.bettermuffling.client.gui.widget.SoundSlider;
 import io.korti.bettermuffling.common.blockentity.MufflingBlockEntity;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundSource;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
-import javax.annotation.Nonnull;
-
-@OnlyIn(Dist.CLIENT)
 public class MufflingBlockSimpleGui extends Screen {
 
     private static final String titleKey = "gui.muffling_block.title";
 
     protected final MufflingBlockEntity tileMuffling;
-    protected final ResourceLocation background = ResourceLocation.fromNamespaceAndPath(BetterMuffling.MOD_ID, "textures/gui/base_gui.png");
+    protected final Identifier background = Identifier.fromNamespaceAndPath(BetterMuffling.MOD_ID, "textures/gui/base_gui.png");
     protected final int xSize;
     protected final int ySize;
     protected int guiTop = 0;
@@ -67,13 +63,15 @@ public class MufflingBlockSimpleGui extends Screen {
         buttonNumber++;
 
         for (SoundSource category : SoundSource.values()) {
-            if (category != SoundSource.MASTER && category != SoundSource.MUSIC) {
-                SoundSlider soundSlider = this.addRenderableWidget(new SoundSlider(this.guiLeft + 10 + buttonNumber % 2 * 145,
-                        (this.guiTop + 22 + 24 * (buttonNumber >> 1)), 135, 20,
-                        tileMuffling.getSoundLevel(category), category));
-                soundSlider.setListener(((soundCategory, volume) -> this.tileMuffling.setSoundLevel(soundCategory, volume.floatValue())));
-                buttonNumber++;
+            if (MufflingBlockEntity.IGNORED_CATEGORIES.contains(category)) {
+                continue;
             }
+
+            SoundSlider soundSlider = this.addRenderableWidget(new SoundSlider(this.guiLeft + 10 + buttonNumber % 2 * 145,
+                    (this.guiTop + 22 + 24 * (buttonNumber >> 1)), 135, 20,
+                    tileMuffling.getSoundLevel(category), category));
+            soundSlider.setListener(((soundCategory, volume) -> this.tileMuffling.setSoundLevel(soundCategory, volume.floatValue())));
+            buttonNumber++;
         }
 
         this.addRenderableWidget(new BetterButton(this.guiLeft + 50, this.guiTop + 142, 200, 20, I18n.get("gui.done"),
@@ -81,21 +79,21 @@ public class MufflingBlockSimpleGui extends Screen {
     }
 
     @Override
-    public void render(@Nonnull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
-        super.render(guiGraphics, mouseX, mouseY, partialTicks);
-        this.renderForeground(guiGraphics, mouseX, mouseY, partialTicks);
+    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+        super.extractRenderState(graphics, mouseX, mouseY, a);
+        this.renderForeground(graphics, mouseX, mouseY, a);
     }
 
-    public void renderForeground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+    public void renderForeground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
         String title = this.title.getString();
         final int x = this.width / 2 - this.font.width(title) / 2;
         final int y = this.guiTop + 7;
-        guiGraphics.drawString(this.font, this.title, x, y, 4210752, false);
+        graphics.text(this.font, this.title, x, y, 0xFF404040, false);
     }
 
     @Override
-    public void renderBackground(@Nonnull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        super.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
+    public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+        super.extractBackground(graphics, mouseX, mouseY, a);
 
         int halfHeight = this.ySize / 2;
         int top1 = 0;
@@ -103,19 +101,18 @@ public class MufflingBlockSimpleGui extends Screen {
         int middleWidth = this.xSize - 100;
 
         // Render left end
-        guiGraphics.blit(background, this.guiLeft, this.guiTop, 0, top1, 50, halfHeight);
-        guiGraphics.blit(background, this.guiLeft, this.guiTop + halfHeight, 0, top2, 50, halfHeight);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, background, this.guiLeft, this.guiTop, 0.0f, (float) top1, 50, halfHeight, 256, 256);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, background, this.guiLeft, this.guiTop + halfHeight, 0.0f, (float) top2, 50, halfHeight, 256, 256);
         // Render middle part
-        guiGraphics.blit(background, this.guiLeft + 50, this.guiTop, 4, top1, middleWidth, halfHeight);
-        guiGraphics.blit(background, this.guiLeft + 50, this.guiTop + halfHeight, 4, top2, middleWidth, halfHeight);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, background, this.guiLeft + 50, this.guiTop, 4.0f, (float) top1, middleWidth, halfHeight, 256, 256);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, background, this.guiLeft + 50, this.guiTop + halfHeight, 4.0f, (float) top2, middleWidth, halfHeight, 256, 256);
         // Render right end
-        guiGraphics.blit(background, this.guiLeft + 50 + middleWidth, this.guiTop, 256 - 50, top1, 50, halfHeight);
-        guiGraphics.blit(background, this.guiLeft + 50 + middleWidth, this.guiTop + halfHeight, 256 - 50, top2, 50, halfHeight);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, background, this.guiLeft + 50 + middleWidth, this.guiTop, (float) (256 - 50), (float) top1, 50, halfHeight, 256, 256);
+        graphics.blit(RenderPipelines.GUI_TEXTURED, background, this.guiLeft + 50 + middleWidth, this.guiTop + halfHeight, (float) (256 - 50), (float) top2, 50, halfHeight, 256, 256);
     }
 
     private String getPlacerOnlyButtonMessage() {
         return tileMuffling.isPlacerOnly() ? "button.muffling_block.placer_only.on" :
                 "button.muffling_block.placer_only.off";
     }
-
 }

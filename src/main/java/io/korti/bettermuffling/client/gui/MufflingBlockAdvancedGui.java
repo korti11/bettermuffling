@@ -5,15 +5,17 @@ import io.korti.bettermuffling.BetterMuffling;
 import io.korti.bettermuffling.client.gui.widget.*;
 import io.korti.bettermuffling.common.blockentity.MufflingBlockEntity;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
+import net.minecraft.client.input.MouseButtonEvent;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import org.apache.commons.lang3.tuple.Pair;
@@ -25,7 +27,7 @@ import java.util.*;
 
 public class MufflingBlockAdvancedGui extends MufflingBlockSimpleGui {
 
-    private final ResourceLocation guiElements = ResourceLocation.fromNamespaceAndPath(BetterMuffling.MOD_ID, "textures/gui/gui_elements.png");
+    private final Identifier guiElements = Identifier.fromNamespaceAndPath(BetterMuffling.MOD_ID, "textures/gui/gui_elements.png");
 
     private ScrollList soundNamesList = null;
     private Button selectedSoundCategoryButton = null;
@@ -44,7 +46,7 @@ public class MufflingBlockAdvancedGui extends MufflingBlockSimpleGui {
 
         int buttonCount = 0;
         for (final SoundSource category : SoundSource.values()) {
-            if (category == SoundSource.MASTER || category == SoundSource.MUSIC) {
+            if (MufflingBlockEntity.IGNORED_CATEGORIES.contains(category)) {
                 continue;
             }
             SoundSlider soundSlider = this.addRenderableWidget(new SoundSlider(this.guiLeft + 130, this.guiTop + 31, 180, 20,
@@ -118,18 +120,18 @@ public class MufflingBlockAdvancedGui extends MufflingBlockSimpleGui {
     }
 
     @Override
-    public void renderForeground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
-        super.renderForeground(guiGraphics, mouseX, mouseY, partialTicks);
-        guiGraphics.drawString(this.font, Component.translatable("label.muffling_block.sound.category"), this.guiLeft + 11, this.guiTop + 21, 4210752, false);
-        guiGraphics.drawString(this.font, Component.translatable("label.muffling_block.volume"), this.guiLeft + 130, this.guiTop + 21, 4210752, false);
-        guiGraphics.drawString(this.font, Component.translatable("label.muffling_block.sound.names"), this.guiLeft + 130, this.guiTop + 60, 4210752, false);
-        this.soundNamesList.renderForeground(guiGraphics);
+    public void renderForeground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+        super.renderForeground(graphics, mouseX, mouseY, a);
+        graphics.text(this.font, Component.translatable("label.muffling_block.sound.category"), this.guiLeft + 11, this.guiTop + 21, 0xFF404040, false);
+        graphics.text(this.font, Component.translatable("label.muffling_block.volume"), this.guiLeft + 130, this.guiTop + 21, 0xFF404040, false);
+        graphics.text(this.font, Component.translatable("label.muffling_block.sound.names"), this.guiLeft + 130, this.guiTop + 60, 0xFF404040, false);
+        this.soundNamesList.renderForeground(graphics);
     }
 
     @Override
-    public void renderBackground(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        super.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
-        this.soundNamesList.renderBackground(guiGraphics);
+    public void extractBackground(@NotNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
+        super.extractBackground(graphics, mouseX, mouseY, a);
+        this.soundNamesList.renderBackground(graphics);
     }
 
     private class ScrollList implements GuiEventListener, NarratableEntry {
@@ -165,7 +167,7 @@ public class MufflingBlockAdvancedGui extends MufflingBlockSimpleGui {
 
         protected void init() {
             for (final SoundSource category : SoundSource.values()) {
-                if (category == SoundSource.MASTER || category == SoundSource.MUSIC) {
+                if (MufflingBlockEntity.IGNORED_CATEGORIES.contains(category)) {
                     continue;
                 }
                 soundCategoryNameMap.put(category,
@@ -182,8 +184,8 @@ public class MufflingBlockAdvancedGui extends MufflingBlockSimpleGui {
             this.updateSoundNames();
         }
 
-        private void drawString(GuiGraphics guiGraphics, String msg, int x, int y, int color) {
-            guiGraphics.drawString(MufflingBlockAdvancedGui.this.font, msg, x, y, color, false);
+        private void drawString(GuiGraphicsExtractor graphics, String msg, int x, int y, int color) {
+            graphics.text(MufflingBlockAdvancedGui.this.font, msg, x, y, color, false);
         }
 
         private void updateSoundNames() {
@@ -207,10 +209,11 @@ public class MufflingBlockAdvancedGui extends MufflingBlockSimpleGui {
             return (int) ((this.height - 1 - 27) * this.scrollValue);
         }
 
-        public void renderForeground(GuiGraphics guiGraphics) {
+        public void renderForeground(GuiGraphicsExtractor graphics) {
             int scrollBarUV = isScrollBarEnabled() ? 185 : 191;
             int yOffset = getScrollYOffset();
-            guiGraphics.blit(guiElements, this.scrollPosX, this.scrollPosY + yOffset, scrollBarUV, 0, 6, 27);
+            graphics.blit(RenderPipelines.GUI_TEXTURED, MufflingBlockAdvancedGui.this.guiElements,
+                    this.scrollPosX, this.scrollPosY + yOffset, (float) scrollBarUV, 0.0f, 6, 27, 256, 256);
 
             int startValue = Math.max((int) ((this.soundNameSet.size() - 12) * scrollValue), 0);
             int maxValue = Math.min(startValue + 12, this.soundNameSet.size());
@@ -218,29 +221,29 @@ public class MufflingBlockAdvancedGui extends MufflingBlockSimpleGui {
             for (int i = startValue; i < maxValue && i < this.soundNameSet.size() && i < this.soundNames.size(); i++) {
                 String current = soundNames.get(i);
                 if (this.selectedEntries.contains(current)) {
-                    drawString(guiGraphics, current, this.x + 2, this.y + 2 + (elementOffset * 10), 16777120);
+                    drawString(graphics, current, this.x + 2, this.y + 2 + (elementOffset * 10), 0xFFFFFFA0);
                 } else {
-                    drawString(guiGraphics, current, this.x + 2, this.y + 2 + (elementOffset * 10), 4210752);
+                    drawString(graphics, current, this.x + 2, this.y + 2 + (elementOffset * 10), 0xFF404040);
                 }
                 elementOffset++;
             }
         }
 
-        public void renderBackground(GuiGraphics guiGraphics) {
+        public void renderBackground(GuiGraphicsExtractor graphics) {
             int listWidth = this.listWidth - 1;
             int halfHeight = Math.round(this.height / 2f);
             int top1 = 0;
             int top2 = 142 - halfHeight;
 
             // Render left end
-            guiGraphics.blit(guiElements, this.x, this.y, 0, top1, 1, halfHeight);
-            guiGraphics.blit(guiElements, this.x, this.y + halfHeight, 0, top2, 1, halfHeight + 1);
+            graphics.blit(RenderPipelines.GUI_TEXTURED, MufflingBlockAdvancedGui.this.guiElements, this.x, this.y, 0.0f, (float) top1, 1, halfHeight, 256, 256);
+            graphics.blit(RenderPipelines.GUI_TEXTURED, MufflingBlockAdvancedGui.this.guiElements, this.x, this.y + halfHeight, 0.0f, (float) top2, 1, halfHeight + 1, 256, 256);
             // Render middle
-            guiGraphics.blit(guiElements, this.x + 1, this.y, 1, top1, listWidth, halfHeight);
-            guiGraphics.blit(guiElements, this.x + 1, this.y + halfHeight, 1, top2, listWidth, halfHeight + 1);
+            graphics.blit(RenderPipelines.GUI_TEXTURED, MufflingBlockAdvancedGui.this.guiElements, this.x + 1, this.y, 1.0f, (float) top1, listWidth, halfHeight, 256, 256);
+            graphics.blit(RenderPipelines.GUI_TEXTURED, MufflingBlockAdvancedGui.this.guiElements, this.x + 1, this.y + halfHeight, 1.0f, (float) top2, listWidth, halfHeight + 1, 256, 256);
             // Render right end
-            guiGraphics.blit(guiElements, this.scrollPosX - 1, this.y, 177, top1, 8, halfHeight);
-            guiGraphics.blit(guiElements, this.scrollPosX - 1, this.y + halfHeight, 177, top2, 8, halfHeight + 1);
+            graphics.blit(RenderPipelines.GUI_TEXTURED, MufflingBlockAdvancedGui.this.guiElements, this.scrollPosX - 1, this.y, 177.0f, (float) top1, 8, halfHeight, 256, 256);
+            graphics.blit(RenderPipelines.GUI_TEXTURED, MufflingBlockAdvancedGui.this.guiElements, this.scrollPosX - 1, this.y + halfHeight, 177.0f, (float) top2, 8, halfHeight + 1, 256, 256);
         }
 
         private boolean isScrollBarEnabled() {
@@ -260,7 +263,9 @@ public class MufflingBlockAdvancedGui extends MufflingBlockSimpleGui {
         }
 
         @Override
-        public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
+            double mouseX = event.x();
+            double mouseY = event.y();
             if (isMouseOver(mouseX, mouseY)) {
                 if (this.isOverScrollBar(mouseX, mouseY)) {
                     this.scrollBarClicked = true;
@@ -270,9 +275,9 @@ public class MufflingBlockAdvancedGui extends MufflingBlockSimpleGui {
                         (int) ((this.soundNameSet.size() - 12) * scrollValue);
                 if (index < this.soundNames.size()) {
                     String selectedEntry = this.soundNames.get(index);
-                    long windowHandle = Minecraft.getInstance().getWindow().getWindow();
-                    if (!InputConstants.isKeyDown(windowHandle, GLFW.GLFW_KEY_LEFT_SHIFT) &&
-                        !InputConstants.isKeyDown(windowHandle, GLFW.GLFW_KEY_RIGHT_SHIFT)) {
+                    com.mojang.blaze3d.platform.Window window = Minecraft.getInstance().getWindow();
+                    if (!InputConstants.isKeyDown(window, GLFW.GLFW_KEY_LEFT_SHIFT) &&
+                        !InputConstants.isKeyDown(window, GLFW.GLFW_KEY_RIGHT_SHIFT)) {
                         this.selectedEntries.clear();
                         this.selectedEntries.add(selectedEntry);
                     } else {
@@ -289,13 +294,14 @@ public class MufflingBlockAdvancedGui extends MufflingBlockSimpleGui {
         }
 
         @Override
-        public boolean mouseReleased(double p_mouseReleased_1_, double p_mouseReleased_3_, int p_mouseReleased_5_) {
+        public boolean mouseReleased(MouseButtonEvent event) {
             this.scrollBarClicked = false;
             return true;
         }
 
         @Override
-        public boolean mouseDragged(double mouseX, double mouseY, int button, double xOffset, double yOffset) {
+        public boolean mouseDragged(MouseButtonEvent event, double dx, double dy) {
+            double mouseY = event.y();
             if (!this.scrollBarClicked || !this.isScrollBarEnabled()) {
                 return false;
             }

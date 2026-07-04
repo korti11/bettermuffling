@@ -14,8 +14,7 @@ public final class BetterMufflingTileEntities {
 
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<MufflingBlockEntity>> MUFFLING_BLOCK =
             BLOCK_ENTITY_TYPES.register("muffling_block", () ->
-                    BlockEntityType.Builder.of(MufflingBlockEntity::new,
+                    new BlockEntityType<>(MufflingBlockEntity::new,
                             BetterMufflingBlocks.MUFFLING_BLOCK.get(),
-                            BetterMufflingBlocks.MUFFLING_BLOCK_ADVANCED.get())
-                    .build(null));
+                            BetterMufflingBlocks.MUFFLING_BLOCK_ADVANCED.get()));
 }

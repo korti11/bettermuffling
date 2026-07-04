@@ -5,7 +5,6 @@ import io.korti.bettermuffling.common.network.packet.OpenScreenPacket;
 import io.korti.bettermuffling.common.network.packet.RequestMufflingUpdatePacket;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
-import net.neoforged.neoforge.network.handling.DirectionalPayloadHandler;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
 public final class PacketHandler {
@@ -27,6 +26,7 @@ public final class PacketHandler {
         registrar.playBidirectional(
                 MufflingDataPacket.TYPE,
                 MufflingDataPacket.STREAM_CODEC,
-                new DirectionalPayloadHandler<>(MufflingDataPacket::handleClient, MufflingDataPacket::handleServer));
+                MufflingDataPacket::handleServer,
+                MufflingDataPacket::handleClient);
     }
 }

@@ -3,7 +3,6 @@ package io.korti.bettermuffling.common.core;
 import io.korti.bettermuffling.BetterMuffling;
 import io.korti.bettermuffling.common.item.UpgradeItem;
 import net.minecraft.world.item.CreativeModeTabs;
-import net.minecraft.world.item.Item;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
@@ -15,7 +14,7 @@ public final class BetterMufflingItems {
 
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(BetterMuffling.MOD_ID);
 
-    public static final DeferredItem<UpgradeItem> UPGRADE = ITEMS.register("upgrade", UpgradeItem::new);
+    public static final DeferredItem<UpgradeItem> UPGRADE = ITEMS.registerItem("upgrade", UpgradeItem::new);
 
     @SubscribeEvent
     public static void addToCreativeTab(BuildCreativeModeTabContentsEvent event) {

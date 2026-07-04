@@ -13,6 +13,10 @@ import javax.annotation.Nullable;
 
 public class AdvancedMufflingBlock extends MufflingBlock {
 
+    public AdvancedMufflingBlock(Properties properties) {
+        super(properties);
+    }
+
     @Override
     public void setPlacedBy(@NotNull Level worldIn, @NotNull BlockPos blockPos, @NotNull BlockState blockState,
                             @Nullable LivingEntity player, @NotNull ItemStack itemStack) {

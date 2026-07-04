@@ -1,26 +1,40 @@
 package io.korti.bettermuffling.common.recipe;
 
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.korti.bettermuffling.common.core.BetterMufflingRecipes;
-import net.minecraft.core.HolderLookup;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.CustomRecipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.level.Level;
-import net.minecraft.core.component.DataComponents;
 
 import javax.annotation.Nonnull;
 
 public class MufflingBlockCloningRecipe extends CustomRecipe {
 
+    public static final MapCodec<MufflingBlockCloningRecipe> CODEC = RecordCodecBuilder.mapCodec(instance ->
+            instance.group(
+                    BuiltInRegistries.ITEM.byNameCodec().fieldOf("ingredient")
+                            .forGetter(MufflingBlockCloningRecipe::getItem)
+            ).apply(instance, MufflingBlockCloningRecipe::new)
+    );
+
+    public static final StreamCodec<RegistryFriendlyByteBuf, MufflingBlockCloningRecipe> STREAM_CODEC =
+            ByteBufCodecs.registry(Registries.ITEM).map(MufflingBlockCloningRecipe::new, MufflingBlockCloningRecipe::getItem);
+
     private final Item item;
 
-    public MufflingBlockCloningRecipe(CraftingBookCategory category, Item item) {
-        super(category);
+    public MufflingBlockCloningRecipe(Item item) {
+        super();
         this.item = item;
     }
 
@@ -28,7 +42,7 @@ public class MufflingBlockCloningRecipe extends CustomRecipe {
         return item;
     }
 
-    public ResourceLocation getItemId() {
+    public Identifier getItemId() {
         return BuiltInRegistries.ITEM.getKey(item);
     }
 
@@ -59,7 +73,7 @@ public class MufflingBlockCloningRecipe extends CustomRecipe {
 
     @Override
     @Nonnull
-    public ItemStack assemble(CraftingInput inv, HolderLookup.Provider registries) {
+    public ItemStack assemble(CraftingInput inv) {
         int i = 0;
         ItemStack itemStack = ItemStack.EMPTY;
 
@@ -89,13 +103,8 @@ public class MufflingBlockCloningRecipe extends CustomRecipe {
     }
 
     @Override
-    public boolean canCraftInDimensions(int width, int height) {
-        return width >= 3 && height >= 3;
-    }
-
-    @Override
     @Nonnull
-    public RecipeSerializer<?> getSerializer() {
+    public RecipeSerializer<? extends CustomRecipe> getSerializer() {
         return BetterMufflingRecipes.MUFFLING_BLOCK_CLONING_RECIPE.get();
     }
 }

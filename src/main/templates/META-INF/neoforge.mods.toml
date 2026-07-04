@@ -4,11 +4,6 @@
 # Note that there are a couple of TOML lists in this file.
 # Find more information on toml format here:  https://github.com/toml-lang/toml
 
-# The mod loader type to load - for regular FML @Mod mods it should be javafml
-modLoader="javafml" #mandatory
-# The version range of the javafml mod loader to load - for 1.21.x you typically need [1,)
-loaderVersion="${loader_version_range}" #mandatory
-
 # The license for you mod. This is mandatory metadata and allows for easier comprehension of your redistributive properties.
 # Review your options at https://choosealicense.com/. All rights reserved is the default copyright stance, and is thus the default here.
 license="${mod_license}"

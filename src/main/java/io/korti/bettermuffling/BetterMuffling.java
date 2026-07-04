@@ -9,14 +9,14 @@ import io.korti.bettermuffling.common.network.PacketHandler;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Mod(BetterMuffling.MOD_ID)
 public class BetterMuffling {
 
     public static final String MOD_ID = "bettermuffling";
-    public static final Logger LOG = LogManager.getLogger();
+    public static final Logger LOG = LoggerFactory.getLogger(MOD_ID);
 
     public BetterMuffling(IEventBus modEventBus, ModContainer modContainer) {
         BetterMufflingConfig.register(modContainer);

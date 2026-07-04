@@ -18,7 +18,7 @@ public class EventHandler {
     @SubscribeEvent
     public static void onBreaking(final PlayerEvent.BreakSpeed event) {
         final Player player = event.getEntity();
-        final Level world = player.getCommandSenderWorld();
+        final Level world = player.level();
         final Optional<BlockPos> pos = event.getPosition();
 
         if (pos.isPresent()) {
