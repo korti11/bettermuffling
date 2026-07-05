@@ -2,7 +2,7 @@
 
 A Minecraft mod that adds configurable sound-muffling blocks. Place one down, open its GUI, and dial per-category volume multipliers for everything within range.
 
-**Minecraft:** 1.21.1 | **Loader:** NeoForge 21.1.x | **License:** MIT
+**Minecraft:** 26.1.x | **Loader:** NeoForge 26.1.2.x | **License:** MIT
 
 [CurseForge](https://www.curseforge.com/minecraft/mc-mods/better-muffling) · [Issues](https://github.com/korti11/bettermuffling/issues)
 
